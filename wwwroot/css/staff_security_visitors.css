@@ -903,3 +903,64 @@ body.dark .visitor-list::-webkit-scrollbar-thumb,
 body.dark .vehicle-list::-webkit-scrollbar-thumb {
     background: #3a3a4a;
 }
+
+@media (max-width: 768px) {
+    .status-badge {
+        padding: 3px 6px;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .status-badge i {
+        font-size: 12px;
+    }
+
+    .status-pending {
+        background: var(--light-yellow);
+        color: var(--dark);
+    }
+
+    .status-approved {
+        background: var(--light-green);
+        color: var(--dark);
+    }
+
+    .status-completed {
+        background: var(--light-blue);
+        color: var(--blue);
+    }
+
+    .status-in-progress {
+        background: var(--light-orange);
+        color: var(--orange);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .status-in-progress i {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+}
+
+@media (max-width: 480px) {
+    .status-badge {
+        padding: 2px 4px;
+        font-size: 10px;
+    }
+
+    .status-badge i {
+        font-size: 11px;
+    }
+
+    .status-in-progress {
+        gap: 3px;
+    }
+}

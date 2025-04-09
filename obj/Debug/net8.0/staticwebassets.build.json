@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "RcLICoj6Fu57X86IAC/ecCm+hWavgxeCs1SSHNJ5wMw=",
+  "Hash": "6DhDdpVDL5CaZlLKfo6I6xauzq25vzBfG2oLp0+lVJQ=",
   "Source": "SubdivisionManagement",
   "BasePath": "_content/SubdivisionManagement",
   "Mode": "Default",
@@ -141,6 +141,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\billing.css"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\community_forum.css",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "css/community_forum#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "0ruogyzy6k",
+      "Integrity": "rDmvtSrYoYp8QMJU2+CDPFlOhKnC4eGX/E4Oxe+QTMM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\community_forum.css"
     },
     {
       "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\contact.css",
@@ -346,8 +367,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "hfz6fe7r8a",
-      "Integrity": "I3BbN4+NHJW4g4lj3G5lZvuD43fu6ZwJT2uA4yke3G0=",
+      "Fingerprint": "536a4yvysb",
+      "Integrity": "UflmnjCrZFomX4/O+f419YiAU96btIULMJ/ReH+T7mE=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\staff_security_visitors.css"
@@ -2363,6 +2384,88 @@
       ]
     },
     {
+      "Route": "css/community_forum.0ruogyzy6k.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\community_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "19559"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"rDmvtSrYoYp8QMJU2+CDPFlOhKnC4eGX/E4Oxe+QTMM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 16:35:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "0ruogyzy6k"
+        },
+        {
+          "Name": "label",
+          "Value": "css/community_forum.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-rDmvtSrYoYp8QMJU2+CDPFlOhKnC4eGX/E4Oxe+QTMM="
+        }
+      ]
+    },
+    {
+      "Route": "css/community_forum.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\community_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "19559"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"rDmvtSrYoYp8QMJU2+CDPFlOhKnC4eGX/E4Oxe+QTMM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 16:35:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-rDmvtSrYoYp8QMJU2+CDPFlOhKnC4eGX/E4Oxe+QTMM="
+        }
+      ]
+    },
+    {
       "Route": "css/contact.css",
       "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\contact.css",
       "Selectors": [],
@@ -3101,6 +3204,51 @@
       ]
     },
     {
+      "Route": "css/staff_security_visitors.536a4yvysb.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_security_visitors.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "17957"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UflmnjCrZFomX4/O+f419YiAU96btIULMJ/ReH+T7mE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 14:28:56 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "536a4yvysb"
+        },
+        {
+          "Name": "label",
+          "Value": "css/staff_security_visitors.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-UflmnjCrZFomX4/O+f419YiAU96btIULMJ/ReH+T7mE="
+        }
+      ]
+    },
+    {
       "Route": "css/staff_security_visitors.css",
       "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_security_visitors.css",
       "Selectors": [],
@@ -3111,7 +3259,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "18000"
+          "Value": "17957"
         },
         {
           "Name": "Content-Type",
@@ -3119,11 +3267,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"I3BbN4+NHJW4g4lj3G5lZvuD43fu6ZwJT2uA4yke3G0=\""
+          "Value": "\"UflmnjCrZFomX4/O+f419YiAU96btIULMJ/ReH+T7mE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 09 Apr 2025 14:26:50 GMT"
+          "Value": "Wed, 09 Apr 2025 14:28:56 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3133,52 +3281,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-I3BbN4+NHJW4g4lj3G5lZvuD43fu6ZwJT2uA4yke3G0="
-        }
-      ]
-    },
-    {
-      "Route": "css/staff_security_visitors.hfz6fe7r8a.css",
-      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_security_visitors.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "18000"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"I3BbN4+NHJW4g4lj3G5lZvuD43fu6ZwJT2uA4yke3G0=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Wed, 09 Apr 2025 14:26:50 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "hfz6fe7r8a"
-        },
-        {
-          "Name": "label",
-          "Value": "css/staff_security_visitors.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-I3BbN4+NHJW4g4lj3G5lZvuD43fu6ZwJT2uA4yke3G0="
+          "Value": "sha256-UflmnjCrZFomX4/O+f419YiAU96btIULMJ/ReH+T7mE="
         }
       ]
     },

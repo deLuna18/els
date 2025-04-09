@@ -1,0 +1,542 @@
+@{
+    ViewData["Title"] = "Community Forum";
+}
+<head>
+	<!-- Boxicons -->
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<!-- My CSS -->
+	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/css/community_forum.css" asp-append-version="true">
+</head>
+
+<title>Community Forum</title>
+<body>
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<i class='bx bxs-smile'></i>
+			<span class="text">Welcome</span>
+		</a>
+		<ul class="side-menu top">
+			<li class="active">
+				<a asp-area="" asp-controller="Home" asp-action="dashboard">
+					<i class='bx bxs-dashboard'></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="profile">
+					<i class='bx bxs-user'></i>
+					<span class="text">Profile</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Announcements">
+					<i class='bx bxs-megaphone'></i>
+					<span class="text">Announcement</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="billing">
+					<i class='bx bxs-credit-card-front'></i>
+					<span class="text">Payment and Billing</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Services">
+                    <i class='bx bxs-briefcase'></i>
+                    <span class="text">Services</span>
+                </a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Community_forum">
+                    <i class='bx bxs-message-square-dots'></i>
+                    <span class="text">Community Forum</span>
+                </a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="security_visitors">
+					<i class='bx bxs-shield-alt-2'></i>
+					<span class="text">Security and Visitors</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="contact">
+					<i class='bx bx-support'></i>
+					<span class="text">Contact and Support</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#">
+					<i class='bx bxs-cog'></i>
+					<span class="text">Settings</span>
+				</a>
+			</li>
+			<li>
+				<a asp-action="logout" class="logout">
+					<i class='bx bxs-log-out-circle'></i>
+					<span class="text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+	<!-- CONTENT -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu'></i>
+			<form>
+				<div class="form-input">
+					<input type="search" placeholder="Search...">
+					<button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+				</div>
+			</form>
+			<input type="checkbox" id="switch-mode" hidden>
+			<label for="switch-mode" class="switch-mode"></label>
+			<a href="#" class="notification">
+				<i class='bx bxs-bell'></i>
+				<span class="num">8</span>
+			</a>
+			<a asp-area="" asp-controller="Home" asp-action="profile">
+				<img src="~/images/profile.jpg" style="border-radius: 50%; width: 36px; height: 36px; object-fit: cover;">
+			</a>
+		</nav>
+		<!-- NAVBAR -->
+		<!-- MAIN -->
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Community Forum</h1>
+					<ul class="breadcrumb">
+						<li>
+							<a asp-area="" asp-controller="Home" asp-action="dashboard">Home</a>
+						</li>
+						<li><i class='bx bx-chevron-right'></i></li>
+						<li>
+							<a class="active" asp-area="" asp-controller="Home" asp-action="CommunityForum">Community Forum</a>
+						</li>
+					</ul>
+				</div>
+				<button class="new-topic-btn" onclick="openNewTopicModal()">
+					<i class='bx bx-plus'></i>
+					<span class="text">New Topic</span>
+				</button>
+			</div>
+
+			<div class="forum-container">
+				<!-- FORUM CATEGORIES -->
+				<div class="forum-categories">
+					<div class="category-card">
+						<i class='bx bxs-message-square-dots'></i>
+						<h3>General Discussion</h3>
+						<p>Open discussions about community life, events, and general topics.</p>
+						<span class="topic-count">24 topics</span>
+					</div>
+					<div class="category-card">
+						<i class='bx bxs-home'></i>
+						<h3>Home Improvement</h3>
+						<p>Share renovation ideas, DIY projects, and home maintenance tips.</p>
+						<span class="topic-count">18 topics</span>
+					</div>
+					<div class="category-card">
+						<i class='bx bxs-calendar-event'></i>
+						<h3>Events & Activities</h3>
+						<p>Discuss upcoming community events, activities, and gatherings.</p>
+						<span class="topic-count">12 topics</span>
+					</div>
+					<div class="category-card">
+						<i class='bx bxs-help-circle'></i>
+						<h3>Help & Support</h3>
+						<p>Ask questions and get help from community members and staff.</p>
+						<span class="topic-count">32 topics</span>
+					</div>
+				</div>
+
+				<!-- RECENT TOPICS -->
+				<div class="recent-topics">
+					<div class="head">
+						<h3>Recent Topics</h3>
+						<div class="topic-filters">
+							<button class="filter-btn active" data-filter="all">All</button>
+							<button class="filter-btn" data-filter="general">General</button>
+							<button class="filter-btn" data-filter="home">Home</button>
+							<button class="filter-btn" data-filter="events">Events</button>
+							<button class="filter-btn" data-filter="help">Help</button>
+						</div>
+					</div>
+					<div class="topic-list">
+						<div class="topic-item">
+							<div class="topic-info">
+								<h4>Community Garden Initiative</h4>
+								<p>Proposal for creating a community garden in the vacant lot near the playground.</p>
+								<div class="topic-meta">
+									<span><i class='bx bxs-user'></i> Marianne Calderon</span>
+									<span><i class='bx bxs-time'></i> 2 hours ago</span>
+								</div>
+							</div>
+							<div class="topic-stats">
+								<span><i class='bx bxs-message-dots'></i> 15 replies</span>
+								<span><i class='bx bxs-show'></i> 42 views</span>
+							</div>
+						</div>
+						<div class="topic-item">
+							<div class="topic-info">
+								<h4>Street Light Maintenance</h4>
+								<p>Several street lights on Oak Avenue are not working properly. Requesting maintenance.</p>
+								<div class="topic-meta">
+									<span><i class='bx bxs-user'></i> Cedric Cornelio</span>
+									<span><i class='bx bxs-time'></i> 5 hours ago</span>
+								</div>
+							</div>
+							<div class="topic-stats">
+								<span><i class='bx bxs-message-dots'></i> 8 replies</span>
+								<span><i class='bx bxs-show'></i> 27 views</span>
+							</div>
+						</div>
+						<div class="topic-item">
+							<div class="topic-info">
+								<h4>Weekend Basketball Tournament</h4>
+								<p>Organizing a community basketball tournament this weekend. Looking for participants.</p>
+								<div class="topic-meta">
+									<span><i class='bx bxs-user'></i> Larie </span>
+									<span><i class='bx bxs-time'></i> 1 day ago</span>
+								</div>
+							</div>
+							<div class="topic-stats">
+								<span><i class='bx bxs-message-dots'></i> 23 replies</span>
+								<span><i class='bx bxs-show'></i> 56 views</span>
+							</div>
+						</div>
+						<div class="topic-item">
+							<div class="topic-info">
+								<h4>Home Security Recommendations</h4>
+								<p>Looking for recommendations on home security systems. What do you use?</p>
+								<div class="topic-meta">
+									<span><i class='bx bxs-user'></i> Shekainah</span>
+									<span><i class='bx bxs-time'></i> 2 days ago</span>
+								</div>
+							</div>
+							<div class="topic-stats">
+								<span><i class='bx bxs-message-dots'></i> 31 replies</span>
+								<span><i class='bx bxs-show'></i> 89 views</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- COMMUNITY CHAT -->
+				<div class="community-chat">
+					<div class="head">
+						<h3>Community Chat</h3>
+						<div class="chat-actions">
+							<button class="chat-filter-btn" data-filter="all">All</button>
+							<button class="chat-filter-btn" data-filter="neighbors">Neighbors</button>
+							<button class="chat-filter-btn" data-filter="staff">Staff</button>
+						</div>
+					</div>
+					<div class="chat-container">
+						<div class="chat-sidebar">
+							<div class="chat-search">
+								<i class='bx bx-search'></i>
+								<input type="text" placeholder="Search conversations...">
+							</div>
+							<div class="chat-contacts">
+								<div class="chat-contact active">
+									<img src="~/images/profile.jpg" alt="Alexa de Luna">
+									<div class="contact-info">
+										<h4>Alexa de Luna</h4>
+										<p>Community Garden Initiative</p>
+									</div>
+									<span class="chat-time">2h</span>
+								</div>
+								<div class="chat-contact">
+									<img src="~/images/profile.jpg" alt="Marianne Calderon">
+									<div class="contact-info">
+										<h4>Marianne Calderon</h4>
+										<p>Street Light Maintenance</p>
+									</div>
+									<span class="chat-time">5h</span>
+								</div>
+								<div class="chat-contact">
+									<img src="~/images/profile.jpg" alt="Larie Jane Rubi">
+									<div class="contact-info">
+										<h4>Larie Jane Rubi</h4>
+										<p>Weekend Basketball Tournament</p>
+									</div>
+									<span class="chat-time">1d</span>
+								</div>
+								<div class="chat-contact">
+									<img src="~/images/profile.jpg" alt="Shekainah Gaceta">
+									<div class="contact-info">
+										<h4>Shekainah Gaceta</h4>
+										<p>Home Security Recommendations</p>
+									</div>
+									<span class="chat-time">2d</span>
+								</div>
+								<div class="chat-contact">
+									<img src="~/images/profile.jpg" alt="Community Staff">
+									<div class="contact-info">
+										<h4>Community Staff</h4>
+										<p>Announcement: Monthly Meeting</p>
+									</div>
+									<span class="chat-time">3d</span>
+								</div>
+							</div>
+						</div>
+						<div class="chat-main">
+							<div class="chat-header">
+								<div class="chat-user">
+									<img src="~/images/profile.jpg" alt="Alexa de Luna">
+									<div class="user-info">
+										<h4>Alexa de Luna</h4>
+										<p>Community Garden Initiative</p>
+									</div>
+								</div>
+								<div class="chat-options">
+									<button><i class='bx bx-dots-vertical-rounded'></i></button>
+								</div>
+							</div>
+							<div class="chat-messages">
+								<div class="message-date">Today</div>
+								<div class="message received">
+									<div class="message-content">
+										<p>Hi everyone! I've been thinking about starting a community garden project in the vacant lot near the playground. Would anyone be interested in participating?</p>
+									</div>
+									<div class="message-time">10:30 AM</div>
+								</div>
+								<div class="message sent">
+									<div class="message-content">
+										<p>That's a great idea! I'd love to help with the planning and implementation.</p>
+									</div>
+									<div class="message-time">10:45 AM</div>
+								</div>
+								<div class="message received">
+									<div class="message-content">
+										<p>Thanks for your interest! I'm thinking we could start with a small section and expand as more people join. We could grow vegetables, herbs, and maybe even some flowers.</p>
+									</div>
+									<div class="message-time">11:00 AM</div>
+								</div>
+								<div class="message sent">
+									<div class="message-content">
+										<p>I have some experience with gardening and can help with the initial setup. When would you like to start?</p>
+									</div>
+									<div class="message-time">11:15 AM</div>
+								</div>
+								<div class="message received">
+									<div class="message-content">
+										<p>I'm thinking we could have a planning meeting this weekend. Saturday afternoon works best for me. How about you?</p>
+									</div>
+									<div class="message-time">11:30 AM</div>
+								</div>
+							</div>
+							<div class="chat-input">
+								<button class="attach-btn"><i class='bx bx-paperclip'></i></button>
+								<input type="text" placeholder="Type a message...">
+								<button class="send-btn"><i class='bx bx-send'></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<!-- MAIN -->
+	</section>
+
+	<!-- NEW TOPIC MODAL -->
+	<div id="newTopicModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>Create New Topic</h2>
+				<span class="close-btn" onclick="closeNewTopicModal()">&times;</span>
+			</div>
+			<div class="modal-body">
+				<form id="newTopicForm">
+					<div class="form-group">
+						<label for="topicTitle">Topic Title</label>
+						<input type="text" id="topicTitle" placeholder="Enter a descriptive title" required>
+					</div>
+					<div class="form-group">
+						<label for="topicCategory">Category</label>
+						<select id="topicCategory" required>
+							<option value="">Select a category</option>
+							<option value="general">General Discussion</option>
+							<option value="home">Home Improvement</option>
+							<option value="events">Events & Activities</option>
+							<option value="help">Help & Support</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="topicContent">Content</label>
+						<textarea id="topicContent" placeholder="Describe your topic in detail..." required></textarea>
+					</div>
+					<div class="form-group">
+						<label for="topicTags">Tags (comma separated)</label>
+						<input type="text" id="topicTags" placeholder="e.g., garden, community, project">
+					</div>
+					<div class="form-actions">
+						<button type="button" class="cancel-btn" onclick="closeNewTopicModal()">Cancel</button>
+						<button type="submit" class="submit-btn">Create Topic</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// SIDEBAR TOGGLE
+		const menuBar = document.querySelector('#content nav .bx-menu');
+		const sidebar = document.getElementById('sidebar');
+
+		menuBar.addEventListener('click', function () {
+			sidebar.classList.toggle('hide');
+		});
+
+		// SIDEBAR ACTIVE STATE
+		const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
+
+		const currentPath = window.location.pathname;
+		allSideMenu.forEach(item => {
+			const li = item.parentElement;
+			if (item.getAttribute('href') === currentPath || 
+				(currentPath.includes(item.getAttribute('href')) && item.getAttribute('href') !== '/')) {
+				allSideMenu.forEach(i => {
+					i.parentElement.classList.remove('active');
+				})
+				li.classList.add('active');
+			}
+		});
+
+		allSideMenu.forEach(item=> {
+			const li = item.parentElement;
+
+			item.addEventListener('click', function () {
+				allSideMenu.forEach(i=> {
+					i.parentElement.classList.remove('active');
+				})
+				li.classList.add('active');
+				localStorage.setItem('activeMenu', item.getAttribute('href'));
+			})
+		});
+
+		const activeMenu = localStorage.getItem('activeMenu');
+		if (activeMenu) {
+			allSideMenu.forEach(item => {
+				if (item.getAttribute('href') === activeMenu) {
+					allSideMenu.forEach(i => {
+						i.parentElement.classList.remove('active');
+					})
+					item.parentElement.classList.add('active');
+				}
+			});
+		}
+
+		// DARK MODE
+		const switchMode = document.getElementById('switch-mode');
+		switchMode.addEventListener('change', function () {
+			if(this.checked) {
+				document.body.classList.add('dark');
+			} else {
+				document.body.classList.remove('dark');
+			}
+		});
+
+		// TOPIC FILTERS
+		const filterBtns = document.querySelectorAll('.filter-btn');
+		filterBtns.forEach(btn => {
+			btn.addEventListener('click', function() {
+				filterBtns.forEach(b => b.classList.remove('active'));
+				this.classList.add('active');
+			});
+		});
+
+		// CHAT FILTERS
+		const chatFilterBtns = document.querySelectorAll('.chat-filter-btn');
+		chatFilterBtns.forEach(btn => {
+			btn.addEventListener('click', function() {
+				chatFilterBtns.forEach(b => b.classList.remove('active'));
+				this.classList.add('active');
+			});
+		});
+
+		// CHAT CONTACTS
+		const chatContacts = document.querySelectorAll('.chat-contact');
+		chatContacts.forEach(contact => {
+			contact.addEventListener('click', function() {
+				chatContacts.forEach(c => c.classList.remove('active'));
+				this.classList.add('active');
+			});
+		});
+
+		// NEW TOPIC MODAL
+		function openNewTopicModal() {
+			document.getElementById('newTopicModal').style.display = 'block';
+		}
+
+		function closeNewTopicModal() {
+			document.getElementById('newTopicModal').style.display = 'none';
+		}
+
+		// SEND MESSAGE
+		const chatInput = document.querySelector('.chat-input input');
+		const sendBtn = document.querySelector('.send-btn');
+
+		sendBtn.addEventListener('click', function() {
+			sendMessage();
+		});
+
+		chatInput.addEventListener('keypress', function(e) {
+			if (e.key === 'Enter') {
+				sendMessage();
+			}
+		});
+
+		function sendMessage() {
+			const message = chatInput.value.trim();
+			if (message) {
+				const chatMessages = document.querySelector('.chat-messages');
+				const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+				
+				const messageElement = document.createElement('div');
+				messageElement.className = 'message sent';
+				messageElement.innerHTML = `
+					<div class="message-content">
+						<p>${message}</p>
+					</div>
+					<div class="message-time">${time}</div>
+				`;
+				
+				chatMessages.appendChild(messageElement);
+				chatMessages.scrollTop = chatMessages.scrollHeight;
+				chatInput.value = '';
+			}
+		}
+
+		// CLOSE MODAL WHEN CLICKING OUTSIDE
+		window.addEventListener('click', function(event) {
+			const modal = document.getElementById('newTopicModal');
+			if (event.target === modal) {
+				modal.style.display = 'none';
+			}
+		});
+
+		// FORM SUBMISSION
+		document.getElementById('newTopicForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+			
+			const title = document.getElementById('topicTitle').value;
+			const category = document.getElementById('topicCategory').value;
+			const content = document.getElementById('topicContent').value;
+			
+			if (!title || !category || !content) {
+				alert('Please fill in all required fields');
+				return;
+			}
+			
+			closeNewTopicModal();
+			alert('Topic created successfully!');
+		});
+	</script>
+</body>

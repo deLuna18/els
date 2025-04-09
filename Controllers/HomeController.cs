@@ -133,6 +133,11 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Community_forum()
+    {
+        return View();
+    }
+
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();

@@ -1,0 +1,388 @@
+@{
+    ViewData["Title"] = "Security and Visitors";
+}
+<head>
+	<!-- Boxicons -->
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<!-- My CSS -->
+	<link rel="stylesheet" href="~/css/security_visitors.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+	<style>
+		#sidebar .side-menu li a {
+			width: 100%;
+			height: 100%;
+			background: var(--light);
+			display: flex;
+			align-items: center;
+			border-radius: 48px;
+			font-size: 16px;
+			color: var(--dark);
+			white-space: nowrap;
+			overflow-x: hidden;
+			transition: all 0.3s ease;
+		}
+
+		#sidebar .side-menu.top li a:hover {
+			color: var(--blue);
+			background: var(--grey);
+		}
+
+		#sidebar .side-menu li.active a {
+			color: var(--blue);
+			background: var(--grey);
+		}
+	</style>
+</head>
+
+<title>Security and Visitors</title>
+<body>
+
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<i class='bx bxs-smile'></i>
+			<span class="text">Welcome</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="dashboard">
+					<i class='bx bxs-dashboard'></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="profile">
+					<i class='bx bxs-user'></i>
+					<span class="text">Profile</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Announcements">
+					<i class='bx bxs-megaphone'></i>
+					<span class="text">Announcement</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="billing">
+					<i class='bx bxs-credit-card-front'></i>
+					<span class="text">Payment and Billing</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Services">
+                    <i class='bx bxs-briefcase'></i>
+                    <span class="text">Services</span>
+                </a>
+			</li>
+			<li class="active">
+				<a asp-area="" asp-controller="Home" asp-action="security_visitors">
+					<i class='bx bxs-shield-alt-2'></i>
+					<span class="text">Security and Visitors</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="contact">
+					<i class='bx bx-support'></i>
+					<span class="text">Contact and Support</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#">
+					<i class='bx bxs-cog'></i>
+					<span class="text">Settings</span>
+				</a>
+			</li>
+			<li>
+				<a asp-action="logout" class="logout">
+					<i class='bx bxs-log-out-circle'></i>
+					<span class="text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+	<!-- CONTENT -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<form>
+				<div class="form-input">
+					<input type="search" placeholder="Search...">
+					<button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+				</div>
+			</form>
+			<input type="checkbox" id="switch-mode" hidden>
+			<label for="switch-mode" class="switch-mode"></label>
+			<a href="#" class="notification">
+				<i class='bx bxs-bell'></i>
+				<span class="num">8</span>
+			</a>
+			<a asp-area="" asp-controller="Home" asp-action="profile">
+				<img src="~/images/profile.jpg" style="border-radius: 50%; width: 36px; height: 36px; object-fit: cover;">
+			</a>
+		</nav>
+		<!-- NAVBAR -->
+		<!-- MAIN -->
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Security and Visitors</h1>
+					<ul class="breadcrumb">
+						<li>
+							<a asp-area="" asp-controller="Home" asp-action="dashboard">Home</a>
+						</li>
+						<li><i class='bx bx-chevron-right'></i></li>
+						<li>
+							<a class="active" asp-area="" asp-controller="Home" asp-action="security_visitors">Security and Visitors</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="security-section">
+				<!-- VISITOR PASS REQUEST -->
+				<div class="security-card">
+					<h2><i class='bx bx-user-plus'></i>Visitor Pass Request</h2>
+					<form>
+						<div class="form-group">
+							<label for="visitorName">Visitor Name</label>
+							<input type="text" id="visitorName" placeholder="Enter visitor's name">
+						</div>
+						<div class="form-group">
+							<label for="visitDate">Visit Date</label>
+							<input type="date" id="visitDate">
+						</div>
+						<div class="form-group">
+							<label for="visitPurpose">Purpose of Visit</label>
+							<textarea id="visitPurpose" placeholder="Enter purpose of visit"></textarea>
+						</div>
+						<button type="submit" class="btn-submit">Request Pass</button>
+					</form>
+				</div>
+
+				<!-- VEHICLE REGISTRATION -->
+				<div class="security-card">
+					<h2><i class='bx bx-car'></i>Vehicle Registration</h2>
+					<form>
+						<div class="form-group">
+							<label for="vehicleMake">Vehicle Make</label>
+							<input type="text" id="vehicleMake" placeholder="Enter vehicle make">
+						</div>
+						<div class="form-group">
+							<label for="vehicleModel">Vehicle Model</label>
+							<input type="text" id="vehicleModel" placeholder="Enter vehicle model">
+						</div>
+						<div class="form-group">
+							<label for="plateNumber">Plate Number</label>
+							<input type="text" id="plateNumber" placeholder="Enter plate number">
+						</div>
+						<button type="submit" class="btn-submit">Register Vehicle</button>
+					</form>
+				</div>
+
+				<!-- EMERGENCY CONTACTS -->
+				<div class="security-card">
+					<h2><i class='bx bx-phone-call'></i>Emergency Contacts</h2>
+					<div class="emergency-list">
+						<div class="emergency-contact">
+							<div class="contact-icon">
+								<i class='bx bx-building-house'></i>
+							</div>
+							<div class="contact-info">
+								<h3>Security Office</h3>
+								<p>+1 (555) 123-4567</p>
+							</div>
+						</div>
+						<div class="emergency-contact">
+							<div class="contact-icon">
+								<i class='bx bx-first-aid'></i>
+							</div>
+							<div class="contact-info">
+								<h3>Medical Emergency</h3>
+								<p>911</p>
+							</div>
+						</div>
+						<div class="emergency-contact">
+							<div class="contact-icon">
+								<i class='bx bx-shield-quarter'></i>
+							</div>
+							<div class="contact-info">
+								<h3>Police Department</h3>
+								<p>+1 (555) 987-6543</p>
+							</div>
+						</div>
+						<div class="emergency-contact">
+							<div class="contact-icon">
+								<i class='bx bx-water'></i>
+							</div>
+							<div class="contact-info">
+								<h3>Fire Department</h3>
+								<p>911</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- REQUESTS AND REGISTRATIONS -->
+			<div class="requests-section">
+				<!-- VISITOR PASS REQUESTS -->
+				<div class="security-card">
+					<h2><i class='bx bx-list-ul'></i>Visitor Pass Requests</h2>
+					<div class="requests-container">
+						<h3>Pending Requests</h3>
+						<div class="visitor-list">
+							<div class="list-item">
+								<div class="request-info">
+									<span class="visitor-name">Alexa de Luna</span>
+									<span class="visit-date">2025-03-15</span>
+								</div>
+								<div class="status-badge status-pending">Pending</div>
+							</div>
+							<div class="list-item">
+								<div class="request-info">
+									<span class="visitor-name">John Loui</span>
+									<span class="visit-date">2025-03-16</span>
+								</div>
+								<div class="status-badge status-pending">Pending</div>
+							</div>
+						</div>
+
+						<h3>Approved Requests</h3>
+						<div class="visitor-list">
+							<div class="list-item">
+								<div class="request-info">
+									<span class="visitor-name">JC Hontiveros</span>
+									<span class="visit-date">2025-03-14</span>
+								</div>
+								<div class="status-badge status-approved">Approved</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- VEHICLE REGISTRATIONS -->
+				<div class="security-card">
+					<h2><i class='bx bx-car'></i>Vehicle Registrations</h2>
+					<div class="requests-container">
+						<h3>Pending Registrations</h3>
+						<div class="vehicle-list">
+							<div class="list-item">
+								<div class="request-info">
+									<span class="vehicle-make">Toyota</span>
+									<span class="vehicle-model">Camry</span>
+									<span class="plate-number">ABC123</span>
+								</div>
+								<div class="status-badge status-pending">Pending</div>
+							</div>
+						</div>
+
+						<h3>Approved Registrations</h3>
+						<div class="vehicle-list">
+							<div class="list-item">
+								<div class="request-info">
+									<span class="vehicle-make">Honda</span>
+									<span class="vehicle-model">Civic</span>
+									<span class="plate-number">XYZ789</span>
+								</div>
+								<div class="status-badge status-approved">Approved</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<!-- MAIN -->
+	</section>
+
+	<script>
+		const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
+
+        const currentPath = window.location.pathname;
+        allSideMenu.forEach(item => {
+            const li = item.parentElement;
+            if (item.getAttribute('href') === currentPath || 
+                (currentPath.includes(item.getAttribute('href')) && item.getAttribute('href') !== '/')) {
+                allSideMenu.forEach(i => {
+                    i.parentElement.classList.remove('active');
+                })
+                li.classList.add('active');
+            }
+        });
+
+		allSideMenu.forEach(item=> {
+			const li = item.parentElement;
+
+			item.addEventListener('click', function () {
+				allSideMenu.forEach(i=> {
+					i.parentElement.classList.remove('active');
+				})
+				li.classList.add('active');
+                localStorage.setItem('activeMenu', item.getAttribute('href'));
+			})
+		});
+
+        const activeMenu = localStorage.getItem('activeMenu');
+        if (activeMenu) {
+            allSideMenu.forEach(item => {
+                if (item.getAttribute('href') === activeMenu) {
+                    allSideMenu.forEach(i => {
+                        i.parentElement.classList.remove('active');
+                    })
+                    item.parentElement.classList.add('active');
+                }
+            });
+        }
+
+		// TOGGLE SIDEBAR
+		const menuBar = document.querySelector('#content nav .bx.bx-menu');
+		const sidebar = document.getElementById('sidebar');
+
+		menuBar.addEventListener('click', function () {
+			sidebar.classList.toggle('hide');
+		})
+
+		const searchButton = document.querySelector('#content nav form .form-input button');
+		const searchButtonIcon = document.querySelector('#content nav form .form-input button .bx');
+		const searchForm = document.querySelector('#content nav form');
+
+		searchButton.addEventListener('click', function (e) {
+			if(window.innerWidth < 576) {
+				e.preventDefault();
+				searchForm.classList.toggle('show');
+				if(searchForm.classList.contains('show')) {
+					searchButtonIcon.classList.replace('bx-search', 'bx-x');
+				} else {
+					searchButtonIcon.classList.replace('bx-x', 'bx-search');
+				}
+			}
+		})
+
+		if(window.innerWidth < 768) {
+			sidebar.classList.add('hide');
+		} else if(window.innerWidth > 576) {
+			searchButtonIcon.classList.replace('bx-x', 'bx-search');
+			searchForm.classList.remove('show');
+		}
+
+		window.addEventListener('resize', function () {
+			if(this.innerWidth > 576) {
+				searchButtonIcon.classList.replace('bx-x', 'bx-search');
+				searchForm.classList.remove('show');
+			}
+		})
+
+		const switchMode = document.getElementById('switch-mode');
+
+		switchMode.addEventListener('change', function () {
+			if(this.checked) {
+				document.body.classList.add('dark');
+			} else {
+				document.body.classList.remove('dark');
+			}
+		})
+	</script>
+</body>

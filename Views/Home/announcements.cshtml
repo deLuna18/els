@@ -1,0 +1,323 @@
+@{
+    ViewData["Title"] = "Announcements";
+}
+
+<head>
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="~/css/announcements.css" asp-append-version="true">
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<i class='bx bxs-smile'></i>
+			<span class="text">Welcome</span>
+		</a>
+		<ul class="side-menu top">
+			<li class="active">
+				<a asp-area="" asp-controller="Home" asp-action="dashboard">
+					<i class='bx bxs-dashboard'></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="profile">
+					<i class='bx bxs-user'></i>
+					<span class="text">Profile</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Announcements">
+					<i class='bx bxs-megaphone'></i>
+					<span class="text">Announcement</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="billing">
+					<i class='bx bxs-credit-card-front'></i>
+					<span class="text">Payment and Billing</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Services">
+                    <i class='bx bxs-briefcase'></i>
+                    <span class="text">Services</span>
+                </a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="security_visitors">
+					<i class='bx bxs-shield-alt-2'></i>
+					<span class="text">Security and Visitors</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="contact">
+					<i class='bx bx-support'></i>
+					<span class="text">Contact and Support</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#">
+					<i class='bx bxs-cog'></i>
+					<span class="text">Settings</span>
+				</a>
+			</li>
+			<li>
+				<a asp-action="logout" class="logout">
+					<i class='bx bxs-log-out-circle'></i>
+					<span class="text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</section>
+    <!-- SIDEBAR -->
+
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav>
+            <i class='bx bx-menu'></i>
+            <a href="#" class="nav-link">Categories</a>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" placeholder="Search...">
+                    <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+                </div>
+            </form>
+            <input type="checkbox" id="switch-mode" hidden>
+            <label for="switch-mode" class="switch-mode"></label>
+            <a href="#" class="notification">
+                <i class='bx bxs-bell'></i>
+                <span class="num">8</span>
+            </a>
+            <a href="#" class="profile">
+                <img src="~/images/profile.jpg">
+            </a>
+        </nav>
+        <!-- NAVBAR -->
+
+        <!-- MAIN -->
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Announcements</h1>
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="#">Dashboard</a>
+                        </li>
+                        <li><i class='bx bx-chevron-right'></i></li>
+                        <li>
+                            <a class="active" href="#">Announcements</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="announcement-box">
+                <!-- News Announcements -->
+                <div class="announcement-category" onclick="toggleAnnouncementBody(this)">
+                    <div class="announcement-header">
+                        <h3>News</h3>
+                        <button class="close-btn" onclick="hideAnnouncementBody(this)">x</button>
+                    </div>
+                    <div class="announcement-body">
+                        <div class="slideshow-container">
+                            <div class="mySlides fade">
+                                <img src="~/images/news1.jpg" style="width:100%">
+                                <div class="text-announcement">News 1</div>
+                            </div>
+                            <div class="mySlides fade">
+                                <img src="~/images/news2.jpg" style="width:100%">
+                                <div class="text-announcement">News 2</div>
+                            </div>
+                            <div class="mySlides fade">
+                                <img src="~/images/news3.jpg" style="width:100%">
+                                <div class="text-announcement">News 3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Announcements -->
+                <div class="announcement-category" onclick="toggleAnnouncementBody(this)">
+                    <div class="announcement-header">
+                        <h3>Events</h3>
+                        <button class="close-btn" onclick="hideAnnouncementBody(this)">x</button>
+                    </div>
+                    <div class="announcement-body">
+                        <div class="slideshow-container">
+                            <div class="mySlides fade">
+                                <img src="~/images/event1.jpg" style="width:100%">
+                                <div class="text-announcement">Event 1</div>
+                            </div>
+                            <div class="mySlides fade">
+                                <img src="~/images/event2.jpg" style="width:100%">
+                                <div class="text-announcement">Event 2</div>
+                            </div>
+                            <div class="mySlides fade">
+                                <img src="~/images/event3.jpg" style="width:100%">
+                                <div class="text-announcement">Event 3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance Announcements -->
+                <div class="announcement-category" onclick="toggleAnnouncementBody(this)">
+                    <div class="announcement-header">
+                        <h3>Maintenance</h3>
+                        <button class="close-btn" onclick="hideAnnouncementBody(this)">x</button>
+                    </div>
+                    <div class="announcement-body">
+                        <div class="slideshow-container">
+                            <div class="mySlides fade">
+                                <img src="~/images/maintenance1.jpg" style="width:100%">
+                                <div class="text-announcement">Maintenance 1</div>
+                            </div>
+                            <div class="mySlides fade">
+                                <img src="~/images/maintenance2.jpg" style="width:100%">
+                                <div class="text-announcement">Maintenance 2</div>
+                            </div>
+                            <div class="mySlides fade">
+                                <img src="~/images/maintenance3.jpg" style="width:100%">
+                                <div class="text-announcement">Maintenance 3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+    <!-- CONTENT -->
+
+    <script>
+        const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
+
+        allSideMenu.forEach(item => {
+            const li = item.parentElement;
+
+            item.addEventListener('click', function () {
+                allSideMenu.forEach(i => {
+                    i.parentElement.classList.remove('active');
+                })
+                li.classList.add('active');
+            })
+        });
+
+        // TOGGLE SIDEBAR
+        const menuBar = document.querySelector('#content nav .bx.bx-menu');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBar.addEventListener('click', function () {
+            sidebar.classList.toggle('hide');
+        })
+
+        const searchButton = document.querySelector('#content nav form .form-input button');
+        const searchButtonIcon = document.querySelector('#content nav form .form-input button .bx');
+        const searchForm = document.querySelector('#content nav form');
+
+        searchButton.addEventListener('click', function (e) {
+            if (window.innerWidth < 576) {
+                e.preventDefault();
+                searchForm.classList.toggle('show');
+                if (searchForm.classList.contains('show')) {
+                    searchButtonIcon.classList.replace('bx-search', 'bx-x');
+                } else {
+                    searchButtonIcon.classList.replace('bx-x', 'bx-search');
+                }
+            }
+        })
+
+        if (window.innerWidth < 768) {
+            sidebar.classList.add('hide');
+        } else if (window.innerWidth > 576) {
+            searchButtonIcon.classList.replace('bx-x', 'bx-search');
+            searchForm.classList.remove('show');
+        }
+
+        window.addEventListener('resize', function () {
+            if (this.innerWidth > 576) {
+                searchButtonIcon.classList.replace('bx-x', 'bx-search');
+                searchForm.classList.remove('show');
+            }
+        })
+
+        const switchMode = document.getElementById('switch-mode');
+
+        switchMode.addEventListener('change', function () {
+            if (this.checked) {
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+            }
+        })
+
+        let slideIntervals = {};
+
+        function showSlides(container) {
+            let slides = container.getElementsByClassName("mySlides");
+            let slideIndex = 0;
+            function displaySlide() {
+                for (let i = 0; i < slides.length; i++) {
+                    slides[i].style.display = "none";
+                }
+                slideIndex++;
+                if (slideIndex > slides.length) { slideIndex = 1 }
+                slides[slideIndex - 1].style.display = "block";
+            }
+            displaySlide();
+            slideIntervals[container] = setInterval(displaySlide, 3000);
+        }
+
+        function startSlideshow(category) {
+            let container = category.querySelector(".slideshow-container");
+            showSlides(container);
+        }
+
+        function stopSlideshow(category) {
+            let container = category.querySelector(".slideshow-container");
+            clearInterval(slideIntervals[container]);
+            let slides = container.getElementsByClassName("mySlides");
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+        }
+
+        function toggleAnnouncementBody(category) {
+            let body = category.querySelector(".announcement-body");
+            let closeButton = category.querySelector(".close-btn");
+
+            // Hide other announcement bodies
+            document.querySelectorAll('.announcement-body').forEach(item => {
+                if (item !== body) {
+                    item.style.display = 'none';
+                    item.closest('.announcement-category').querySelector('.close-btn').style.display = 'none';
+                    stopSlideshow(item.closest('.announcement-category'));
+                }
+            });
+
+            if (body.style.display === "block") {
+                body.style.display = "none";
+                closeButton.style.display = "none";
+                stopSlideshow(category);
+            } else {
+                body.style.display = "block";
+                closeButton.style.display = "block";
+                startSlideshow(category);
+            }
+        }
+
+        function hideAnnouncementBody(button) {
+            let body = button.closest(".announcement-body");
+            body.style.display = "none";
+            button.style.display = "none";
+            stopSlideshow(body.closest(".announcement-category"));
+        }
+    </script>
+</body>

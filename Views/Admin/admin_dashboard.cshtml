@@ -1,0 +1,284 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_Layout";
+}
+
+<head>
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="~/css/admin_dashboard.css" asp-append-version="true">  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<!-- SIDEBAR -->
+<section id="sidebar">
+    <a class="brand">
+        <i class='bx bxs-smile'></i>
+        <span class="text">Admin</span>
+    </a>
+    <ul class="side-menu top">
+        <li class="active">
+            <a asp-area="" asp-controller="Admin" asp-action="Dashboard">
+                <i class='bx bxs-dashboard'></i>
+                <span class="text">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a> <!-- kani mga a replace lang sa route -->
+                <i class='bx bxs-user'></i>
+                <span class="text">Profile</span>
+            </a>
+        </li>
+        <li>
+            <a>
+                <i class='bx bxs-megaphone'></i>
+                <span class="text">Announcement</span>
+            </a>
+        </li>
+        <li>
+            <a>
+                <i class='bx bxs-credit-card-front'></i>
+                <span class="text">Payment and Billing</span>
+            </a>
+        </li>
+        <li>
+            <a>
+                <i class='bx bxs-briefcase'></i>
+                <span class="text">Services</span>
+            </a>
+        </li>
+        <li>
+            <a>
+                <i class='bx bxs-shield-alt-2'></i>
+                <span class="text">Security and Visitors</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="side-menu">
+        <li>
+            <a>
+                <i class='bx bxs-cog'></i>
+                <span class="text">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a asp-action="logout" class="logout">
+                <i class='bx bxs-log-out-circle'></i>
+                <span class="text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</section>
+
+<!-- CONTENT -->
+<section id="content">
+    <!-- NAVBAR -->
+    <nav>
+        <i class='bx bx-menu'></i>
+        <form action="#">
+            <div class="form-input">
+                <input type="search" placeholder="Search...">
+                <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+            </div>
+        </form>
+        <input type="checkbox" id="switch-mode" hidden>
+        <label for="switch-mode" class="switch-mode"></label>
+        <div class="profile">
+            <span>@ViewBag.AdminName<br>Aleki</span>
+            <img src="~/images/house.jpg" alt="Profile" class="profile-pic">
+        </div>
+    </nav>
+
+    <div class="container">
+        <main>
+            <div class="dashboard-header">
+                <h1>Dashboard</h1>
+                <button class="btn btn-add-employee" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                    <i class='bx bxs-user-plus'></i> Add Employee
+                </button>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon home">🏠</div>
+                    <div class="stat-info">
+                        <h3>Total Houses</h3>
+                        <p class="stat-number">102</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon visitors">👥</div>
+                    <div class="stat-info">
+                        <h3>Total Residence</h3>
+                        <p class="stat-number">345</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon facility">💰</div>
+                    <div class="stat-info">
+                        <h3>Total Income</h3>
+                        <p class="stat-number">₱1,123,589.00</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon employees">👔</div>
+                    <div class="stat-info">
+                        <h3>Total Employees</h3>
+                        <p class="stat-number" id="totalEmployees">58</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Add this chart container -->
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </main>
+    </div>
+</section>
+
+<!-- Staff Registration Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEmployeeModalLabel"><i class="fas fa-user-plus"></i> Register Staff</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="employeeForm">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="employeeName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Position</label>
+                        <input type="text" class="form-control" id="employeePosition" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <input type="text" class="form-control" id="employeeDepartment" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date Hired</label>
+                        <input type="date" class="form-control" id="employeeDateHired" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="employeeEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" class="form-control" id="employeeContact" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" id="employeeUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Temporary Password</label>
+                        <input type="password" class="form-control" id="employeePassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="employeeConfirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#employeeForm').submit(function (e) {
+            e.preventDefault();
+
+            let name = $('#employeeName').val();
+            let position = $('#employeePosition').val();
+            let email = $('#employeeEmail').val();
+            let contact = $('#employeeContact').val();
+            let password = $('#employeePassword').val();
+            let confirmPassword = $('#employeeConfirmPassword').val();
+            let username = $('#employeeUsername').val();
+            let dateHired = $('#employeeDateHired').val();
+            let department = $('#employeeDepartment').val();
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            $.ajax({
+                url: '/Admin/RegisterStaff',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    fullName: name,
+                    position: position,
+                    email: email,
+                    contactNumber: contact,
+                    passwordHash: password,
+                    username: username,
+                    date_Hired: dateHired,
+                    department: department
+                }),
+                success: function(response) {
+                    alert(response.message);
+                    let totalEmployees = parseInt($('#totalEmployees').text());
+                    $('#totalEmployees').text(totalEmployees + 1);
+                    $('#addEmployeeModal').modal('hide');
+                    $('#employeeForm')[0].reset();
+                },
+                error: function(xhr, status, error) {
+                    alert("An error occurred: " + error);
+                }
+            });
+        });
+    });
+
+    // Dark mode toggle
+    const switchMode = document.getElementById('switch-mode');
+    switchMode.addEventListener('change', function () {
+        document.body.classList.toggle('dark');
+    });
+
+    // Sidebar toggle
+    const menuBar = document.querySelector('nav .bx.bx-menu');
+    const sidebar = document.getElementById('sidebar');
+
+    menuBar.addEventListener('click', function () {
+        sidebar.classList.toggle('hide');
+    });
+
+     // SALES CHART
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Overall Sales',
+                    data: [12, 19, 3, 5, 2, 3, 10, 12, 15, 9, 6, 7],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>

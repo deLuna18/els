@@ -1,0 +1,59 @@
+@media (max-width: 767px) {
+    .login-container {
+        max-width: 100%;  
+        padding: 20px;  
+    }
+
+    .login-container h2 {
+        font-size: 22px;
+    }
+
+    .form-group input {
+        font-size: 14px;
+    }
+
+    .btn-login {
+        font-size: 16px;  
+        padding: 12px;  
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .login-container {
+        max-width: 450px;  
+        padding: 30px 40px; 
+    }
+
+    .login-container h2 {
+        font-size: 26px;  
+    }
+
+    .form-group input {
+        font-size: 16px;
+    }
+
+    .btn-login {
+        font-size: 18px;  
+        padding: 14px;  
+    }
+}
+
+@media (min-width: 1366px) and (max-width: 1440px) {
+    .login-container {
+        max-width: 600px;  
+        padding: 50px 60px;  
+    }
+
+    .login-container h2 {
+        font-size: 32px;  
+    }
+
+    .form-group input {
+        font-size: 18px; 
+    }
+
+    .btn-login {
+        font-size: 20px; 
+        padding: 16px;  
+    }
+}

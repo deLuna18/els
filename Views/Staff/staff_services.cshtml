@@ -1,0 +1,696 @@
+@{
+    ViewData["Title"] = "Staff Services";
+}
+
+<head>
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/staff_services.css" asp-append-version="true">
+</head>
+
+<title>Staff Services</title>
+<body>
+    <section id="sidebar">
+		<a href="#" class="brand">
+			<i class='bx bxs-smile'></i>
+			<span class="text">Staff</span>
+		</a>
+		<ul class="side-menu top">
+			<li class="active">
+				<a asp-area="" asp-controller="Staff" asp-action="Dashboard">
+					<i class='bx bxs-dashboard'></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class='bx bxs-user'></i>
+					<span class="text">Profile</span>
+				</a>
+			</li>
+			<li>
+				<a asp-action="Announcements" asp-controller="Staff">
+					<i class='bx bxs-megaphone'></i>
+					<span class="text">Announcement</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class='bx bxs-credit-card-front'></i>
+					<span class="text">Payment and Billing</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Staff" asp-action="staff_services">
+					<i class='bx bxs-briefcase'></i>
+					<span class="text">Services</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Staff" asp-action="staff_security_visitors">
+					<i class='bx bxs-shield-alt-2'></i>
+					<span class="text">Security and Visitors</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class='bx bx-support'></i>
+					<span class="text">Contact and Support</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#">
+					<i class='bx bxs-cog'></i>
+					<span class="text">Settings</span>
+				</a>
+			</li>
+			<li>
+				<a asp-action="logout" class="logout">
+                    <i class='bx bxs-log-out-circle'></i>
+                    <span class="text">Logout</span>
+                </a>
+			</li>
+		</ul>
+	</section>
+    <!-- SIDEBAR -->
+
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav>
+			<i class='bx bx-menu'></i>
+			<form action="#">
+				<div class="form-input">
+					<input type="search" placeholder="Search...">
+					<button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+				</div>
+			</form>
+			<input type="checkbox" id="switch-mode" hidden>
+			<label for="switch-mode" class="switch-mode"></label>
+		</nav>
+        <!-- NAVBAR -->
+
+        <!-- MAIN -->
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Service Request Management</h1>
+                </div>
+                <div class="filter-options">
+                    <select id="statusFilter" onchange="filterRequests()">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    <select id="typeFilter" onchange="filterRequests()">
+                        <option value="all">All Types</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="security">Security</option>
+                        <option value="landscaping">Landscaping</option>
+                        <option value="facility">Facility</option>
+                    </select>
+                    <div class="search-box">
+                        <i class='bx bx-search'></i>
+                        <input type="text" id="searchInput" placeholder="Search requests..." onkeyup="filterRequests()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Service Requests</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Homeowner</th>
+                                    <th>Service Type</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Date Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestsTableBody">
+                                <!-- DYNAMIC -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button id="prevPage" onclick="changePage(-1)">Previous</button>
+                        <span id="pageInfo">Page 1 of 1</span>
+                        <button id="nextPage" onclick="changePage(1)">Next</button>
+                    </div>
+                </div>
+
+                <div class="todo">
+                    <div class="head">
+                        <h3>Quick Stats</h3>
+                    </div>
+                    <ul class="todo-list">
+                        <li class="completed">
+                            <p>Total Requests</p>
+                            <p>24</p>
+                            <i class='bx bx-list-ul'></i>
+                        </li>
+                        <li class="completed">
+                            <p>Pending</p>
+                            <p>8</p>
+                            <i class='bx bx-time'></i>
+                        </li>
+                        <li class="completed">
+                            <p>In Progress</p>
+                            <p>12</p>
+                            <i class='bx bx-loader-alt'></i>
+                        </li>
+                        <li class="completed">
+                            <p>Completed</p>
+                            <p>4</p>
+                            <i class='bx bx-check-circle'></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- COMPLETED REQUESTS REPORT -->
+            <div class="completed-requests-report">
+                <div class="head">
+                    <h3>Completed Service Requests Report</h3>
+                    <div class="report-filters">
+                        <select id="reportMonthFilter" onchange="filterReport()">
+                            <option value="all">All Time</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <select id="reportYearFilter" onchange="filterReport()">
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Homeowner</th>
+                                <th>Service Type</th>
+                                <th>Priority</th>
+                                <th>Date Completed</th>
+                                <th>Completion Time</th>
+                                <th>Staff Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completedRequestsTableBody">
+                            <tr>
+                                <td>#SR-001</td>
+                                <td>John Doe</td>
+                                <td><span class="service-type maintenance">Maintenance</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td>2024-03-20</td>
+                                <td>2 days</td>
+                                <td>Plumbing issue resolved. Replaced faulty pipes.</td>
+                                <td>
+                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-001')" title="Edit Staff Notes">
+                                        <i class='bx bx-edit'></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#SR-002</td>
+                                <td>Jane Smith</td>
+                                <td><span class="service-type security">Security</span></td>
+                                <td><span class="priority urgent">Urgent</span></td>
+                                <td>2024-03-18</td>
+                                <td>1 day</td>
+                                <td>Security camera system repaired and tested.</td>
+                                <td>
+                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-002')" title="Edit Staff Notes">
+                                        <i class='bx bx-edit'></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#SR-003</td>
+                                <td>Mike Johnson</td>
+                                <td><span class="service-type landscaping">Landscaping</span></td>
+                                <td><span class="priority medium">Medium</span></td>
+                                <td>2024-03-15</td>
+                                <td>3 days</td>
+                                <td>Garden maintenance completed. Trees trimmed.</td>
+                                <td>
+                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-003')" title="Edit Staff Notes">
+                                        <i class='bx bx-edit'></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#SR-004</td>
+                                <td>Sarah Wilson</td>
+                                <td><span class="service-type facility">Facility</span></td>
+                                <td><span class="priority low">Low</span></td>
+                                <td>2024-03-10</td>
+                                <td>5 days</td>
+                                <td>Clubhouse cleaning and maintenance completed.</td>
+                                <td>
+                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-004')" title="Edit Staff Notes">
+                                        <i class='bx bx-edit'></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="report-summary">
+                    <div class="summary-item">
+                        <span>Total Completed:</span>
+                        <strong>4</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>Average Completion Time:</span>
+                        <strong>2.75 days</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>Most Common Service:</span>
+                        <strong>Maintenance</strong>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+
+    <!-- REQUEST DETAILS MODAL -->
+    <div id="requestDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeRequestDetailsModal()">&times;</span>
+            <h2>Request Details</h2>
+            <div id="requestDetailsContent">
+                <!-- DYBAMIC -->
+            </div>
+        </div>
+    </div>
+
+    <!-- UPDATE STATUS MODAL -->
+    <div id="updateStatusModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeUpdateStatusModal()">&times;</span>
+            <h2>Update Request Status</h2>
+            <form id="updateStatusForm">
+                <div class="form-group">
+                    <label for="newStatus">New Status</label>
+                    <select id="newStatus" required>
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="staffNotes">Staff Notes</label>
+                    <textarea id="staffNotes" placeholder="Add any relevant notes..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Update Status</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STAFF NOTES MODAL -->
+    <div id="staffNotesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Staff Notes</h2>
+                <span class="close-btn" onclick="closeStaffNotesModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="staffNotesForm">
+                    <div class="form-group">
+                        <label for="requestId">Request ID:</label>
+                        <input type="text" id="requestId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeownerName">Homeowner:</label>
+                        <input type="text" id="homeownerName" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceType">Service Type:</label>
+                        <input type="text" id="serviceType" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="staffNotes">Staff Notes:</label>
+                        <textarea id="staffNotes" rows="5" placeholder="Enter your notes here..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeStaffNotesModal()">Cancel</button>
+                        <button type="submit" class="save-btn">Save Notes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SIDEBAR
+        const menuBar = document.querySelector('#content nav .bx.bx-menu');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBar.addEventListener('click', function () {
+            sidebar.classList.toggle('hide');
+        });
+
+        // DARK MODE
+        const switchMode = document.getElementById('switch-mode');
+        const body = document.body;
+
+        if (localStorage.getItem('darkMode') === 'true') {
+            body.classList.add('dark');
+            switchMode.checked = true;
+        }
+
+        switchMode.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                body.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+
+        // SAMPLE DATA
+        const sampleRequests = [
+            {
+                id: 'SR-001',
+                homeowner: 'John Doe',
+                serviceType: 'Maintenance',
+                priority: 'High',
+                status: 'pending',
+                dateSubmitted: '2024-03-15',
+                description: 'Plumbing issue in the bathroom'
+            },
+            {
+                id: 'SR-002',
+                homeowner: 'Jane Smith',
+                serviceType: 'Security',
+                priority: 'Urgent',
+                status: 'pending',
+                dateSubmitted: '2024-03-16',
+                description: 'Security camera not working'
+            },
+            
+        ];
+
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let filteredRequests = [...sampleRequests];
+
+        // TABLE
+        function initializeTable() {
+            updateTable();
+            updatePagination();
+        }
+
+        // UPDATE TABLE WITH FILTERED DATA
+        function updateTable() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentPageData = filteredRequests.slice(startIndex, endIndex);
+
+            const tableBody = document.getElementById('requestsTableBody');
+            tableBody.innerHTML = '';
+
+            currentPageData.forEach(request => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${request.id}</td>
+                    <td>${request.homeowner}</td>
+                    <td>${request.serviceType}</td>
+                    <td>${request.priority}</td>
+                    <td><span class="status ${request.status}">${getStatusText(request.status)}</span></td>
+                    <td>${request.dateSubmitted}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn view" onclick="viewRequestDetails('${request.id}')" title="View Details">
+                                <i class='bx bx-detail'></i>
+                            </button>
+                            ${request.status === 'pending' ? `
+                                <button class="action-btn accept" onclick="updateRequestStatus('${request.id}', 'accepted')" title="Accept Request">
+                                    <i class='bx bx-check-double'></i>
+                                </button>
+                                <button class="action-btn reject" onclick="updateRequestStatus('${request.id}', 'rejected')" title="Reject Request">
+                                    <i class='bx bx-x-circle'></i>
+                                </button>
+                            ` : ''}
+                            ${request.status === 'accepted' ? `
+                                <button class="action-btn progress" onclick="updateRequestStatus('${request.id}', 'in-progress')" title="Start Progress">
+                                    <i class='bx bx-play-circle'></i>
+                                </button>
+                            ` : ''}
+                            ${request.status === 'in-progress' ? `
+                                <button class="action-btn complete" onclick="updateRequestStatus('${request.id}', 'completed')" title="Mark Complete">
+                                    <i class='bx bx-check-circle'></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Pending',
+                'accepted': 'Accepted',
+                'rejected': 'Rejected',
+                'in-progress': 'In Progress',
+                'completed': 'Completed'
+            };
+            return statusMap[status] || status;
+        }
+
+        // FILTER REQUESTS 
+        function filterRequests() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredRequests = sampleRequests.filter(request => {
+                const matchesStatus = statusFilter === 'all' || request.status === statusFilter;
+                const matchesType = typeFilter === 'all' || request.serviceType.toLowerCase() === typeFilter;
+                const matchesSearch = request.id.toLowerCase().includes(searchText) ||
+                                    request.homeowner.toLowerCase().includes(searchText) ||
+                                    request.serviceType.toLowerCase().includes(searchText);
+
+                return matchesStatus && matchesType && matchesSearch;
+            });
+
+            currentPage = 1;
+            updateTable();
+            updatePagination();
+        }
+
+        // PAGINATION CONTROLS
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+
+        // CHANGE PAGE
+        function changePage(delta) {
+            const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+            const newPage = currentPage + delta;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                updateTable();
+                updatePagination();
+            }
+        }
+
+        // MODAL
+        function viewRequestDetails(requestId) {
+            const request = sampleRequests.find(r => r.id === requestId);
+            if (!request) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Request Details</h2>
+                        <span class="close-btn" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="request-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Request ID:</span>
+                                <span class="detail-value">#${request.id}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Homeowner:</span>
+                                <span class="detail-value">${request.homeowner}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Service Type:</span>
+                                <span class="detail-value">${request.serviceType}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value status ${request.status}">${getStatusText(request.status)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Priority:</span>
+                                <span class="detail-value priority ${request.priority.toLowerCase()}">${request.priority}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Date Submitted:</span>
+                                <span class="detail-value">${request.dateSubmitted}</span>
+                            </div>
+                            <div class="detail-row full-width">
+                                <span class="detail-label">Description:</span>
+                                <div class="detail-value description">${request.description}</div>
+                            </div>
+                            ${request.staffNotes ? `
+                                <div class="detail-row full-width">
+                                    <span class="detail-label">Staff Notes:</span>
+                                    <div class="detail-value description">${request.staffNotes}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+        }
+
+        function updateRequestStatus(requestId, newStatus) {
+            const request = sampleRequests.find(r => r.id === requestId);
+            if (!request) return;
+
+            const modal = document.getElementById('updateStatusModal');
+            const form = document.getElementById('updateStatusForm');
+            
+            document.getElementById('newStatus').value = newStatus;
+            document.getElementById('staffNotes').value = '';
+            
+            const confirmMessage = `Are you sure you want to ${newStatus} this request?`;
+            if (confirm(confirmMessage)) {
+                request.status = newStatus;
+                showNotification(`Request ${newStatus} successfully!`, 'success');
+                filterRequests();
+            }
+        }
+
+        // FORM SUBMISSION
+        document.getElementById('updateStatusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newStatus = document.getElementById('newStatus').value;
+            const staffNotes = document.getElementById('staffNotes').value;
+            
+            if (!newStatus) {
+                showNotification('Please select a status', 'error');
+                return;
+            }
+            
+            showNotification('Status updated successfully!', 'success');
+            closeUpdateStatusModal();
+            
+            filterRequests();
+        });
+
+        // NOFIFICAION
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // REPORTS
+        function filterReport() {
+            const month = document.getElementById('reportMonthFilter').value;
+            const year = document.getElementById('reportYearFilter').value;
+            
+            
+            showNotification(`Filtering completed requests for ${month === 'all' ? 'all time' : `Month ${month}`} of ${year}`, 'info');
+        }
+
+        // SSTAFF NOTES
+        function openStaffNotesModal(requestId) {
+            const modal = document.getElementById('staffNotesModal');
+            const request = sampleRequests.find(r => r.id === requestId);
+            
+            if (request) {
+                document.getElementById('requestId').value = request.id;
+                document.getElementById('homeownerName').value = request.homeowner;
+                document.getElementById('serviceType').value = request.serviceType;
+                document.getElementById('staffNotes').value = request.staffNotes || '';
+                
+                modal.style.display = 'block';
+            }
+        }
+
+        function closeStaffNotesModal() {
+            const modal = document.getElementById('staffNotesModal');
+            modal.style.display = 'none';
+        }
+
+        document.getElementById('staffNotesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const requestId = document.getElementById('requestId').value;
+            const staffNotes = document.getElementById('staffNotes').value;
+            
+            const request = sampleRequests.find(r => r.id === requestId);
+            if (request) {
+                request.staffNotes = staffNotes;
+                
+                const tableRow = document.querySelector(`tr[data-request-id="${requestId}"]`);
+                if (tableRow) {
+                    const notesCell = tableRow.querySelector('td:nth-child(7)');
+                    notesCell.textContent = staffNotes;
+                }
+                
+                showNotification('Staff notes updated successfully!', 'success');
+                closeStaffNotesModal();
+            }
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('staffNotesModal');
+            if (event.target === modal) {
+                closeStaffNotesModal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeTable);
+    </script>
+</body>

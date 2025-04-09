@@ -33,6 +33,10 @@
       "PackagePath": "staticwebassets\\css\\dashboard.css"
     },
     {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\facility_reservation.css",
+      "PackagePath": "staticwebassets\\css\\facility_reservation.css"
+    },
+    {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\index.css",
       "PackagePath": "staticwebassets\\css\\index.css"
     },
@@ -61,6 +65,10 @@
       "PackagePath": "staticwebassets\\css\\staff_community_forum.css"
     },
     {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_facility_reservation.css",
+      "PackagePath": "staticwebassets\\css\\staff_facility_reservation.css"
+    },
+    {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_login.css",
       "PackagePath": "staticwebassets\\css\\staff_login.css"
     },
@@ -85,6 +93,10 @@
       "PackagePath": "staticwebassets\\images\\announcement.png"
     },
     {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\basketball-court.jpg",
+      "PackagePath": "staticwebassets\\images\\basketball-court.jpg"
+    },
+    {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\event1.jpg",
       "PackagePath": "staticwebassets\\images\\event1.jpg"
     },
@@ -95,6 +107,14 @@
     {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\event3.jpg",
       "PackagePath": "staticwebassets\\images\\event3.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\function-hall.jpg",
+      "PackagePath": "staticwebassets\\images\\function-hall.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\functions.jpg",
+      "PackagePath": "staticwebassets\\images\\functions.jpg"
     },
     {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\house.jpg",
@@ -131,6 +151,22 @@
     {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\profile.jpg",
       "PackagePath": "staticwebassets\\images\\profile.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swim.jpg",
+      "PackagePath": "staticwebassets\\images\\swim.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swimming-pool.png",
+      "PackagePath": "staticwebassets\\images\\swimming-pool.png"
+    },
+    {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten",
+      "PackagePath": "staticwebassets\\images"
+    },
+    {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten.jpg",
+      "PackagePath": "staticwebassets\\images\\tenten.jpg"
     },
     {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\js\\site.js",

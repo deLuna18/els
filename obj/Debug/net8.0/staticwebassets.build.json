@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "wC2e47y23UX9nBDfqoionyRHLfXy0MKAJ9+O/LrAmEQ=",
+  "Hash": "lVRz/Tj07pDfputZHBzcZP9Q7A3TLknwlWQ7q9msg3U=",
   "Source": "SubdivisionManagement",
   "BasePath": "_content/SubdivisionManagement",
   "Mode": "Default",
@@ -206,6 +206,27 @@
       "OriginalItemSpec": "wwwroot\\css\\dashboard.css"
     },
     {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\facility_reservation.css",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "css/facility_reservation#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "jds8t0fzfl",
+      "Integrity": "py61QRBrPcduiCbKFStZN7fWJqIkp+aDYIfiLyhagds=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\facility_reservation.css"
+    },
+    {
       "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\index.css",
       "SourceId": "SubdivisionManagement",
       "SourceType": "Discovered",
@@ -353,6 +374,27 @@
       "OriginalItemSpec": "wwwroot\\css\\staff_community_forum.css"
     },
     {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_facility_reservation.css",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "css/staff_facility_reservation#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "5ipweew5fc",
+      "Integrity": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\staff_facility_reservation.css"
+    },
+    {
       "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_login.css",
       "SourceId": "SubdivisionManagement",
       "SourceType": "Discovered",
@@ -479,6 +521,27 @@
       "OriginalItemSpec": "wwwroot\\images\\announcement.png"
     },
     {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\basketball-court.jpg",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "images/basketball-court#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "k8tczhz5l0",
+      "Integrity": "BHaqPboZsEd5Mc0gxnJ0KpHlFOaDt7G6No6ZjFO5BO4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\basketball-court.jpg"
+    },
+    {
       "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\event1.jpg",
       "SourceId": "SubdivisionManagement",
       "SourceType": "Discovered",
@@ -540,6 +603,48 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\event3.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\function-hall.jpg",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "images/function-hall#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "9u8obtjnf1",
+      "Integrity": "P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\function-hall.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\functions.jpg",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "images/functions#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "9u8obtjnf1",
+      "Integrity": "P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\functions.jpg"
     },
     {
       "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\house.jpg",
@@ -729,6 +834,90 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\profile.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swim.jpg",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "images/swim#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "j3pwq9tdbd",
+      "Integrity": "8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\swim.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swimming-pool.png",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "images/swimming-pool#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "j3pwq9tdbd",
+      "Integrity": "8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\swimming-pool.png"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "images/tenten#[.{fingerprint}]?",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "hgcpfgfpiy",
+      "Integrity": "rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\tenten"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten.jpg",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "images/tenten#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "hgcpfgfpiy",
+      "Integrity": "rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\tenten.jpg"
     },
     {
       "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\js\\site.js",
@@ -2651,6 +2840,88 @@
       ]
     },
     {
+      "Route": "css/facility_reservation.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\facility_reservation.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "9554"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"py61QRBrPcduiCbKFStZN7fWJqIkp+aDYIfiLyhagds=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:47:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-py61QRBrPcduiCbKFStZN7fWJqIkp+aDYIfiLyhagds="
+        }
+      ]
+    },
+    {
+      "Route": "css/facility_reservation.jds8t0fzfl.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\facility_reservation.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "9554"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"py61QRBrPcduiCbKFStZN7fWJqIkp+aDYIfiLyhagds=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:47:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "jds8t0fzfl"
+        },
+        {
+          "Name": "label",
+          "Value": "css/facility_reservation.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-py61QRBrPcduiCbKFStZN7fWJqIkp+aDYIfiLyhagds="
+        }
+      ]
+    },
+    {
       "Route": "css/index.css",
       "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\index.css",
       "Selectors": [],
@@ -3225,6 +3496,88 @@
       ]
     },
     {
+      "Route": "css/staff_facility_reservation.5ipweew5fc.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_facility_reservation.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "0"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 17:53:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "5ipweew5fc"
+        },
+        {
+          "Name": "label",
+          "Value": "css/staff_facility_reservation.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="
+        }
+      ]
+    },
+    {
+      "Route": "css/staff_facility_reservation.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_facility_reservation.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "0"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 17:53:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="
+        }
+      ]
+    },
+    {
       "Route": "css/staff_login.css",
       "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_login.css",
       "Selectors": [],
@@ -3717,6 +4070,88 @@
       ]
     },
     {
+      "Route": "images/basketball-court.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\basketball-court.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "62176"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"BHaqPboZsEd5Mc0gxnJ0KpHlFOaDt7G6No6ZjFO5BO4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:11:24 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-BHaqPboZsEd5Mc0gxnJ0KpHlFOaDt7G6No6ZjFO5BO4="
+        }
+      ]
+    },
+    {
+      "Route": "images/basketball-court.k8tczhz5l0.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\basketball-court.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "62176"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"BHaqPboZsEd5Mc0gxnJ0KpHlFOaDt7G6No6ZjFO5BO4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:11:24 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "k8tczhz5l0"
+        },
+        {
+          "Name": "label",
+          "Value": "images/basketball-court.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-BHaqPboZsEd5Mc0gxnJ0KpHlFOaDt7G6No6ZjFO5BO4="
+        }
+      ]
+    },
+    {
       "Route": "images/event1.jpg",
       "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\event1.jpg",
       "Selectors": [],
@@ -3959,6 +4394,170 @@
         {
           "Name": "integrity",
           "Value": "sha256-lD7Ctt1/QZTW74l5QUNcfuU784vk/HEaraEukXL080c="
+        }
+      ]
+    },
+    {
+      "Route": "images/function-hall.9u8obtjnf1.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\function-hall.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "67161"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:09:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "9u8obtjnf1"
+        },
+        {
+          "Name": "label",
+          "Value": "images/function-hall.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM="
+        }
+      ]
+    },
+    {
+      "Route": "images/function-hall.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\function-hall.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "67161"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:09:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM="
+        }
+      ]
+    },
+    {
+      "Route": "images/functions.9u8obtjnf1.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\functions.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "67161"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:10:32 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "9u8obtjnf1"
+        },
+        {
+          "Name": "label",
+          "Value": "images/functions.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM="
+        }
+      ]
+    },
+    {
+      "Route": "images/functions.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\functions.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "67161"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:10:32 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-P063s2qhTSvONEOiowbg4wsYyTS69bhHbaXjvBWqwNM="
         }
       ]
     },
@@ -4697,6 +5296,334 @@
         {
           "Name": "integrity",
           "Value": "sha256-4unc9wteGiXJe96c6yO6CZEyTkLTZyddoW3aX1rVLFc="
+        }
+      ]
+    },
+    {
+      "Route": "images/swim.j3pwq9tdbd.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swim.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "795808"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:08:36 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "j3pwq9tdbd"
+        },
+        {
+          "Name": "label",
+          "Value": "images/swim.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo="
+        }
+      ]
+    },
+    {
+      "Route": "images/swim.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swim.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "795808"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:08:36 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo="
+        }
+      ]
+    },
+    {
+      "Route": "images/swimming-pool.j3pwq9tdbd.png",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swimming-pool.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "795808"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:07:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "j3pwq9tdbd"
+        },
+        {
+          "Name": "label",
+          "Value": "images/swimming-pool.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo="
+        }
+      ]
+    },
+    {
+      "Route": "images/swimming-pool.png",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\swimming-pool.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "795808"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:07:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-8YrhThxMPpDZr8MFAVx3YAo6WongKxPlbjB4EGW86Zo="
+        }
+      ]
+    },
+    {
+      "Route": "images/tenten",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "129298"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "application/octet-stream"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:12:06 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg="
+        }
+      ]
+    },
+    {
+      "Route": "images/tenten.hgcpfgfpiy",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "129298"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "application/octet-stream"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:12:06 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "hgcpfgfpiy"
+        },
+        {
+          "Name": "label",
+          "Value": "images/tenten"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg="
+        }
+      ]
+    },
+    {
+      "Route": "images/tenten.hgcpfgfpiy.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "129298"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:12:16 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "hgcpfgfpiy"
+        },
+        {
+          "Name": "label",
+          "Value": "images/tenten.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg="
+        }
+      ]
+    },
+    {
+      "Route": "images/tenten.jpg",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\images\\tenten.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "129298"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 18:12:16 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-rxWjPTY2H//KFjOPDY0bzLj6jwdut5zTYIjuLgQaAlg="
         }
       ]
     },

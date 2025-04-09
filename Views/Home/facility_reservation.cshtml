@@ -1,0 +1,493 @@
+@{
+    ViewData["Title"] = "Facility Reservation";
+}
+
+<head>
+	<!-- BOXICONS -->
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<!-- FULLCALENDAR CSS -->
+	<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+	<!-- MY CSS -->
+	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/css/facility_reservation.css" asp-append-version="true">
+	<style>
+
+	</style>
+</head>
+
+<title>Facility Reservation</title>
+<body>
+
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand">
+			<i class='bx bxs-smile'></i>
+			<span class="text">Welcome</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="dashboard">
+					<i class='bx bxs-dashboard'></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="profile">
+					<i class='bx bxs-user'></i>
+					<span class="text">Profile</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Announcements">
+					<i class='bx bxs-megaphone'></i>
+					<span class="text">Announcement</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="billing">
+					<i class='bx bxs-credit-card-front'></i>
+					<span class="text">Payment and Billing</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Services">
+                    <i class='bx bxs-briefcase'></i>
+                    <span class="text">Services</span>
+                </a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="Community_forum">
+                    <i class='bx bxs-message-square-dots'></i>
+                    <span class="text">Community Forum</span>
+                </a>
+			</li>
+			<li class="active">
+				<a asp-area="" asp-controller="Home" asp-action="facility_reservation">
+					<i class='bx bxs-calendar'></i>
+					<span class="text">Facility Reservation</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="security_visitors">
+					<i class='bx bxs-shield-alt-2'></i>
+					<span class="text">Security and Visitors</span>
+				</a>
+			</li>
+			<li>
+				<a asp-area="" asp-controller="Home" asp-action="contact">
+					<i class='bx bx-support'></i>
+					<span class="text">Contact and Support</span>
+				</a>
+			</li>
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#">
+					<i class='bx bxs-cog'></i>
+					<span class="text">Settings</span>
+				</a>
+			</li>
+			<li>
+				<a asp-action="logout" class="logout">
+					<i class='bx bxs-log-out-circle'></i>
+					<span class="text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+	<!-- CONTENT -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu'></i>
+			<form>
+				<div class="form-input">
+					<input type="search" placeholder="Search...">
+					<button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+				</div>
+			</form>
+			<input type="checkbox" id="switch-mode" hidden>
+			<label for="switch-mode" class="switch-mode"></label>
+			<a href="#" class="notification">
+				<i class='bx bxs-bell'></i>
+				<span class="num">8</span>
+			</a>
+			<a asp-area="" asp-controller="Home" asp-action="profile">
+				<img src="~/images/profile.jpg" style="border-radius: 50%; width: 36px; height: 36px; object-fit: cover;">
+			</a>
+		</nav>
+		<!-- NAVBAR -->
+		<!-- MAIN -->
+		<main>
+			<div class="head-title">
+				<div class="left">
+					<h1>Facility Reservation</h1>
+					<ul class="breadcrumb">
+						<li>
+							<a asp-area="" asp-controller="Home" asp-action="dashboard">Home</a>
+						</li>
+						<li><i class='bx bx-chevron-right'></i></li>
+						<li>
+							<a class="active" asp-area="" asp-controller="Home" asp-action="facility_reservation">Facility Reservation</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="facility-container">
+				<!-- CALENDAR SECTION -->
+				<div class="calendar-section">
+					<div class="calendar-header">
+						<h2>Community Calendar</h2>
+					</div>
+					<div id="calendar"></div>
+				</div>
+
+				<!-- FACILITIES SECTION -->
+				<div class="facilities-section">
+					<div class="facilities-header">
+						<h2>Available Facilities</h2>
+						<div class="facility-filters">
+							<button class="filter-btn active" data-filter="all">All</button>
+							<button class="filter-btn" data-filter="function-hall">Function Hall</button>
+							<button class="filter-btn" data-filter="sports">Sports</button>
+							<button class="filter-btn" data-filter="pool">Swimming Pool</button>
+						</div>
+					</div>
+					<div class="facilities-grid">
+						<div class="facility-card" data-category="function-hall">
+							<div class="facility-image">
+								<img src="~/images/functions.jpg" alt="Function Hall">
+							</div>
+							<div class="facility-info">
+								<h3>Grand Function Hall</h3>
+								<p>Capacity: 200 people</p>
+								<div class="facility-status available">Available</div>
+							</div>
+							<button class="book-btn" onclick="openBookingModal('Grand Function Hall')">Book Now</button>
+						</div>
+
+						<div class="facility-card" data-category="sports">
+							<div class="facility-image">
+								<img src="~/images/basketball-court.jpg" alt="Basketball Court">
+							</div>
+							<div class="facility-info">
+								<h3>Basketball Court</h3>
+								<p>Capacity: 20 players</p>
+								<div class="facility-status available">Available</div>
+							</div>
+							<button class="book-btn" onclick="openBookingModal('Basketball Court')">Book Now</button>
+						</div>
+
+						<div class="facility-card" data-category="pool">
+							<div class="facility-image">
+								<img src="~/images/swim.jpg" alt="Swimming Pool">
+							</div>
+							<div class="facility-info">
+								<h3>Olympic Swimming Pool</h3>
+								<p>Capacity: 50 people</p>
+								<div class="facility-status available">Available</div>
+							</div>
+							<button class="book-btn" onclick="openBookingModal('Olympic Swimming Pool')">Book Now</button>
+						</div>
+
+						<div class="facility-card" data-category="sports">
+							<div class="facility-image">
+								<img src="~/images/tenten.jpg" alt="Tennis Court">
+							</div>
+							<div class="facility-info">
+								<h3>Tennis Court</h3>
+								<p>Capacity: 4 players</p>
+								<div class="facility-status available">Available</div>
+							</div>
+							<button class="book-btn" onclick="openBookingModal('Tennis Court')">Book Now</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<!-- MAIN -->
+	</section>
+
+
+	<script>
+	// WAIT FOR THE DOM TO BE FULLY LOADED
+	document.addEventListener('DOMContentLoaded', function() {
+		// INITIALIZE CALENDAR
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+			initialView: 'dayGridMonth',
+			headerToolbar: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'dayGridMonth,timeGridWeek,timeGridDay'
+			},
+			dateClick: function(info) {
+				// ONLY ALLOW FUTURE DATES
+				if (info.date < new Date()) {
+					showNotification('Cannot book past dates', 'error');
+					return;
+				}
+				openReservationModal(info.dateStr);
+			},
+			events: [
+				// SAMPLE EVENTS
+				{
+					title: 'Clubhouse Booking',
+					start: '2024-03-20',
+					end: '2024-03-21'
+				},
+				{
+					title: 'Pool Party',
+					start: '2024-03-25',
+					end: '2024-03-25'
+				}
+			]
+		});
+		calendar.render();
+
+		// FUNCTION TO SHOW NOTIFICATION
+		function showNotification(message, type = 'success') {
+			const notification = document.createElement('div');
+			notification.className = `message ${type}`;
+			
+			let icon = '';
+			switch(type) {
+				case 'success':
+					icon = 'bx bx-check-circle';
+					break;
+				case 'error':
+					icon = 'bx bx-x-circle';
+					break;
+				case 'warning':
+					icon = 'bx bx-error';
+					break;
+				default:
+					icon = 'bx bx-info-circle';
+			}
+			
+			notification.innerHTML = `
+				<i class='${icon}'></i>
+				<span>${message}</span>
+			`;
+			
+			document.body.appendChild(notification);
+			
+			const existingNotifications = document.querySelectorAll('.message');
+			existingNotifications.forEach(notif => {
+				if (notif !== notification) {
+					notif.remove();
+				}
+			});
+			
+			setTimeout(() => {
+				notification.style.animation = 'slideOut 0.3s ease forwards';
+				setTimeout(() => {
+					notification.remove();
+				}, 300);
+			}, 3000);
+		}
+
+		// FUNCTION TO OPEN RESERVATION MODAL
+		function openReservationModal(date) {
+			const modal = document.createElement('div');
+			modal.className = 'modal';
+			modal.innerHTML = `
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2>New Reservation</h2>
+						<span class="close-btn" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+					</div>
+					<div class="modal-body">
+						<form id="reservationForm">
+							<div class="form-group">
+								<label for="facility">Facility</label>
+								<select id="facility" required>
+									<option value="">Select Facility</option>
+									<option value="function-hall">Grand Function Hall</option>
+									<option value="basketball-court">Basketball Court</option>
+									<option value="swimming-pool">Olympic Swimming Pool</option>
+									<option value="tennis-court">Tennis Court</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="date">Date</label>
+								<input type="date" id="date" value="${date}" required>
+							</div>
+							<div class="form-group">
+								<label for="startTime">Start Time</label>
+								<input type="time" id="startTime" required>
+							</div>
+							<div class="form-group">
+								<label for="endTime">End Time</label>
+								<input type="time" id="endTime" required>
+							</div>
+							<div class="form-group">
+								<label for="purpose">Purpose</label>
+								<textarea id="purpose" required placeholder="Please describe the purpose of your reservation..."></textarea>
+							</div>
+							<div class="form-actions">
+								<button type="button" class="cancel-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">Cancel</button>
+								<button type="submit" class="submit-btn">Submit Reservation</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			`;
+			document.body.appendChild(modal);
+			modal.style.display = 'block';
+
+			const form = modal.querySelector('#reservationForm');
+			form.addEventListener('submit', function(e) {
+				e.preventDefault();
+				
+				const facility = document.getElementById('facility').value;
+				const date = document.getElementById('date').value;
+				const startTime = document.getElementById('startTime').value;
+				const endTime = document.getElementById('endTime').value;
+				const purpose = document.getElementById('purpose').value;
+
+				if (!facility || !date || !startTime || !endTime || !purpose) {
+					showNotification('Please fill in all fields', 'error');
+					return;
+				}
+
+				calendar.addEvent({
+					title: facility.charAt(0).toUpperCase() + facility.slice(1),
+					start: `${date}T${startTime}`,
+					end: `${date}T${endTime}`,
+					description: purpose
+				});
+
+				showNotification('Reservation submitted successfully!');
+				modal.remove();
+			});
+		}
+
+		// TOGGLE CALENDAR VIEW
+		function toggleView(view) {
+			var calendar = document.querySelector('#calendar .fc-view-harness');
+			if (calendar) {
+				calendar.classList.remove('month-view', 'week-view', 'day-view');
+				calendar.classList.add(view + '-view');
+			}
+		}
+
+		// FILTER FACILITIES
+		const filterButtons = document.querySelectorAll('.filter-btn');
+		if (filterButtons.length > 0) {
+			filterButtons.forEach(button => {
+				button.addEventListener('click', function() {
+					const filter = this.getAttribute('data-filter');
+					document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+					this.classList.add('active');
+
+					document.querySelectorAll('.facility-card').forEach(card => {
+						if (filter === 'all' || card.getAttribute('data-category') === filter) {
+							card.style.display = 'block';
+						} else {
+							card.style.display = 'none';
+						}
+					});
+				});
+			});
+		}
+
+		// HANDLE "BOOK NOW" BUTTON CLICKS
+		document.querySelectorAll('.book-btn').forEach(button => {
+			button.addEventListener('click', function() {
+				const facility = this.getAttribute('data-facility');
+				const today = new Date().toISOString().split('T')[0];
+				openReservationModal(today);
+			});
+		});
+	});
+
+	// SIDEBAR TOGGLE
+	const menuBar = document.querySelector('#content nav .bx-menu');
+	const sidebar = document.getElementById('sidebar');
+
+	if (menuBar && sidebar) {
+		menuBar.addEventListener('click', function () {
+			sidebar.classList.toggle('hide');
+		});
+	}
+
+	// SIDEBAR ACTIVE STATE
+	const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
+	if (allSideMenu.length > 0) {
+		const currentPath = window.location.pathname;
+		allSideMenu.forEach(item => {
+			const li = item.parentElement;
+			if (item.getAttribute('href') === currentPath || 
+				(currentPath.includes(item.getAttribute('href')) && item.getAttribute('href') !== '/')) {
+				allSideMenu.forEach(i => {
+					i.parentElement.classList.remove('active');
+				});
+				li.classList.add('active');
+			}
+		});
+	}
+
+	// DARK MODE
+	const switchMode = document.getElementById('switch-mode');
+	if (switchMode) {
+		switchMode.addEventListener('change', function () {
+			if(this.checked) {
+				document.body.classList.add('dark');
+			} else {
+				document.body.classList.remove('dark');
+			}
+		});
+	}
+	</script>
+
+	<!-- BOOKING MODAL -->
+	<div id="bookingModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>New Reservation</h2>
+				<span class="close-btn" onclick="closeBookingModal()">&times;</span>
+			</div>
+			<div class="modal-body">
+				<form id="reservationForm">
+					<div class="form-group">
+						<label for="facility">Facility</label>
+						<select id="facility" required>
+							<option value="">Select Facility</option>
+							<option value="function-hall">Grand Function Hall</option>
+							<option value="basketball-court">Basketball Court</option>
+							<option value="swimming-pool">Olympic Swimming Pool</option>
+							<option value="tennis-court">Tennis Court</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="date">Date</label>
+						<input type="date" id="date" required>
+					</div>
+					<div class="form-group">
+						<label for="start-time">Start Time</label>
+						<input type="time" id="start-time" required>
+					</div>
+					<div class="form-group">
+						<label for="end-time">End Time</label>
+						<input type="time" id="end-time" required>
+					</div>
+					<div class="form-group">
+						<label for="purpose">Purpose</label>
+						<textarea id="purpose" required placeholder="Please describe the purpose of your reservation..."></textarea>
+					</div>
+					<div class="form-actions">
+						<button type="button" class="cancel-btn" onclick="closeBookingModal()">Cancel</button>
+						<button type="submit" class="submit-btn">Submit Reservation</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- FULLCALENDAR JS -->
+	<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+</body>

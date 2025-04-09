@@ -138,6 +138,11 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult facility_reservation()
+    {
+        return View();
+    }
+
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();

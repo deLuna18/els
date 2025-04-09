@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "6DhDdpVDL5CaZlLKfo6I6xauzq25vzBfG2oLp0+lVJQ=",
+  "Hash": "wC2e47y23UX9nBDfqoionyRHLfXy0MKAJ9+O/LrAmEQ=",
   "Source": "SubdivisionManagement",
   "BasePath": "_content/SubdivisionManagement",
   "Mode": "Default",
@@ -330,6 +330,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_community_forum.css",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "css/staff_community_forum#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "rdxiewiixf",
+      "Integrity": "f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\staff_community_forum.css"
     },
     {
       "Identity": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_login.css",
@@ -2406,7 +2427,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 09 Apr 2025 16:35:10 GMT"
+          "Value": "Wed, 09 Apr 2025 16:43:27 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -2451,7 +2472,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 09 Apr 2025 16:35:10 GMT"
+          "Value": "Wed, 09 Apr 2025 16:43:27 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3118,6 +3139,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-j6fhJSuuyLpOSLuPJU0TsDV0iNjor5S3rDnvxJrt4bg="
+        }
+      ]
+    },
+    {
+      "Route": "css/staff_community_forum.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_community_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20065"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 17:06:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU="
+        }
+      ]
+    },
+    {
+      "Route": "css/staff_community_forum.rdxiewiixf.css",
+      "AssetFile": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_community_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20065"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 17:06:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rdxiewiixf"
+        },
+        {
+          "Name": "label",
+          "Value": "css/staff_community_forum.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU="
         }
       ]
     },

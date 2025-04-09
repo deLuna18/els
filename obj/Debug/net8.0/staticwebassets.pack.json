@@ -57,6 +57,10 @@
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
+      "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_community_forum.css",
+      "PackagePath": "staticwebassets\\css\\staff_community_forum.css"
+    },
+    {
       "Id": "C:\\Users\\Home\\Downloads\\SubdivisionManagement-withdatabase (2)\\SubdivisionManagement-withdatabase\\SubdivisionManagement\\wwwroot\\css\\staff_login.css",
       "PackagePath": "staticwebassets\\css\\staff_login.css"
     },

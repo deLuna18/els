@@ -342,7 +342,6 @@ namespace SubdivisionManagement.Controllers
 
         public IActionResult Staff_Security_Visitors()
         {
-            // Check if staff is logged in
             var username = HttpContext.Session.GetString("StaffUser");
             if (string.IsNullOrEmpty(username))
             {
@@ -350,6 +349,17 @@ namespace SubdivisionManagement.Controllers
             }
 
             return View("staff_security_visitors");
+        }
+
+        public IActionResult Staff_Community_Forum()
+        {
+            var username = HttpContext.Session.GetString("StaffUser");
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View("staff_community_forum");
         }
     }
 

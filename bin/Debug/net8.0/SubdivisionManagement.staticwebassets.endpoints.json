@@ -439,7 +439,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 09 Apr 2025 16:35:10 GMT"
+          "Value": "Wed, 09 Apr 2025 16:43:27 GMT"
         }
       ],
       "EndpointProperties": [
@@ -484,7 +484,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 09 Apr 2025 16:35:10 GMT"
+          "Value": "Wed, 09 Apr 2025 16:43:27 GMT"
         }
       ],
       "EndpointProperties": [
@@ -1147,6 +1147,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-j6fhJSuuyLpOSLuPJU0TsDV0iNjor5S3rDnvxJrt4bg="
+        }
+      ]
+    },
+    {
+      "Route": "css/staff_community_forum.css",
+      "AssetFile": "css/staff_community_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20065"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 17:06:44 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU="
+        }
+      ]
+    },
+    {
+      "Route": "css/staff_community_forum.rdxiewiixf.css",
+      "AssetFile": "css/staff_community_forum.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20065"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 09 Apr 2025 17:06:44 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rdxiewiixf"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-f2f10HAlZe5fKzDvHEohZuAWMX87pN1U5ebIz5iN2zU="
+        },
+        {
+          "Name": "label",
+          "Value": "css/staff_community_forum.css"
         }
       ]
     },

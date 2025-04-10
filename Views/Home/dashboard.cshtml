@@ -1,12 +1,74 @@
 ﻿@{
     ViewData["Title"] = "Dashboard";
 }
+@model IEnumerable<SubdivisionManagement.Model.Announcement>
 <head>
 	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<!-- My CSS -->
 	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
 </head>
+<style>
+	/* ANNOUNCEMENT CARD */
+.announcement-card {
+    position: relative;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.announcement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.announcement-content {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    color: white;
+    max-width: 100%;
+}
+
+.announcement-content h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.announcement-content p {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.announcement-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.9rem;
+    margin-top: auto;
+    padding: 0 10px;
+}
+</style>
 
 <title>Dashboard</title>
 <body>
@@ -157,35 +219,23 @@
 					</div>
 					<table>
 						<tbody>
-							<tr>
-								<td>
-									<img src="~/images/event1.jpg" alt="event1">
-								</td>
-							</tr>
-							<tr>
-								<td>
-								
-									<img src="~/images/event2.jpg" alt="event2">
-								</td>
-							</tr>
-							<tr>
-								<td>
-
-									<img src="~/images/maintenance1.jpg" alt="maintenance1">
-								</td>
-							</tr>
-							<tr>
-								<td>
-
-									<img src="~/images/maintenance2.jpg" alt="maintenance2">
-								</td>
-							</tr>
-							<tr>
-								<td>
-
-									<img src="~/images/news1.jpg" alt="news1">
-								</td>
-							</tr>
+							@foreach (var announcement in Model)
+							{
+								<tr>
+									<td>
+										<div class="announcement-card" style="background-image: url('@announcement.ImagePath');">
+											<div class="announcement-content">
+												<h4>@announcement.Type</h4>
+												<p>@announcement.Description</p>
+												<div class="announcement-footer">
+													<span>@announcement.Staff.FullName</span>
+													<span>@announcement.DateCreated.ToString("MMM dd, yyyy")</span>
+												</div>
+											</div>
+										</div>
+									</td>
+								</tr>
+							}
 						</tbody>
 					</table>
 				</div>

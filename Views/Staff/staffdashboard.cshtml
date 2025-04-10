@@ -4,11 +4,14 @@
     var antiforgeryToken = Html.AntiForgeryToken();
 }
 
+<!DOCTYPE html>
+<html>
 <head>
 	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<!-- My CSS -->
 	<link rel="stylesheet" href="~/css/staffdashboard.css" asp-append-version="true">
+</head>
     <style>
         @@media screen and (max-width: 1200px) {
             .stats-container {
@@ -128,12 +131,7 @@
             }
         }
     </style>
-</head>
-
-<title>Staff Dashboard</title>
 <body>
-
-
 	<!-- SIDEBAR -->
 	<section id="sidebar">
 		<a href="#" class="brand">
@@ -259,25 +257,29 @@
             <!-- Add this after the stats-container div -->
             <div class="announcements-container">
                 <h2>Recent Announcements</h2>
-                <div class="announcements-list">
-                    @foreach (var announcement in ViewBag.Announcements)
-                    {
-                        <div class="announcement-card">
-                            <div class="announcement-header">
-                                <span class="announcement-type">@announcement.Type</span>
-                                <span class="announcement-date">@announcement.DateCreated.ToString("MMM dd, yyyy")</span>
-                            </div>
-                            <div class="announcement-body">
-                                <p>@announcement.Description</p>
-                                @if (!string.IsNullOrEmpty(announcement.ImagePath))
-                                {
-                                    <img src="@announcement.ImagePath" alt="Announcement Image" class="announcement-image">
-                                }
-                            </div>
-                            <div class="announcement-footer">
-                                <small>Posted by: @announcement.Staff.FullName</small>
-                            </div>
-                        </div>
+                <div class="announcement-box">
+                    @{
+                        var announcements = ViewBag.Announcements as IEnumerable<SubdivisionManagement.Model.Announcement>;
+                        if (announcements != null)
+                        {
+                            foreach (var announcement in announcements)
+                            {
+                                <div class="announcement-card">
+                                    <div class="announcement-image" style="background-image: url('@announcement.ImagePath')">
+                                        <div class="announcement-overlay">
+                                            <div class="announcement-content">
+                                                <h4>@announcement.Type</h4>
+                                                <p>@announcement.Description</p>
+                                                <div class="announcement-footer">
+                                                    <span>Posted by: @announcement.Staff.FullName</span>
+                                                    <span>@announcement.DateCreated.ToString("MMM dd, yyyy")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
                     }
                 </div>
             </div>
@@ -355,7 +357,7 @@
                                     <tr id="homeowner-@homeowner.Id">
                                         <td>
                                             <div class="user-info">
-                                                <img src="~/images/aleki.jpg" alt="@homeowner.FirstName @homeowner.LastName" class="user-avatar">
+                                                <img src="~/images/profile.jpg" alt="@homeowner.FirstName @homeowner.LastName" class="user-avatar">
                                                 <span>@homeowner.FirstName @(homeowner.MiddleName != null ? homeowner.MiddleName + " " : "")@homeowner.LastName</span>
                                             </div>
                                         </td>
@@ -435,7 +437,7 @@
                         <tr>
                             <td>
                                 <div class="user-info">
-                                    <img src="~/images/aleki.jpg" alt="Maria Alexa de Luna" class="user-avatar">
+                                    <img src="~/images/profile.jpg" alt="Maria Alexa de Luna" class="user-avatar">
                                     <span>Maria Alexa de Luna</span>
                                 </div>
                             </td>
@@ -450,7 +452,7 @@
                             <td>
                                 <div class="user-info">
 								
-                                    <img src="~/images/aleki.jpg" alt="Maria Alexa de Luna" class="user-avatar">
+                                    <img src="~/images/profile.jpg" alt="Maria Alexa de Luna" class="user-avatar">
                                     <span>Maria Alexa de Luna</span>
                                 </div>
                             </td>
@@ -474,7 +476,7 @@
         <form id="addAnnouncementForm" method="post" action="/Staff/AddAnnouncement" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="announcementType">Type of Announcement</label>
-                <select id="announcementType" name="type" class="form-control" required>
+                <select id="announcementType" name="type" required>
                     <option value="" disabled selected>Select type</option>
                     <option value="news">News</option>
                     <option value="events">Events</option>
@@ -483,11 +485,11 @@
             </div>
             <div class="form-group">
                 <label for="announcementDescription">Description</label>
-                <textarea id="announcementDescription" name="description" class="form-control" rows="5" placeholder="Enter the announcement description" required></textarea>
+                <textarea id="announcementDescription" name="description" rows="5" placeholder="Enter the announcement description" required></textarea>
             </div>
             <div class="form-group">
                 <label for="announcementImage">Upload Image</label>
-                <input type="file" id="announcementImage" name="image" class="form-control" accept="image/*">
+                <input type="file" id="announcementImage" name="image" accept="image/*">
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn-primary">Submit</button>
@@ -600,282 +602,69 @@
                         if (data.success) {
                             // Update the status in the table
                             const row = document.getElementById(`homeowner-${homeownerId}`);
-                            const statusCell = row.querySelector('.status-cell');
-                            statusCell.textContent = newStatus;
-                            
-                            // Update status cell color
-                            statusCell.className = 'status-cell ' + newStatus.toLowerCase();
-                            
-                            // Disable the buttons after successful update
-                            const buttons = row.querySelectorAll('.action-btn');
-                            buttons.forEach(button => {
-                                button.disabled = true;
-                            });
-
-                            alert('Status updated successfully!');
-                        } else {
-                            alert('Error updating status: ' + data.message);
+                            if (row) {
+                                row.cells[2].textContent = newStatus;
+                                if (newStatus === 'approved') {
+                                    row.cells[2].className = 'status-cell approved';
+                                } else {
+                                    row.cells[2].className = 'status-cell disapproved';
+                                }
+                            }
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error updating status. Please try again.');
                     });
                 }
 
-// Open the Add Announcement Modal
-document.querySelector('.add-announcement').addEventListener('click', function () {
-    openModal('addAnnouncementModal');
-});
-
-// Close the modal when clicking outside of it
-window.onclick = function (event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-    }
-};
-
-document.getElementById('addAnnouncementForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    var formData = new FormData(this);
-    
-    fetch('/Staff/AddAnnouncement', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Announcement added successfully!');
-            location.reload();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error adding announcement');
+    // Add Announcement Modal Functions
+    document.querySelector('.add-announcement').addEventListener('click', function() {
+        openModal('addAnnouncementModal');
     });
-});
+
+    // Handle form submission
+    document.getElementById('addAnnouncementForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        try {
+            const response = await fetch('/Staff/AddAnnouncement', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Announcement added successfully!');
+                closeModal('addAnnouncementModal');
+                location.reload(); // Refresh the page to show the new announcement
+            } else {
+                alert('Error: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while adding the announcement.');
+        }
+    });
+
+    // Function to open a modal
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    // Function to close a modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    // Close modal when clicking outside the modal content
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
+    };
 </script>
-
-<style>
-    .status-cell {
-        font-weight: bold;
-    }
-
-    .status-cell.approved {
-        color: #28a745;
-    }
-
-    .status-cell.disapproved {
-        color: #dc3545;
-    }
-
-    .status-cell.pending {
-        color: #ffc107;
-    }
-
-    .action-btn {
-        padding: 5px 10px;
-        margin: 0 2px;
-        cursor: pointer;
-    }
-
-    .action-btn.approve {
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 3px;
-    }
-
-    .action-btn.reject {
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 3px;
-    }
-
-    .action-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .announcements-container {
-        margin-top: 2rem;
-        padding: 1rem;
-    }
-
-    .announcements-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
-    }
-
-    .announcement-card {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        padding: 1rem;
-    }
-
-    .announcement-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-    }
-
-    .announcement-type {
-        font-weight: bold;
-        color: #007bff;
-    }
-
-    .announcement-date {
-        color: #666;
-    }
-
-    .announcement-image {
-        max-width: 100%;
-        height: auto;
-        margin: 1rem 0;
-        border-radius: 4px;
-    }
-
-    .announcement-footer {
-        margin-top: 1rem;
-        color: #666;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 2000; /* Increased z-index to ensure it appears above the sidenav */
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 1rem;
-        box-sizing: border-box;
-    }
-
-    .modal-content {
-        background-color: #fff;
-        margin: auto;
-        padding: 1.5rem;
-        border-radius: 8px;
-        width: 90%;
-        max-width: 800px;
-        max-height: 90%;
-        overflow-y: auto;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    #sidebar {
-        z-index: 1000; /* Ensure the sidebar stays below the modal */
-    }
-
-    .table-container {
-        overflow-x: auto;
-    }
-
-    .table-container table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .table-container th, .table-container td {
-        padding: 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .pagination {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 1rem;
-    }
-
-    .pagination .page-numbers a {
-        margin: 0 0.25rem;
-        padding: 0.5rem 0.75rem;
-        text-decoration: none;
-        color: #007bff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-
-    .pagination .page-numbers a.active {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-    }
-
-    .form-group input, .form-group select, .form-group textarea {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-    }
-
-    .form-actions .btn-primary {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .form-actions .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .form-actions .btn-primary:hover, .form-actions .btn-secondary:hover {
-        opacity: 0.9;
-    }
-
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #333;
-        cursor: pointer;
-    }
-
-    .close:hover {
-        color: #000;
-    }
-</style>
 </body>
 </html>

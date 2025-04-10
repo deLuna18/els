@@ -268,13 +268,14 @@ namespace SubdivisionManagement.Controllers
                 var announcement = _context.Announcements.FirstOrDefault(a => a.Id == id);
                 if (announcement == null)
                 {
-                    TempData["Error"] = "Announcement not found.";
-                    return RedirectToAction("Announcements");
+                    return Json(new { success = false, message = "Announcement not found." });
                 }
 
+                // Update announcement details
                 announcement.Type = type;
                 announcement.Description = description;
 
+                // Handle image upload if provided
                 if (image != null && image.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "announcements");
@@ -297,13 +298,14 @@ namespace SubdivisionManagement.Controllers
                 _context.Announcements.Update(announcement);
                 await _context.SaveChangesAsync();
 
-                TempData["Success"] = "Announcement updated successfully.";
-                return RedirectToAction("Announcements"); // Redirect to the Announcements view
+                // Return success response
+                return Json(new { success = true, message = "Announcement updated successfully." });
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction("Announcements");
+                // Log the exception and return an error response
+                Console.WriteLine($"Error: {ex.Message}");
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
             }
         }
 

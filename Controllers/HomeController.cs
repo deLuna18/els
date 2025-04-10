@@ -42,6 +42,7 @@ public class HomeController : Controller
             }
 
             // Set session or authentication cookie here if needed
+            HttpContext.Session.SetInt32("UserId", homeowner.Id);
             return RedirectToAction("Dashboard");
         }
 
@@ -58,7 +59,14 @@ public class HomeController : Controller
 
     public IActionResult Dashboard()
     {
-        return View();
+
+        var announcements = _context.Announcements
+            .Include(a => a.Staff)
+            .OrderByDescending(a => a.DateCreated)
+            .Take(4)
+            .ToList();
+            
+        return View(announcements);
     }
 
     public IActionResult Contact()
@@ -68,7 +76,14 @@ public class HomeController : Controller
 
     public IActionResult Announcements()
     {
-        return View();
+        var announcements = _context.Announcements
+            .Include(a => a.Staff)
+            .OrderByDescending(a => a.DateCreated)
+            .ToList()
+            .GroupBy(a => a.Type)
+            .ToDictionary(g => g.Key, g => g.ToList());
+            
+        return View(announcements);
     }
 
     public IActionResult Register()
@@ -102,9 +117,27 @@ public class HomeController : Controller
             numBytesRequested: 256 / 8));
     }
 
+    private int GetLoggedInUserId()
+    {
+        // Retrieve the logged-in user's ID from the session
+        int? userId = HttpContext.Session.GetInt32("UserId");
+
+        // If the session does not contain a user ID, return 0 or handle it as needed
+        return userId ?? 0;
+    }
+
+    [HttpGet]
     public IActionResult Profile()
     {
-        return View();
+        int loggedInUserId = GetLoggedInUserId(); // Use the helper method to get the user ID
+        var homeowner = _context.Homeowners.FirstOrDefault(h => h.Id == loggedInUserId);
+
+        if (homeowner == null)
+        {
+            return RedirectToAction("Index"); // Redirect if no user is found
+        }
+
+        return View(homeowner);
     }
 
     public IActionResult EditProfile()
@@ -148,4 +181,4 @@ public class HomeController : Controller
         HttpContext.Session.Clear();
         return RedirectToAction("Index");
     }
-} 
+}

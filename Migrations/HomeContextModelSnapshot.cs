@@ -126,6 +126,10 @@ namespace SubdivisionManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Profile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("StaffId")
                         .HasColumnType("int");
 

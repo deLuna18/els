@@ -21,7 +21,7 @@ namespace SubdivisionManagement.Model
         [Required]
         public string PasswordHash { get; set; } = null!;
 
-         [Required]
+        [Required]
         [Phone]
         public string PhoneNumber { get; set; } = null!;
 
@@ -42,5 +42,8 @@ namespace SubdivisionManagement.Model
 
         public int? StaffId { get; set; }
         public Staff? Staff { get; set; }
+
+        // New Profile property with default value
+        public string Profile { get; set; } = "profile.jpg";
     }
 }

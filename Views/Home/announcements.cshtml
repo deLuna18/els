@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Announcements";
 }
+@model Dictionary<string, List<SubdivisionManagement.Model.Announcement>>
 
 <head>
     <!-- Boxicons -->
@@ -18,7 +19,7 @@
 			<span class="text">Welcome</span>
 		</a>
 		<ul class="side-menu top">
-			<li class="active">
+			<li>
 				<a asp-area="" asp-controller="Home" asp-action="dashboard">
 					<i class='bx bxs-dashboard'></i>
 					<span class="text">Dashboard</span>
@@ -30,7 +31,7 @@
 					<span class="text">Profile</span>
 				</a>
 			</li>
-			<li>
+			<li class="active">
 				<a asp-area="" asp-controller="Home" asp-action="Announcements">
 					<i class='bx bxs-megaphone'></i>
 					<span class="text">Announcement</span>
@@ -132,77 +133,34 @@
             </div>
 
             <div class="announcement-box">
-                <!-- News Announcements -->
-                <div class="announcement-category" onclick="toggleAnnouncementBody(this)">
-                    <div class="announcement-header">
-                        <h3>News</h3>
-                        <button class="close-btn" onclick="hideAnnouncementBody(this)">x</button>
-                    </div>
-                    <div class="announcement-body">
-                        <div class="slideshow-container">
-                            <div class="mySlides fade">
-                                <img src="~/images/news1.jpg" style="width:100%">
-                                <div class="text-announcement">News 1</div>
-                            </div>
-                            <div class="mySlides fade">
-                                <img src="~/images/news2.jpg" style="width:100%">
-                                <div class="text-announcement">News 2</div>
-                            </div>
-                            <div class="mySlides fade">
-                                <img src="~/images/news3.jpg" style="width:100%">
-                                <div class="text-announcement">News 3</div>
-                            </div>
+                @foreach (var category in Model)
+                {
+                    <div class="announcement-category">
+                        <div class="announcement-header" onclick="toggleAnnouncementBody(this)">
+                            <h3>@category.Key</h3>
+                            <i class='bx bx-chevron-down toggle-icon'></i>
+                        </div>
+                        <div class="announcement-body">
+                            @foreach (var announcement in category.Value)
+                            {
+                                <div class="announcement-card">
+                                    <div class="announcement-image" style="background-image: url('@announcement.ImagePath')">
+                                        <div class="announcement-overlay">
+                                            <div class="announcement-content">
+                                                <h4>@announcement.Type</h4>
+                                                <p>@announcement.Description</p>
+                                                <div class="announcement-footer">
+                                                    <span>Posted by: @announcement.Staff.FullName</span>
+                                                    <span>@announcement.DateCreated.ToString("MMM dd, yyyy")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
-                </div>
-
-                <!-- Events Announcements -->
-                <div class="announcement-category" onclick="toggleAnnouncementBody(this)">
-                    <div class="announcement-header">
-                        <h3>Events</h3>
-                        <button class="close-btn" onclick="hideAnnouncementBody(this)">x</button>
-                    </div>
-                    <div class="announcement-body">
-                        <div class="slideshow-container">
-                            <div class="mySlides fade">
-                                <img src="~/images/event1.jpg" style="width:100%">
-                                <div class="text-announcement">Event 1</div>
-                            </div>
-                            <div class="mySlides fade">
-                                <img src="~/images/event2.jpg" style="width:100%">
-                                <div class="text-announcement">Event 2</div>
-                            </div>
-                            <div class="mySlides fade">
-                                <img src="~/images/event3.jpg" style="width:100%">
-                                <div class="text-announcement">Event 3</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Maintenance Announcements -->
-                <div class="announcement-category" onclick="toggleAnnouncementBody(this)">
-                    <div class="announcement-header">
-                        <h3>Maintenance</h3>
-                        <button class="close-btn" onclick="hideAnnouncementBody(this)">x</button>
-                    </div>
-                    <div class="announcement-body">
-                        <div class="slideshow-container">
-                            <div class="mySlides fade">
-                                <img src="~/images/maintenance1.jpg" style="width:100%">
-                                <div class="text-announcement">Maintenance 1</div>
-                            </div>
-                            <div class="mySlides fade">
-                                <img src="~/images/maintenance2.jpg" style="width:100%">
-                                <div class="text-announcement">Maintenance 2</div>
-                            </div>
-                            <div class="mySlides fade">
-                                <img src="~/images/maintenance3.jpg" style="width:100%">
-                                <div class="text-announcement">Maintenance 3</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </main>
         <!-- MAIN -->
@@ -302,35 +260,47 @@
             }
         }
 
-        function toggleAnnouncementBody(category) {
-            let body = category.querySelector(".announcement-body");
-            let closeButton = category.querySelector(".close-btn");
-
-            // Hide other announcement bodies
-            document.querySelectorAll('.announcement-body').forEach(item => {
-                if (item !== body) {
-                    item.style.display = 'none';
-                    item.closest('.announcement-category').querySelector('.close-btn').style.display = 'none';
-                    stopSlideshow(item.closest('.announcement-category'));
+        function toggleAnnouncementBody(header) {
+            // Get all announcement categories
+            const categories = document.querySelectorAll('.announcement-category');
+            
+            // Get the clicked category
+            const clickedCategory = header.parentElement;
+            const clickedBody = clickedCategory.querySelector('.announcement-body');
+            const clickedIcon = header.querySelector('.toggle-icon');
+            
+            // Close all other categories
+            categories.forEach(category => {
+                if (category !== clickedCategory) {
+                    const otherHeader = category.querySelector('.announcement-header');
+                    const otherBody = category.querySelector('.announcement-body');
+                    const otherIcon = otherHeader.querySelector('.toggle-icon');
+                    
+                    otherHeader.classList.remove('active');
+                    otherBody.classList.remove('active');
+                    otherIcon.style.transform = 'rotate(0deg)';
                 }
             });
+            
+            // Toggle the clicked category
+            const isActive = header.classList.contains('active');
+            header.classList.toggle('active');
+            clickedBody.classList.toggle('active');
+            clickedIcon.style.transform = isActive ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
 
-            if (body.style.display === "block") {
-                body.style.display = "none";
-                closeButton.style.display = "none";
-                stopSlideshow(category);
-            } else {
-                body.style.display = "block";
-                closeButton.style.display = "block";
-                startSlideshow(category);
+        // Initialize first category as open by default
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCategory = document.querySelector('.announcement-category');
+            if (firstCategory) {
+                const header = firstCategory.querySelector('.announcement-header');
+                const body = firstCategory.querySelector('.announcement-body');
+                const icon = header.querySelector('.toggle-icon');
+                
+                header.classList.add('active');
+                body.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
             }
-        }
-
-        function hideAnnouncementBody(button) {
-            let body = button.closest(".announcement-body");
-            body.style.display = "none";
-            button.style.display = "none";
-            stopSlideshow(body.closest(".announcement-category"));
-        }
+        });
     </script>
 </body>

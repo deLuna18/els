@@ -1,3 +1,5 @@
+@model SubdivisionManagement.Model.Homeowner
+
 @{
     ViewData["Title"] = "Profile";
 }
@@ -20,13 +22,13 @@
 			<span class="text">Welcome</span>
 		</a>
 		<ul class="side-menu top">
-			<li class="active">
+			<li>
 				<a asp-area="" asp-controller="Home" asp-action="dashboard">
 					<i class='bx bxs-dashboard'></i>
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-			<li>
+			<li class="active">
 				<a asp-area="" asp-controller="Home" asp-action="profile">
 					<i class='bx bxs-user'></i>
 					<span class="text">Profile</span>
@@ -109,7 +111,7 @@
 				<span class="num">8</span>
 			</a>
 			<a asp-area="" asp-controller="Home" asp-action="Profile">
-				<img src="~/images/profile.jpg" style="border-radius: 50%; width: 36px; height: 36px; object-fit: cover;">
+				<img src="@Url.Content($"~/images/{Model.Profile}")" alt="Profile Picture" style="border-radius: 50%; width: 36px; height: 36px; object-fit: cover;">
 			</a>
 		</nav>
 		<!-- NAVBAR -->
@@ -121,41 +123,39 @@
 					<h1>Profile</h1>
 				</div>
                 <div class="profile-container">
-                <form asp-action="Profile" asp-controller="Home" method="post">
-                <div class="profile-card">
-					<div class="prof-head">
-						<div class="profile-image">
-							<img src="~/images/profile.jpg" alt="Profile Picture">
-							<h2>Cornelio, Cedric Espiritu</h2>
-							<a class="edit-btn" asp-area="" asp-controller="Home" asp-action="EditProfile">Edit Profile</a>
-							<button type="submit">Change Password</button>
-						</div>
-					</div>
-                    <div class="row">
-                        <div class="column">
-                            <p> Full Name </p>
-                                 <input type="text" value="Cedric Espiritu Cornelio" readonly>
-                            <p>Email Address</p>
-                                 <input type="text" value="cedcedcornelio@gmail.com" readonly>
-                            <p>Phone Number </p>
-                                <input type="text" value="+63 01234567890" readonly>
-                            <p>Block Number </p>
-                                <input type="text" value="1" readonly>
-                            
+                    <form asp-action="Profile" asp-controller="Home" method="post">
+                        <div class="profile-card">
+                            <div class="prof-head">
+                                <div class="profile-image">
+                                    <img src="~/images/@Model.Profile" alt="Profile Picture">
+                                    <h2>@Model.LastName, @Model.FirstName @Model.MiddleName</h2>
+                                    <a class="edit-btn" asp-area="" asp-controller="Home" asp-action="EditProfile">Edit Profile</a>
+                                    <button type="submit">Change Password</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column">
+                                    <p>Full Name</p>
+                                    <input type="text" value="@($"{Model.FirstName} {Model.MiddleName ?? ""} {Model.LastName}")" readonly>
+                                    <p>Email Address</p>
+                                    <input type="text" value="@Model.Email" readonly>
+                                    <p>Phone Number</p>
+                                    <input type="text" value="@Model.PhoneNumber" readonly>
+                                    <p>Block Number</p>
+                                    <input type="text" value="@Model.Block" readonly>
+                                </div>
+                                <div class="column">
+                                    <p>House/Lot Number</p>
+                                    <input type="text" value="@Model.HouseNumber" readonly>
+                                    <p>Street/Phase</p>
+                                    <input type="text" value="@Model.Street" readonly>
+                                    <p>Emergency Contact Information</p>
+                                    <input type="text" value="@Model.EmergencyContactNumber" readonly>
+                                </div>
+                            </div>
                         </div>
-                        <div class="column">
-                            <p>House/Lot Number </p>
-                                <input type="text" value="2" readonly>
-                            <p>Street/Phase </p>
-                                <input type="text" value="Kalachuchi St." readonly>
-                            <p>Emergency Contact Information </p>
-                                <input type="text" value="+63 12345678901" readonly>
-                            <p>Vehicle Information </p>
-                                <input type="text" value="ABC 1234, Toyota Fortuner, Black" readonly>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
 			</div>
 		</main>
 		<!-- MAIN -->

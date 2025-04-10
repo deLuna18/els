@@ -182,8 +182,91 @@ td {
     color: white;
 }
 
+/* Announcements Container */
+.announcements-container {
+    background: var(--light);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 
+.announcements-container h2 {
+    font-size: 20px;
+    color: var(--dark);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
 
+.announcement-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media screen and (min-width: 768px) {
+    .announcement-box {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .announcement-box {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.announcement-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.announcement-card:hover {
+    transform: translateY(-2px);
+}
+
+.announcement-image {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.announcement-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 20px;
+    color: white;
+}
+
+.announcement-content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.announcement-content p {
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: rgba(255,255,255,0.9);
+}
+
+.announcement-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
 
@@ -197,52 +280,148 @@ a {
     text-decoration: none;
 }
 
+/* Updated Modal Styles */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 2000; /* Higher than the sidebar's z-index */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     overflow: auto;
 }
 
+/* Center the modal content */
 .modal-content {
     background-color: #fff;
-    margin: 10% auto;
-    padding: 25px;
-    border-radius: 10px;
-    width: 70%;
-    max-width: 600px; /* ari lang adjust guys gamay kay laptop gud hehehehe */
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px; /* Reduced max-width for better layout */
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    z-index: 3000; /* Ensure modal content is above everything */
 }
 
-.close {
-    position: absolute;
-    right: 20px;
-    top: 15px;
+.modal-content h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
     color: #333;
-    float: right;
-    font-size: 32px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
+    text-align: center;
 }
 
-.close:hover,
-.close:focus {
-    color: #e74c3c;
-    text-decoration: none;
-    transform: scale(1.1);
+/* Close Button Styles */
+.modal-content .close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-content .close:hover {
+    color: #e74c3c; /* Change color on hover */
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+}
+
+.modal-content .form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.modal-content .form-group input,
+.modal-content .form-group select,
+.modal-content .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.modal-content .form-group textarea {
+    resize: none;
+}
+
+.modal-content .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.modal-content .form-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content .form-actions .btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.modal-content .form-actions .btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.modal-content .form-actions .btn-secondary {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.modal-content .form-actions .btn-secondary:hover {
+    background-color: #c0392b;
+}
+
+/* Sidebar-specific fix */
+#sidebar {
+    z-index: 1000; /* Ensure the sidebar is below the modal */
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .modal-content table {
+        font-size: 12px; /* Adjust font size for smaller screens */
+    }
+
+    .modal-content th, .modal-content td {
+        padding: 8px;
+    }
+
+    .modal-content .pagination {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modal-content .page-numbers {
+        margin-top: 10px;
+    }
 }
 
 .stat-card {
@@ -513,7 +692,6 @@ body {
     height: 35px;
     border-radius: 50%;
     object-fit: cover;
-}
 
 /* MAIN */
 /* CONTENT */
@@ -578,134 +756,6 @@ body {
     #content main .table-data .todo .todo-list {
         min-width: 420px;
     }
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto;
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 30px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    font-family: 'Poppins', sans-serif;
-}
-
-.modal-title {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
-}
-
-.modal-content .form-group {
-    margin-bottom: 20px;
-}
-
-.modal-content .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #555;
-}
-
-.modal-content .form-group select,
-.modal-content .form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #333;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
-}
-
-.modal-content .form-group select:focus,
-.modal-content .form-group textarea:focus {
-    border-color: #3498db;
-    outline: none;
-}
-
-.modal-content .form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.modal-content .btn-primary {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.modal-content .btn-primary:hover {
-    background-color: #2980b9;
-}
-
-.modal-content .btn-secondary {
-    background-color: #e74c3c;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.modal-content .btn-secondary:hover {
-    background-color: #c0392b;
-}
-
-.modal-content .close {
-    position: absolute;
-    right: 20px;
-    top: 15px;
-    color: #333;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.modal-content .close:hover {
-    color: #e74c3c;
-}
-
-.modal-content .form-group input[type="file"] {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #333;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
-}
-
-.modal-content .form-group input[type="file"]:focus {
-    border-color: #3498db;
-    outline: none;
 }
 
 .add-announcement:hover {

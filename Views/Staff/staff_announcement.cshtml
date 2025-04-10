@@ -7,81 +7,75 @@
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <!-- My CSS -->
-    <link rel="stylesheet" href="~/css/announcements.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/staff_announcement.css" asp-append-version="true">
 </head>
 
 <body>
     <!-- SIDEBAR -->
     <section id="sidebar">
-		<a href="#" class="brand">
-			<i class='bx bxs-smile'></i>
-			<span class="text">Staff</span>
-		</a>
-		<ul class="side-menu top">
-			<li class="active">
-				<a asp-area="" asp-controller="Staff" asp-action="Dashboard">
-					<i class='bx bxs-dashboard'></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-			<li>
-				<a href="#">
-					<i class='bx bxs-user'></i>
-					<span class="text">Profile</span>
-				</a>
-			</li>
-			<li>
-				<a asp-action="Announcements" asp-controller="Staff">
-					<i class='bx bxs-megaphone'></i>
-					<span class="text">Announcement</span>
-				</a>
-			</li>
-			<li>
-				<a href="#">
-					<i class='bx bxs-credit-card-front'></i>
-					<span class="text">Payment and Billing</span>
-				</a>
-			</li>
-			<li>
-				<a asp-area="" asp-controller="Staff" asp-action="staff_services">
-					<i class='bx bxs-briefcase'></i>
-					<span class="text">Services</span>
-				</a>
-			</li>
+        <a href="#" class="brand">
+            <i class='bx bxs-smile'></i>
+            <span class="text">Staff</span>
+        </a>
+        <ul class="side-menu top">
             <li>
-				<a asp-area="" asp-controller="Staff" asp-action="staff_community_forum">
-					<i class='bx bxs-message-square-dots'></i>
-					<span class="text">Community Forum</span>
-				</a>
-			</li>
-			<li>
-				<a asp-area="" asp-controller="Staff" asp-action="staff_security_visitors">
-					<i class='bx bxs-shield-alt-2'></i>
-					<span class="text">Security and Visitors</span>
-				</a>
-			</li>
-			<li>
-				<a href="#">
-					<i class='bx bx-support'></i>
-					<span class="text">Contact and Support</span>
-				</a>
-			</li>
-		</ul>
-		<ul class="side-menu">
-			<li>
-				<a href="#">
-					<i class='bx bxs-cog'></i>
-					<span class="text">Settings</span>
-				</a>
-			</li>
-			<li>
-				<a asp-action="logout" class="logout">
+                <a asp-area="" asp-controller="Staff" asp-action="Dashboard">
+                    <i class='bx bxs-dashboard'></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bxs-user'></i>
+                    <span class="text">Profile</span>
+                </a>
+            </li>
+            <li class="active">
+                <a asp-action="Announcements" asp-controller="Staff">
+                    <i class='bx bxs-megaphone'></i>
+                    <span class="text">Announcement</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bxs-credit-card-front'></i>
+                    <span class="text">Payment and Billing</span>
+                </a>
+            </li>
+            <li>
+                <a asp-area="" asp-controller="Staff" asp-action="staff_services">
+                    <i class='bx bxs-briefcase'></i>
+                    <span class="text">Services</span>
+                </a>
+            </li>
+            <li>
+                <a asp-area="" asp-controller="Staff" asp-action="staff_security_visitors">
+                    <i class='bx bxs-shield-alt-2'></i>
+                    <span class="text">Security and Visitors</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-support'></i>
+                    <span class="text">Contact and Support</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="#">
+                    <i class='bx bxs-cog'></i>
+                    <span class="text">Settings</span>
+                </a>
+            </li>
+            <li>
+                <a asp-action="logout" class="logout">
                     <i class='bx bxs-log-out-circle'></i>
                     <span class="text">Logout</span>
                 </a>
-			</li>
-		</ul>
-	</section>
+            </li>
+        </ul>
+    </section>
     <!-- SIDEBAR -->
 
     <!-- CONTENT -->
@@ -102,109 +96,65 @@
 
         <!-- MAIN -->
         <main>
-            <div class="head-title">
-                <div class="left">
-                    <h1>Announcements</h1>
-                    <ul class="breadcrumb">
-                        <li>
-                            <a href="#">Dashboard</a>
-                        </li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li>
-                            <a class="active" href="#">Announcements</a>
-                        </li>
-                    </ul>
+            <div class="announcement-container">
+                <div class="announcement-header">
+                    <h1 class="announcement-title">Announcements</h1>
+                    <button class="add-announcement-btn" onclick="openModal('addAnnouncementModal')">
+                        <i class='bx bx-plus'></i> Add Announcement
+                    </button>
                 </div>
-            </div>
 
-            <!-- Display success or error messages -->
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert alert-success">
-                    @TempData["Success"]
-                </div>
-            }
-            @if (TempData["Error"] != null)
-            {
-                <div class="alert alert-danger">
-                    @TempData["Error"]
-                </div>
-            }
-
-            <div class="announcement-box">
-                <!-- News Announcements -->
-                <div class="announcement-category">
-                    <div class="announcement-header">
-                        <h3>News</h3>
+                <!-- Display success or error messages -->
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["Success"]
                     </div>
-                    <div class="announcement-list">
-                        @foreach (var announcement in Model.Where(a => a.Type == "news"))
-                        {
-                            <div class="announcement-item">
-                                <div class="announcement-content">
-                                    <p class="date">@announcement.DateCreated.ToString("MMM dd, yyyy")</p>
-                                    <p class="description">@announcement.Description</p>
-                                    @if (!string.IsNullOrEmpty(announcement.ImagePath))
-                                    {
-                                        <img src="@announcement.ImagePath" alt="Announcement Image">
-                                    }
-                                    <p class="posted-by">Posted by: @announcement.Staff.FullName</p>
-                                    <button class="btn-edit" onclick="openEditModal(@announcement.Id, '@announcement.Description', '@announcement.Type')">Edit</button>
-                                    <button class="btn-delete" onclick="deleteAnnouncement(@announcement.Id)">Delete</button>
-                                </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["Error"]
+                    </div>
+                }
+
+                <div class="announcement-box">
+                    @foreach (var category in Model.GroupBy(a => a.Type))
+                    {
+                        <div class="announcement-category">
+                            <div class="announcement-category-header" onclick="toggleAnnouncementBody(this)">
+                                <h3>@category.Key</h3>
+                                <i class='bx bx-chevron-down toggle-icon'></i>
                             </div>
-                        }
-                    </div>
-                </div>
-
-                <!-- Events Announcements -->
-                <div class="announcement-category">
-                    <div class="announcement-header">
-                        <h3>Events</h3>
-                    </div>
-                    <div class="announcement-list">
-                        @foreach (var announcement in Model.Where(a => a.Type == "events"))
-                        {
-                            <div class="announcement-item">
-                                <div class="announcement-content">
-                                    <p class="date">@announcement.DateCreated.ToString("MMM dd, yyyy")</p>
-                                    <p class="description">@announcement.Description</p>
-                                    @if (!string.IsNullOrEmpty(announcement.ImagePath))
-                                    {
-                                        <img src="@announcement.ImagePath" alt="Announcement Image">
-                                    }
-                                    <p class="posted-by">Posted by: @announcement.Staff.FullName</p>
-                                    <button class="btn-edit" onclick="openEditModal(@announcement.Id, '@announcement.Description', '@announcement.Type')">Edit</button>
-                                    <button class="btn-delete" onclick="deleteAnnouncement(@announcement.Id)">Delete</button>
-                                </div>
+                            <div class="announcement-body">
+                                @foreach (var announcement in category)
+                                {
+                                    <div class="announcement-card">
+                                        <div class="announcement-image" style="background-image: url('@announcement.ImagePath')">
+                                            <div class="announcement-overlay">
+                                                <div class="announcement-content">
+                                                    <h4>@announcement.Type</h4>
+                                                    <p>@announcement.Description</p>
+                                                    <div class="announcement-footer">
+                                                        <span>Posted by: @announcement.Staff.FullName</span>
+                                                        <span>@announcement.DateCreated.ToString("MMM dd, yyyy")</span>
+                                                    </div>
+                                                    <div class="announcement-actions">
+                                                        <button class="btn-edit" onclick="openEditModal(@announcement.Id, '@announcement.Description', '@announcement.Type')">
+                                                            <i class='bx bx-edit'></i>
+                                                        </button>
+                                                        <button class="btn-delete" onclick="deleteAnnouncement(@announcement.Id)">
+                                                            <i class='bx bx-trash'></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                             </div>
-                        }
-                    </div>
-                </div>
-
-                <!-- Maintenance Announcements -->
-                <div class="announcement-category">
-                    <div class="announcement-header">
-                        <h3>Maintenance</h3>
-                    </div>
-                    <div class="announcement-list">
-                        @foreach (var announcement in Model.Where(a => a.Type == "maintenance"))
-                        {
-                            <div class="announcement-item">
-                                <div class="announcement-content">
-                                    <p class="date">@announcement.DateCreated.ToString("MMM dd, yyyy")</p>
-                                    <p class="description">@announcement.Description</p>
-                                    @if (!string.IsNullOrEmpty(announcement.ImagePath))
-                                    {
-                                        <img src="@announcement.ImagePath" alt="Announcement Image">
-                                    }
-                                    <p class="posted-by">Posted by: @announcement.Staff.FullName</p>
-                                    <button class="btn-edit" onclick="openEditModal(@announcement.Id, '@announcement.Description', '@announcement.Type')">Edit</button>
-                                    <button class="btn-delete" onclick="deleteAnnouncement(@announcement.Id)">Delete</button>
-                                </div>
-                            </div>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
             </div>
         </main>
@@ -212,13 +162,44 @@
     </section>
     <!-- CONTENT -->
 
+    <!-- Add Announcement Modal -->
+    <div id="addAnnouncementModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addAnnouncementModal')">&times;</span>
+            <h2>Add Announcement</h2>
+            <form id="addAnnouncementForm" method="post" action="/Staff/AddAnnouncement" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="announcementType">Type:</label>
+                    <select id="announcementType" name="type" class="form-control" required>
+                        <option value="news">News</option>
+                        <option value="events">Events</option>
+                        <option value="maintenance">Maintenance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="announcementDescription">Description:</label>
+                    <textarea id="announcementDescription" name="description" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="announcementImage">Image:</label>
+                    <input type="file" id="announcementImage" name="image" class="form-control" accept="image/*">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Submit</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('addAnnouncementModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Edit Announcement Modal -->
     <div id="editAnnouncementModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
+            <span class="close" onclick="closeModal('editAnnouncementModal')">&times;</span>
             <h2>Edit Announcement</h2>
             <form id="editAnnouncementForm" method="post" enctype="multipart/form-data" action="/Staff/EditAnnouncement">
-                @Html.AntiForgeryToken() <!-- Add anti-forgery token -->
+                @Html.AntiForgeryToken()
                 <input type="hidden" id="editAnnouncementId" name="id" />
                 <div class="form-group">
                     <label for="editAnnouncementType">Type:</label>
@@ -236,182 +217,66 @@
                     <label for="editAnnouncementImage">Image:</label>
                     <input type="file" id="editAnnouncementImage" name="image" class="form-control" />
                 </div>
-                <button type="submit" class="btn-add">Save Changes</button>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('editAnnouncementModal')">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <style>
-    .announcement-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-    }
-
-    .announcement-item {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        padding: 1rem;
-    }
-
-    .announcement-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .announcement-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 4px;
-    }
-
-    .date {
-        color: #666;
-        font-size: 0.9rem;
-    }
-
-    .description {
-        font-size: 1rem;
-        line-height: 1.5;
-    }
-
-    .posted-by {
-        color: #666;
-        font-size: 0.8rem;
-        font-style: italic;
-    }
-
-    .btn-add {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .btn-add:hover {
-        background: #0056b3;
-    }
-
-    .btn-delete {
-        background: #dc3545;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .btn-delete:hover {
-        background: #c82333;
-    }
-
-    .modal {
-        display: none; /* Ensure the modal is hidden by default */
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal.show {
-        display: flex; /* Use flex to center the modal */
-    }
-
-    .modal-content {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        width: 400px;
-        position: relative;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-content .close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
-        font-size: 20px;
-        color: #333;
-    }
-
-    .btn-edit {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .btn-edit:hover {
-        background: #0056b3;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-    }
-
-    .form-group .form-control {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    .alert {
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        font-size: 14px;
-    }
-
-    .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-    </style>
-
     <script>
+        function toggleAnnouncementBody(header) {
+            const categories = document.querySelectorAll('.announcement-category');
+            const clickedCategory = header.parentElement;
+            const clickedBody = clickedCategory.querySelector('.announcement-body');
+            const clickedIcon = header.querySelector('.toggle-icon');
+            
+            categories.forEach(category => {
+                if (category !== clickedCategory) {
+                    const otherHeader = category.querySelector('.announcement-category-header');
+                    const otherBody = category.querySelector('.announcement-body');
+                    const otherIcon = otherHeader.querySelector('.toggle-icon');
+                    
+                    otherHeader.classList.remove('active');
+                    otherBody.classList.remove('active');
+                    otherIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            const isActive = header.classList.contains('active');
+            header.classList.toggle('active');
+            clickedBody.classList.toggle('active');
+            clickedIcon.style.transform = isActive ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        // Initialize first category as open by default
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCategory = document.querySelector('.announcement-category');
+            if (firstCategory) {
+                const header = firstCategory.querySelector('.announcement-category-header');
+                const body = firstCategory.querySelector('.announcement-body');
+                const icon = header.querySelector('.toggle-icon');
+                
+                header.classList.add('active');
+                body.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        });
+
         function openModal(modalId) {
             document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
         }
 
         function openEditModal(id, description, type) {
             document.getElementById("editAnnouncementId").value = id;
             document.getElementById("editAnnouncementDescription").value = description;
             document.getElementById("editAnnouncementType").value = type;
-            document.getElementById("editAnnouncementModal").classList.add("show");
-        }
-
-        function closeEditModal() {
-            document.getElementById("editAnnouncementModal").classList.remove("show");
+            openModal('editAnnouncementModal');
         }
 
         function deleteAnnouncement(id) {
@@ -438,5 +303,63 @@
                 });
             }
         }
+
+        // Handle form submissions
+        document.getElementById('addAnnouncementForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            
+            fetch('/Staff/AddAnnouncement', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Announcement added successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding announcement');
+            });
+        });
+
+        document.getElementById('editAnnouncementForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            fetch('/Staff/EditAnnouncement', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // Show success message
+                        location.reload(); // Reload the page to reflect changes
+                    } else {
+                        alert('Error: ' + data.message); // Show error message
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the announcement.');
+                });
+        });
     </script>
 </body>

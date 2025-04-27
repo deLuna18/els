@@ -246,6 +246,7 @@
         <!-- NAVBAR -->
         <nav>
             <i class='bx bx-menu'></i>
+            <input type="hidden" id="antiForgeryToken" value="@ViewBag.AntiForgeryToken" />
             <form>
                 <div class="form-input">
                     <input type="search" placeholder="Search...">
@@ -457,6 +458,21 @@
         </div>
     </div>
 
+    <!-- VIEW REQUEST DETAILS MODAL (similar structure, dynamic content) -->
+    <div id="viewRequestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Request Details</h2>
+                <span class="close-btn" onclick="closeViewRequestModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="requestDetailsContent" class="request-details">
+                    <!-- Dynamic content will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // SIDEBAR TOGGLE
         const menuBar = document.querySelector('#content nav .bx-menu');
@@ -515,54 +531,75 @@
             }
         });
 
-        // SAMPLE DATAA - WILL BE REPLACED WITH ACTUAL DATABASE LATER 
-        const sampleRequests = [
-            {
-                id: 'SR-001',
-                serviceType: 'Maintenance',
-                status: 'in-progress',
-                dateSubmitted: '2024-03-15',
-                description: 'Plumbing issue in the bathroom',
-                priority: 'High'
-            },
-            {
-                id: 'SR-002',
-                serviceType: 'Security',
-                status: 'pending',
-                dateSubmitted: '2024-03-16',
-                description: 'Security camera not working',
-                priority: 'Urgent'
+        // ------ DATA FETCHING AND TABLE RENDERING ------
+        let allRequests = []; // Store all fetched requests
+        let activeRequests = [];
+        let completedRequests = [];
+
+        let currentActivePage = 1;
+        const activeItemsPerPage = 5;
+        let filteredActiveRequests = [];
+
+        let currentCompletedPage = 1;
+        const completedItemsPerPage = 5;
+        let filteredCompletedRequests = [];
+
+        // Get the anti-forgery token
+        const antiForgeryToken = document.getElementById('antiForgeryToken')?.value;
+
+        // Fetch data from the server
+        async function fetchServiceRequests() {
+            try {
+                const response = await fetch('/Home/GetHomeownerServiceRequests');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                allRequests = await response.json();
+                console.log("Fetched Requests:", allRequests); // Debug log
+
+                // Separate requests into active and completed
+                activeRequests = allRequests.filter(r => r.status.toLowerCase() !== 'completed' && r.status.toLowerCase() !== 'rejected');
+                completedRequests = allRequests.filter(r => r.status.toLowerCase() === 'completed' || r.status.toLowerCase() === 'rejected');
+
+                // Initialize/Filter both tables
+                filterActiveRequests(); 
+                filterCompletedServices();
+
+            } catch (error) {
+                console.error('Error fetching service requests:', error);
+                showNotification('Failed to load service requests.', 'error');
             }
-        ];
-
-        let currentPage = 1;
-        const itemsPerPage = 5;
-        let filteredRequests = [...sampleRequests];
-
-        // TALBE
-        function initializeTable() {
-            updateTable();
-            updatePagination();
         }
 
-        // UPDATE TABLE
-        function updateTable() {
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const currentPageData = filteredRequests.slice(startIndex, endIndex);
+        // ------ ACTIVE REQUESTS TABLE ------
+        function initializeActiveTable() {
+            updateActiveTable();
+            updateActivePagination();
+        }
+
+        function updateActiveTable() {
+            const startIndex = (currentActivePage - 1) * activeItemsPerPage;
+            const endIndex = startIndex + activeItemsPerPage;
+            const currentPageData = filteredActiveRequests.slice(startIndex, endIndex);
 
             const tableBody = document.getElementById('requestsTableBody');
-            tableBody.innerHTML = '';
+            if (!tableBody) return;
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            if (currentPageData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5">No active requests found.</td></tr>';
+                return;
+            }
 
             currentPageData.forEach(request => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>#${request.id}</td>
+                    <td>${request.requestId}</td>
                     <td>${request.serviceType}</td>
-                    <td><span class="status ${request.status}">${request.status}</span></td>
+                    <td><span class="status ${request.status.toLowerCase().replace(' ', '-')}">${request.status}</span></td>
                     <td>${request.dateSubmitted}</td>
                     <td>
-                        <button class="view-btn" onclick="viewRequestDetails('${request.id}')">
+                        <button class="view-btn" onclick="viewRequestDetails('${request.id}')" title="View Details">
                             <i class='bx bx-show'></i> View
                         </button>
                     </td>
@@ -571,95 +608,198 @@
             });
         }
 
-        // FILTER SEARCH 
-        function filterRequests() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
+        function filterActiveRequests() {
+            const searchText = document.getElementById('searchInput')?.value.toLowerCase() || '';
 
-            filteredRequests = sampleRequests.filter(request => {
-                return request.id.toLowerCase().includes(searchText) ||
-                       request.serviceType.toLowerCase().includes(searchText) ||
-                       request.status.toLowerCase().includes(searchText);
+            filteredActiveRequests = activeRequests.filter(request => {
+                return (request.requestId?.toLowerCase() || '').includes(searchText) ||
+                       (request.serviceType?.toLowerCase() || '').includes(searchText) ||
+                       (request.status?.toLowerCase() || '').includes(searchText);
             });
 
-            currentPage = 1;
-            updateTable();
-            updatePagination();
+            currentActivePage = 1;
+            updateActiveTable();
+            updateActivePagination();
         }
 
-        // PAGINATION CONTROLS
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
-            document.getElementById('prevPage').disabled = currentPage === 1;
-            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        function updateActivePagination() {
+            const totalPages = Math.ceil(filteredActiveRequests.length / activeItemsPerPage);
+            const pageInfo = document.getElementById('pageInfo');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+
+            if (pageInfo) pageInfo.textContent = `Page ${totalPages > 0 ? currentActivePage : 0} of ${totalPages}`;
+            if (prevBtn) prevBtn.disabled = currentActivePage === 1;
+            if (nextBtn) nextBtn.disabled = currentActivePage === totalPages || totalPages === 0;
         }
 
-        // PAGE 
-        function changePage(delta) {
-            const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-            const newPage = currentPage + delta;
+        function changeActivePage(delta) {
+            const totalPages = Math.ceil(filteredActiveRequests.length / activeItemsPerPage);
+            const newPage = currentActivePage + delta;
             
             if (newPage >= 1 && newPage <= totalPages) {
-                currentPage = newPage;
-                updateTable();
-                updatePagination();
+                currentActivePage = newPage;
+                updateActiveTable();
+                updateActivePagination();
             }
         }
 
-       
+        // ------ COMPLETED SERVICES TABLE ------
+        function initializeCompletedTable() {
+            updateCompletedTable();
+            updateCompletedPagination();
+        }
+
+        function updateCompletedTable() {
+            const startIndex = (currentCompletedPage - 1) * completedItemsPerPage;
+            const endIndex = startIndex + completedItemsPerPage;
+            const currentPageData = filteredCompletedRequests.slice(startIndex, endIndex);
+
+            const tableBody = document.getElementById('completedServicesTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = ''; // Clear existing rows
+
+             if (currentPageData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5">No completed or rejected requests found.</td></tr>';
+                return;
+            }
+
+            currentPageData.forEach(service => {
+                const row = document.createElement('tr');
+                // Display different info for completed vs rejected
+                let statusClass = service.status.toLowerCase().replace(' ', '-');
+                let completionDetails = service.status.toLowerCase() === 'completed' 
+                    ? `<td>${service.dateCompleted || 'N/A'}</td>
+                       <td>${service.completionTime || 'N/A'}</td>
+                       <td>${service.staffNotes || 'None'}</td>`
+                    : `<td colspan="3">Status: <span class="status ${statusClass}">${service.status}</span></td>`;
+
+                row.innerHTML = `
+                    <td>${service.requestId}</td>
+                    <td><span class="service-type ${service.serviceType.toLowerCase()}">${service.serviceType}</span></td>
+                    ${completionDetails}
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function filterCompletedServices() {
+            const searchText = document.getElementById('completedSearchInput')?.value.toLowerCase() || '';
+
+            filteredCompletedRequests = completedRequests.filter(service => {
+                return (service.requestId?.toLowerCase() || '').includes(searchText) ||
+                       (service.serviceType?.toLowerCase() || '').includes(searchText) ||
+                       (service.staffNotes?.toLowerCase() || '').includes(searchText);
+            });
+
+            currentCompletedPage = 1;
+            updateCompletedTable();
+            updateCompletedPagination();
+        }
+
+        function updateCompletedPagination() {
+            const totalPages = Math.ceil(filteredCompletedRequests.length / completedItemsPerPage);
+            const pageInfo = document.getElementById('completedPageInfo');
+            const prevBtn = document.getElementById('prevCompletedPage');
+            const nextBtn = document.getElementById('nextCompletedPage');
+
+            if (pageInfo) pageInfo.textContent = `Page ${totalPages > 0 ? currentCompletedPage : 0} of ${totalPages}`;
+            if (prevBtn) prevBtn.disabled = currentCompletedPage === 1;
+            if (nextBtn) nextBtn.disabled = currentCompletedPage === totalPages || totalPages === 0;
+        }
+
+        function changeCompletedPage(delta) {
+            const totalPages = Math.ceil(filteredCompletedRequests.length / completedItemsPerPage);
+            const newPage = currentCompletedPage + delta;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentCompletedPage = newPage;
+                updateCompletedTable();
+                updateCompletedPagination();
+            }
+        }
+
+        // ------ MODALS ------
         function openNewRequestModal() {
-            document.getElementById('newRequestModal').style.display = 'block';
-            document.getElementById('serviceRequestForm').reset();
+            const modal = document.getElementById('newRequestModal');
+            if (modal) {
+                 modal.style.display = 'block';
+                 document.getElementById('serviceRequestForm')?.reset();
+            }
         }
 
         function closeNewRequestModal() {
-            document.getElementById('newRequestModal').style.display = 'none';
+            const modal = document.getElementById('newRequestModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function openViewRequestModal() {
+            const modal = document.getElementById('viewRequestModal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeViewRequestModal() {
+            const modal = document.getElementById('viewRequestModal');
+            if (modal) modal.style.display = 'none';
         }
 
         function viewRequestDetails(requestId) {
-            const request = sampleRequests.find(r => r.id === requestId);
-            if (!request) return;
+            // Find the request in the *original* allRequests array using the database ID (which is a number)
+            const request = allRequests.find(r => r.id === parseInt(requestId)); 
+            if (!request) {
+                console.error("Request not found for ID:", requestId);
+                showNotification('Could not find request details.', 'error');
+                return;
+            }
 
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Request Details</h2>
-                        <span class="close-btn" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <div class="request-details">
-                            <div class="detail-row">
-                                <span class="detail-label">Request ID:</span>
-                                <span class="detail-value">#${request.id}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Service Type:</span>
-                                <span class="detail-value">${request.serviceType}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Status:</span>
-                                <span class="detail-value status ${request.status}">${request.status}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Priority:</span>
-                                <span class="detail-value priority ${request.priority.toLowerCase()}">${request.priority}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Date Submitted:</span>
-                                <span class="detail-value">${request.dateSubmitted}</span>
-                            </div>
-                            <div class="detail-row full-width">
-                                <span class="detail-label">Description:</span>
-                                <div class="detail-value description">${request.description}</div>
-                            </div>
-                        </div>
-                    </div>
+            const detailsContent = document.getElementById('requestDetailsContent');
+            if (!detailsContent) return;
+
+            detailsContent.innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">Request ID:</span>
+                    <span class="detail-value">${request.requestId}</span>
                 </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service Type:</span>
+                    <span class="detail-value">${request.serviceType}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value status ${request.status.toLowerCase().replace(' ', '-')}">${request.status}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Priority:</span>
+                    <span class="detail-value priority ${request.priority.toLowerCase()}">${request.priority}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date Submitted:</span>
+                    <span class="detail-value">${request.dateSubmitted}</span>
+                </div>
+                 ${request.dateCompleted ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Date Completed:</span>
+                        <span class="detail-value">${request.dateCompleted}</span>
+                    </div>
+                 ` : ''}
+                 ${request.completionTime ? `
+                     <div class="detail-row">
+                        <span class="detail-label">Completion Time:</span>
+                        <span class="detail-value">${request.completionTime}</span>
+                    </div>
+                 ` : ''}
+                <div class="detail-row full-width">
+                    <span class="detail-label">Description:</span>
+                    <div class="detail-value description">${request.description}</div>
+                </div>
+                 ${request.staffNotes ? `
+                    <div class="detail-row full-width">
+                        <span class="detail-label">Staff Notes:</span>
+                        <div class="detail-value description">${request.staffNotes}</div>
+                    </div>
+                 ` : ''}
             `;
-            document.body.appendChild(modal);
-            modal.style.display = 'block';
+            openViewRequestModal();
         }
 
         // NOTFI
@@ -697,7 +837,8 @@
             }, 3000);
         }
 
-        document.getElementById('serviceRequestForm').addEventListener('submit', function(e) {
+        // FORM SUBMISSION (NEW REQUEST)
+        document.getElementById('serviceRequestForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const serviceType = document.getElementById('serviceType').value;
@@ -718,126 +859,74 @@
                 showNotification('Please select a priority level', 'error');
                 return;
             }
-            
-            const newRequest = {
-                id: `SR-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+
+            const requestData = {
                 serviceType: serviceType,
-                status: 'pending',
-                dateSubmitted: new Date().toISOString().split('T')[0],
                 description: description,
                 priority: priority
             };
-            
-            sampleRequests.unshift(newRequest);
-            filteredRequests = [...sampleRequests];
-            
-            showNotification('Service request submitted successfully!', 'success');
-            closeNewRequestModal();
-            updateTable();
-            updatePagination();
+
+            try {
+                const response = await fetch('/Home/RequestService', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': antiForgeryToken // Send token
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showNotification(result.message || 'Service request submitted successfully!', 'success');
+                    closeNewRequestModal();
+                    
+                    // Add the new request to the lists and refresh tables
+                    if (result.request) {
+                         allRequests.unshift(result.request); // Add to the beginning
+                         activeRequests.unshift(result.request);
+                         filterActiveRequests(); // This updates table and pagination
+                    } else {
+                         // Fallback: refetch all if specific data wasn't returned
+                        await fetchServiceRequests(); 
+                    }
+                } else {
+                    throw new Error(result.message || 'Failed to submit request.');
+                }
+            } catch (error) {
+                console.error('Error submitting service request:', error);
+                showNotification(error.message || 'An error occurred while submitting the request.', 'error');
+            }
         });
 
-        document.addEventListener('DOMContentLoaded', initializeTable);
-
-        document.getElementById('searchInput').addEventListener('keyup', filterRequests);
-
-        // COMPLETED SERVICES TABLE
-        let currentCompletedPage = 1;
-        const completedItemsPerPage = 5;
-        let filteredCompletedServices = [
-            {
-                id: 'SR-001',
-                serviceType: 'Maintenance',
-                dateCompleted: '2024-03-20',
-                completionTime: '2 days',
-                staffNotes: 'Plumbing issue resolved. Replaced faulty pipes.'
-            },
-            {
-                id: 'SR-002',
-                serviceType: 'Security',
-                dateCompleted: '2024-03-18',
-                completionTime: '1 day',
-                staffNotes: 'Security camera system repaired and tested.'
-            },
-            {
-                id: 'SR-003',
-                serviceType: 'Landscaping',
-                dateCompleted: '2024-03-15',
-                completionTime: '3 days',
-                staffNotes: 'Garden maintenance completed. Trees trimmed.'
-            },
-            {
-                id: 'SR-004',
-                serviceType: 'Facility',
-                dateCompleted: '2024-03-10',
-                completionTime: '5 days',
-                staffNotes: 'Clubhouse cleaning and maintenance completed.'
-            }
-        ];
-
-        function initializeCompletedTable() {
-            updateCompletedTable();
-            updateCompletedPagination();
-        }
-
-        function updateCompletedTable() {
-            const startIndex = (currentCompletedPage - 1) * completedItemsPerPage;
-            const endIndex = startIndex + completedItemsPerPage;
-            const currentPageData = filteredCompletedServices.slice(startIndex, endIndex);
-
-            const tableBody = document.getElementById('completedServicesTableBody');
-            tableBody.innerHTML = '';
-
-            currentPageData.forEach(service => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>#${service.id}</td>
-                    <td><span class="service-type ${service.serviceType.toLowerCase()}">${service.serviceType}</span></td>
-                    <td>${service.dateCompleted}</td>
-                    <td>${service.completionTime}</td>
-                    <td>${service.staffNotes}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        function filterCompletedServices() {
-            const searchText = document.getElementById('completedSearchInput').value.toLowerCase();
-
-            filteredCompletedServices = filteredCompletedServices.filter(service => {
-                return service.id.toLowerCase().includes(searchText) ||
-                       service.serviceType.toLowerCase().includes(searchText) ||
-                       service.staffNotes.toLowerCase().includes(searchText);
-            });
-
-            currentCompletedPage = 1;
-            updateCompletedTable();
-            updateCompletedPagination();
-        }
-
-        function updateCompletedPagination() {
-            const totalPages = Math.ceil(filteredCompletedServices.length / completedItemsPerPage);
-            document.getElementById('completedPageInfo').textContent = `Page ${currentCompletedPage} of ${totalPages}`;
-            document.getElementById('prevCompletedPage').disabled = currentCompletedPage === 1;
-            document.getElementById('nextCompletedPage').disabled = currentCompletedPage === totalPages;
-        }
-
-        function changeCompletedPage(delta) {
-            const totalPages = Math.ceil(filteredCompletedServices.length / completedItemsPerPage);
-            const newPage = currentCompletedPage + delta;
+        // Initial Load and Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchServiceRequests(); // Initial data fetch
             
-            if (newPage >= 1 && newPage <= totalPages) {
-                currentCompletedPage = newPage;
-                updateCompletedTable();
-                updateCompletedPagination();
+            // Add listeners for search inputs
+            document.getElementById('searchInput')?.addEventListener('keyup', filterActiveRequests);
+            document.getElementById('completedSearchInput')?.addEventListener('keyup', filterCompletedServices);
+
+            // Pagination listeners (ensure they are correct)
+            document.getElementById('prevPage')?.addEventListener('click', () => changeActivePage(-1));
+            document.getElementById('nextPage')?.addEventListener('click', () => changeActivePage(1));
+            document.getElementById('prevCompletedPage')?.addEventListener('click', () => changeCompletedPage(-1));
+            document.getElementById('nextCompletedPage')?.addEventListener('click', () => changeCompletedPage(1));
+        });
+
+        // Close modals if clicked outside
+        window.onclick = function(event) {
+            const newRequestModal = document.getElementById('newRequestModal');
+            const viewRequestModal = document.getElementById('viewRequestModal');
+            if (event.target == newRequestModal) {
+                closeNewRequestModal();
+            }
+            if (event.target == viewRequestModal) {
+                closeViewRequestModal();
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeTable();
-            initializeCompletedTable();
-            document.getElementById('completedSearchInput').addEventListener('keyup', filterCompletedServices);
-        });
     </script>
 </body>
 

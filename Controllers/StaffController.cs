@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Antiforgery;
 using System.IO;
 using System;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Logging;
 
 namespace SubdivisionManagement.Controllers
 {
@@ -16,21 +18,41 @@ namespace SubdivisionManagement.Controllers
     {
         private readonly HomeContext _context;
         private readonly IAntiforgery _antiforgery;
+        private readonly ILogger<StaffController> _logger;
 
-        public StaffController(HomeContext context, IAntiforgery antiforgery)
+        public StaffController(HomeContext context, IAntiforgery antiforgery, ILogger<StaffController> logger)
         {
             _context = context;
             _antiforgery = antiforgery;
+            _logger = logger;
+        }
+
+        // Helper to check if staff is logged in
+        private bool IsStaffLoggedIn(out string? username)
+        {
+            username = HttpContext.Session.GetString("StaffUser");
+            return !string.IsNullOrEmpty(username);
+        }
+
+        // Helper to get logged in staff user
+        private Staff? GetLoggedInStaffUser(string? username)
+        {
+            if (string.IsNullOrEmpty(username))
+                return null;
+            return _context.Staffs.FirstOrDefault(s => s.Username == username);
         }
 
         // GET: Staff/Login (Displays the login page)
         public IActionResult Login()
         {
+            var tokens = _antiforgery.GetAndStoreTokens(HttpContext);
+            ViewBag.AntiForgeryToken = tokens.RequestToken;
             return View();
         }
 
         // POST: Staff/Login (Handles the login logic)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(string username, string password)
         {
             var staff = _context.Staffs.FirstOrDefault(s => s.Username == username);
@@ -47,14 +69,12 @@ namespace SubdivisionManagement.Controllers
 
         public IActionResult Dashboard()
         {
-            var username = HttpContext.Session.GetString("StaffUser");
-
-            if (string.IsNullOrEmpty(username))
+            if (!IsStaffLoggedIn(out var username))
             {
                 return RedirectToAction("Login");
             }
 
-            var staff = _context.Staffs.FirstOrDefault(s => s.Username == username);
+            var staff = GetLoggedInStaffUser(username);
             if (staff == null)
             {
                 return RedirectToAction("Login");
@@ -74,16 +94,228 @@ namespace SubdivisionManagement.Controllers
             return View("staffdashboard", staff);
         }
 
+        [HttpGet]
         public IActionResult Staff_Services()
         {
-            // Check if staff is logged in
-            var username = HttpContext.Session.GetString("StaffUser");
-            if (string.IsNullOrEmpty(username))
+            if (!IsStaffLoggedIn(out _))
             {
                 return RedirectToAction("Login");
             }
-
+            var tokens = _antiforgery.GetAndStoreTokens(HttpContext);
+            ViewBag.AntiForgeryToken = tokens.RequestToken;
             return View();
+        }
+
+        // GET: /Staff/GetServiceRequests
+        [HttpGet]
+        public async Task<IActionResult> GetServiceRequests()
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try 
+            {
+                // Step 1: Fetch raw data from the database
+                var rawRequests = await _context.ServiceRequests
+                    .Include(r => r.Homeowner) // Still include homeowner for the name
+                    .OrderByDescending(r => r.DateSubmitted)
+                    .ToListAsync(); // Fetch the full entities
+
+                // Step 2: Project the data into the desired format in memory
+                var projectedRequests = rawRequests.Select(r => new 
+                {
+                    r.Id,
+                    RequestId = $"SR-{r.Id:D3}",
+                    HomeownerName = (r.Homeowner != null) ? $"{r.Homeowner.FirstName} {r.Homeowner.LastName}" : "N/A",
+                    r.HomeownerId,
+                    r.ServiceType,
+                    r.Priority,
+                    r.Status,
+                    DateSubmitted = r.DateSubmitted.ToString("yyyy-MM-dd HH:mm"), 
+                    r.Description,
+                    DateCompleted = r.DateCompleted.HasValue ? r.DateCompleted.Value.ToString("yyyy-MM-dd HH:mm") : null,
+                    CompletionTime = CalculateCompletionTime(r.DateAccepted, r.DateCompleted),
+                    r.StaffNotes,
+                    r.StaffId
+                }).ToList(); // Perform the Select in memory
+
+                return Json(projectedRequests);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching service requests in GetServiceRequests action.");
+                return StatusCode(500, new { message = "An internal error occurred while retrieving service requests." }); 
+            }
+        }
+
+        // POST: /Staff/UpdateServiceRequestStatus
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateServiceRequestStatus([FromBody] UpdateServiceRequestDto updateDto)
+        {
+            if (!IsStaffLoggedIn(out var username)) return Unauthorized();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var staff = GetLoggedInStaffUser(username);
+            if (staff == null) return Forbid(); // Should not happen if logged in
+
+            var request = await _context.ServiceRequests.FindAsync(updateDto.RequestId);
+            if (request == null)
+            {
+                return NotFound(new { success = false, message = "Service request not found." });
+            }
+
+            // Basic state transition validation (can be expanded)
+            if (!IsValidStatusTransition(request.Status, updateDto.NewStatus))
+            {
+                return BadRequest(new { success = false, message = $"Invalid status transition from {request.Status} to {updateDto.NewStatus}." });
+            }
+
+            // Update fields
+            request.Status = updateDto.NewStatus;
+            request.StaffId = staff.Id; // Assign current staff
+            request.StaffNotes = updateDto.StaffNotes ?? request.StaffNotes; // Update notes if provided
+
+            // Update timestamps based on new status
+            switch (updateDto.NewStatus.ToLower())
+            {
+                case "accepted":
+                    request.DateAccepted = DateTime.UtcNow;
+                    break;
+                case "in-progress":
+                    if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow; // Set accepted if not already
+                    request.DateStarted = DateTime.UtcNow;
+                    break;
+                case "completed":
+                    if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow;
+                    if (request.DateStarted == null) request.DateStarted = DateTime.UtcNow; // Assume started if completing directly
+                    request.DateCompleted = DateTime.UtcNow;
+                    break;
+                case "rejected":
+                    // Maybe clear dates if rejected?
+                    request.DateAccepted = null;
+                    request.DateStarted = null;
+                    request.DateCompleted = null;
+                    break;
+            }
+
+            try
+            {
+                _context.ServiceRequests.Update(request);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = $"Request status updated to {updateDto.NewStatus}." });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                 return Conflict(new { success = false, message = "The request was modified by another user. Please refresh and try again." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating service request status for ID {RequestId}", updateDto.RequestId);
+                return StatusCode(500, new { success = false, message = "An internal error occurred while updating the status." });
+            }
+        }
+
+        // POST: /Staff/UpdateStaffNotes
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStaffNotes([FromBody] UpdateStaffNotesDto notesDto)
+        {
+             if (!IsStaffLoggedIn(out var username)) return Unauthorized();
+             if (!ModelState.IsValid) return BadRequest(ModelState);
+
+             var staff = GetLoggedInStaffUser(username);
+             if (staff == null) return Forbid();
+
+             var request = await _context.ServiceRequests.FindAsync(notesDto.RequestId);
+             if (request == null)
+             {
+                 return NotFound(new { success = false, message = "Service request not found." });
+             }
+
+             // Optional: Check if the request is assigned to this staff or if any staff can edit notes
+             // if (request.StaffId != null && request.StaffId != staff.Id) {
+             //     return Forbid(new { success = false, message = "You are not assigned to this request." });
+             // }
+
+             request.StaffNotes = notesDto.StaffNotes;
+             request.StaffId = staff.Id; // Ensure staff is assigned if adding notes
+
+             try
+             {
+                 _context.ServiceRequests.Update(request);
+                 await _context.SaveChangesAsync();
+                 return Json(new { success = true, message = "Staff notes updated successfully." });
+             }
+             catch (Exception ex)
+             {
+                 _logger.LogError(ex, "Error updating staff notes for ID {RequestId}", notesDto.RequestId);
+                 return StatusCode(500, new { success = false, message = "An internal error occurred while updating notes." });
+             }
+        }
+
+        // Basic validation for status transitions
+        private bool IsValidStatusTransition(string currentStatus, string newStatus)
+        {
+            currentStatus = currentStatus.ToLower();
+            newStatus = newStatus.ToLower();
+
+            if (currentStatus == newStatus) return true; // No change
+            if (currentStatus == "completed" || currentStatus == "rejected") return false; // Cannot change from final states
+
+            switch (currentStatus)
+            {
+                case "pending":
+                    return newStatus == "accepted" || newStatus == "rejected";
+                case "accepted":
+                    return newStatus == "in-progress" || newStatus == "completed" || newStatus == "rejected"; // Allow reject even if accepted?
+                case "in-progress":
+                    return newStatus == "completed" || newStatus == "rejected"; // Allow reject while in progress?
+                default:
+                    return false; // Unknown current status
+            }
+        }
+
+        // DTO for updating service request status
+        public class UpdateServiceRequestDto
+        {
+            [Required] public int RequestId { get; set; }
+            [Required] public string NewStatus { get; set; } = string.Empty;
+            public string? StaffNotes { get; set; }
+        }
+
+        // DTO for updating staff notes separately
+        public class UpdateStaffNotesDto
+        {
+            [Required] public int RequestId { get; set; }
+            [Required] public string StaffNotes { get; set; } = string.Empty;
+        }
+
+        // Helper to calculate completion time string safely
+        private string? CalculateCompletionTime(DateTime? start, DateTime? end)
+        {
+             if (!start.HasValue || !end.HasValue || end.Value < start.Value) 
+             {
+                return null; // Cannot calculate if start/end are invalid or null
+             }
+             return CalculateBusinessTime(start.Value, end.Value); // Use the existing helper if dates are valid
+        }
+
+        // Helper to calculate business time (example - ignores weekends/holidays)
+        private string CalculateBusinessTime(DateTime start, DateTime end)
+        {
+            TimeSpan duration = end - start;
+            if (duration.TotalDays >= 1)
+            {
+                return $"{duration.TotalDays:F1} days";
+            }
+            else if (duration.TotalHours >= 1)
+            {
+                return $"{duration.TotalHours:F1} hours";
+            }
+            else
+            {
+                return $"{duration.TotalMinutes:F0} minutes";
+            }
         }
 
         // Staff Logout
@@ -133,6 +365,7 @@ namespace SubdivisionManagement.Controllers
 
         // POST: Staff/Register (Handles the registration logic)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(Staff staff)
         {
             if (staff == null)
@@ -179,8 +412,8 @@ namespace SubdivisionManagement.Controllers
                 }
 
                 // Get the current staff user
-                var username = HttpContext.Session.GetString("StaffUser");
-                var staff = _context.Staffs.FirstOrDefault(s => s.Username == username);
+                if (!IsStaffLoggedIn(out var username)) return Unauthorized();
+                var staff = GetLoggedInStaffUser(username);
                 
                 if (staff == null)
                 {
@@ -214,8 +447,8 @@ namespace SubdivisionManagement.Controllers
         {
             try
             {
-                var username = HttpContext.Session.GetString("StaffUser");
-                var staff = _context.Staffs.FirstOrDefault(s => s.Username == username);
+                if (!IsStaffLoggedIn(out var username)) return Unauthorized();
+                var staff = GetLoggedInStaffUser(username);
                 
                 if (staff == null)
                 {
@@ -265,6 +498,8 @@ namespace SubdivisionManagement.Controllers
         {
             try
             {
+                if (!IsStaffLoggedIn(out _)) return Unauthorized(); // Check login
+
                 var announcement = _context.Announcements.FirstOrDefault(a => a.Id == id);
                 if (announcement == null)
                 {
@@ -315,6 +550,8 @@ namespace SubdivisionManagement.Controllers
         {
             try
             {
+                if (!IsStaffLoggedIn(out _)) return Unauthorized(); // Check login
+
                 var announcement = _context.Announcements.FirstOrDefault(a => a.Id == id);
                 if (announcement == null)
                 {
@@ -334,6 +571,8 @@ namespace SubdivisionManagement.Controllers
 
         public IActionResult Announcements()
         {
+            if (!IsStaffLoggedIn(out _)) return RedirectToAction("Login"); // Check login
+
             var announcements = _context.Announcements
                 .Include(a => a.Staff)
                 .OrderByDescending(a => a.DateCreated)
@@ -344,22 +583,14 @@ namespace SubdivisionManagement.Controllers
 
         public IActionResult Staff_Security_Visitors()
         {
-            var username = HttpContext.Session.GetString("StaffUser");
-            if (string.IsNullOrEmpty(username))
-            {
-                return RedirectToAction("Login");
-            }
+            if (!IsStaffLoggedIn(out _)) return RedirectToAction("Login"); // Check login
 
             return View("staff_security_visitors");
         }
 
         public IActionResult Staff_Community_Forum()
         {
-            var username = HttpContext.Session.GetString("StaffUser");
-            if (string.IsNullOrEmpty(username))
-            {
-                return RedirectToAction("Login");
-            }
+            if (!IsStaffLoggedIn(out _)) return RedirectToAction("Login"); // Check login
 
             return View("staff_community_forum");
         }

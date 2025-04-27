@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SubdivisionManagement.Model;
 
@@ -11,9 +12,11 @@ using SubdivisionManagement.Model;
 namespace SubdivisionManagement.Migrations
 {
     [DbContext(typeof(HomeContext))]
-    partial class HomeContextModelSnapshot : ModelSnapshot
+    [Migration("20250427184743_AddPRFO")]
+    partial class AddPRFO
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,63 +151,6 @@ namespace SubdivisionManagement.Migrations
                     b.ToTable("Homeowners");
                 });
 
-            modelBuilder.Entity("SubdivisionManagement.Model.ServiceRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("DateAccepted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateCompleted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateStarted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateSubmitted")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("HomeownerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ServiceType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("StaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StaffNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HomeownerId");
-
-                    b.HasIndex("StaffId");
-
-                    b.ToTable("ServiceRequests");
-                });
-
             modelBuilder.Entity("SubdivisionManagement.Model.Staff", b =>
                 {
                     b.Property<int>("Id")
@@ -268,24 +214,6 @@ namespace SubdivisionManagement.Migrations
                     b.HasOne("SubdivisionManagement.Model.Staff", "Staff")
                         .WithMany()
                         .HasForeignKey("StaffId");
-
-                    b.Navigation("Staff");
-                });
-
-            modelBuilder.Entity("SubdivisionManagement.Model.ServiceRequest", b =>
-                {
-                    b.HasOne("SubdivisionManagement.Model.Homeowner", "Homeowner")
-                        .WithMany()
-                        .HasForeignKey("HomeownerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SubdivisionManagement.Model.Staff", "Staff")
-                        .WithMany()
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Homeowner");
 
                     b.Navigation("Staff");
                 });

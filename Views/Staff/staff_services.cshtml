@@ -215,6 +215,7 @@
         <!-- NAVBAR -->
         <nav>
 			<i class='bx bx-menu'></i>
+            <input type="hidden" id="antiForgeryToken" value="@ViewBag.AntiForgeryToken" />
 			<form action="#">
 				<div class="form-input">
 					<input type="search" placeholder="Search...">
@@ -355,64 +356,15 @@
                             </tr>
                         </thead>
                         <tbody id="completedRequestsTableBody">
-                            <tr>
-                                <td>#SR-001</td>
-                                <td>John Doe</td>
-                                <td><span class="service-type maintenance">Maintenance</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td>2024-03-20</td>
-                                <td>2 days</td>
-                                <td>Plumbing issue resolved. Replaced faulty pipes.</td>
-                                <td>
-                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-001')" title="Edit Staff Notes">
-                                        <i class='bx bx-edit'></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#SR-002</td>
-                                <td>Jane Smith</td>
-                                <td><span class="service-type security">Security</span></td>
-                                <td><span class="priority urgent">Urgent</span></td>
-                                <td>2024-03-18</td>
-                                <td>1 day</td>
-                                <td>Security camera system repaired and tested.</td>
-                                <td>
-                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-002')" title="Edit Staff Notes">
-                                        <i class='bx bx-edit'></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#SR-003</td>
-                                <td>Mike Johnson</td>
-                                <td><span class="service-type landscaping">Landscaping</span></td>
-                                <td><span class="priority medium">Medium</span></td>
-                                <td>2024-03-15</td>
-                                <td>3 days</td>
-                                <td>Garden maintenance completed. Trees trimmed.</td>
-                                <td>
-                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-003')" title="Edit Staff Notes">
-                                        <i class='bx bx-edit'></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#SR-004</td>
-                                <td>Sarah Wilson</td>
-                                <td><span class="service-type facility">Facility</span></td>
-                                <td><span class="priority low">Low</span></td>
-                                <td>2024-03-10</td>
-                                <td>5 days</td>
-                                <td>Clubhouse cleaning and maintenance completed.</td>
-                                <td>
-                                    <button class="action-btn edit-notes" onclick="openStaffNotesModal('SR-004')" title="Edit Staff Notes">
-                                        <i class='bx bx-edit'></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <!-- Dynamic Content will be loaded here by JavaScript -->
+                            <!-- Removing sample static rows -->
                         </tbody>
                     </table>
+                </div>
+                <div class="pagination">
+                    <button id="prevCompletedPage">Previous</button>
+                    <span id="completedPageInfo">Page 1 of 1</span>
+                    <button id="nextCompletedPage">Next</button>
                 </div>
                 <div class="report-summary">
                     <div class="summary-item">
@@ -436,10 +388,14 @@
     <!-- REQUEST DETAILS MODAL -->
     <div id="requestDetailsModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeRequestDetailsModal()">&times;</span>
-            <h2>Request Details</h2>
-            <div id="requestDetailsContent">
-                <!-- DYBAMIC -->
+            <div class="modal-header">
+                <h2>Request Details</h2>
+                <span class="close-btn" onclick="closeRequestDetailsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="requestDetailsContent">
+                    <!-- Dynamic content -->
+                </div>
             </div>
         </div>
     </div>
@@ -476,21 +432,22 @@
             </div>
             <div class="modal-body">
                 <form id="staffNotesForm">
+                     <input type="hidden" id="staffNotesForm-requestId"> <!-- Hidden input for actual ID -->
                     <div class="form-group">
-                        <label for="requestId">Request ID:</label>
-                        <input type="text" id="requestId" readonly>
+                        <label for="staffNotesForm-requestIdDisplay">Request ID:</label> <!-- Display only -->
+                        <input type="text" id="staffNotesForm-requestIdDisplay" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="homeownerName">Homeowner:</label>
-                        <input type="text" id="homeownerName" readonly>
+                        <label for="staffNotesForm-homeownerName">Homeowner:</label>
+                        <input type="text" id="staffNotesForm-homeownerName" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="serviceType">Service Type:</label>
-                        <input type="text" id="serviceType" readonly>
+                        <label for="staffNotesForm-serviceType">Service Type:</label>
+                        <input type="text" id="staffNotesForm-serviceType" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="staffNotes">Staff Notes:</label>
-                        <textarea id="staffNotes" rows="5" placeholder="Enter your notes here..."></textarea>
+                        <label for="staffNotesForm-notes">Staff Notes:</label>
+                        <textarea id="staffNotesForm-notes" rows="5" placeholder="Enter your notes here..."></textarea>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="cancel-btn" onclick="closeStaffNotesModal()">Cancel</button>
@@ -499,6 +456,11 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); color: white; display: none; justify-content: center; align-items: center; z-index: 1001;">
+        <span>Loading...</span>
     </div>
 
     <script>
@@ -529,88 +491,22 @@
             }
         });
 
-        // SAMPLE DATA
-        const sampleRequests = [
-            {
-                id: 'SR-001',
-                homeowner: 'John Doe',
-                serviceType: 'Maintenance',
-                priority: 'High',
-                status: 'pending',
-                dateSubmitted: '2024-03-15',
-                description: 'Plumbing issue in the bathroom'
-            },
-            {
-                id: 'SR-002',
-                homeowner: 'Jane Smith',
-                serviceType: 'Security',
-                priority: 'Urgent',
-                status: 'pending',
-                dateSubmitted: '2024-03-16',
-                description: 'Security camera not working'
-            },
-            
-        ];
+        // ------ DATA AND STATE MANAGEMENT ------
+        let allServiceRequests = [];
+        let filteredRequests = [];
+        let filteredCompletedRequests = [];
+        let currentRequestPage = 1;
+        const requestsPerPage = 10; // Adjust as needed
+        let currentCompletedPage = 1;
+        const completedPerPage = 10; // Adjust as needed
 
-        let currentPage = 1;
-        const itemsPerPage = 5;
-        let filteredRequests = [...sampleRequests];
+        const antiForgeryToken = document.getElementById('antiForgeryToken')?.value;
+        let currentSortColumn = 'dateSubmitted'; // Default sort
+        let currentSortDirection = 'desc';
 
-        // TABLE
-        function initializeTable() {
-            updateTable();
-            updatePagination();
-        }
-
-        // UPDATE TABLE WITH FILTERED DATA
-        function updateTable() {
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const currentPageData = filteredRequests.slice(startIndex, endIndex);
-
-            const tableBody = document.getElementById('requestsTableBody');
-            tableBody.innerHTML = '';
-
-            currentPageData.forEach(request => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>#${request.id}</td>
-                    <td>${request.homeowner}</td>
-                    <td>${request.serviceType}</td>
-                    <td>${request.priority}</td>
-                    <td><span class="status ${request.status}">${getStatusText(request.status)}</span></td>
-                    <td>${request.dateSubmitted}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn view" onclick="viewRequestDetails('${request.id}')" title="View Details">
-                                <i class='bx bx-detail'></i>
-                            </button>
-                            ${request.status === 'pending' ? `
-                                <button class="action-btn accept" onclick="updateRequestStatus('${request.id}', 'accepted')" title="Accept Request">
-                                    <i class='bx bx-check-double'></i>
-                                </button>
-                                <button class="action-btn reject" onclick="updateRequestStatus('${request.id}', 'rejected')" title="Reject Request">
-                                    <i class='bx bx-x-circle'></i>
-                                </button>
-                            ` : ''}
-                            ${request.status === 'accepted' ? `
-                                <button class="action-btn progress" onclick="updateRequestStatus('${request.id}', 'in-progress')" title="Start Progress">
-                                    <i class='bx bx-play-circle'></i>
-                                </button>
-                            ` : ''}
-                            ${request.status === 'in-progress' ? `
-                                <button class="action-btn complete" onclick="updateRequestStatus('${request.id}', 'completed')" title="Mark Complete">
-                                    <i class='bx bx-check-circle'></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
+        // ------ UTILITY FUNCTIONS ------
         function getStatusText(status) {
+            if (!status) return 'Unknown';
             const statusMap = {
                 'pending': 'Pending',
                 'accepted': 'Accepted',
@@ -618,213 +514,744 @@
                 'in-progress': 'In Progress',
                 'completed': 'Completed'
             };
-            return statusMap[status] || status;
+            return statusMap[status.toLowerCase()] || status;
         }
 
-        // FILTER REQUESTS 
-        function filterRequests() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const typeFilter = document.getElementById('typeFilter').value;
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-
-            filteredRequests = sampleRequests.filter(request => {
-                const matchesStatus = statusFilter === 'all' || request.status === statusFilter;
-                const matchesType = typeFilter === 'all' || request.serviceType.toLowerCase() === typeFilter;
-                const matchesSearch = request.id.toLowerCase().includes(searchText) ||
-                                    request.homeowner.toLowerCase().includes(searchText) ||
-                                    request.serviceType.toLowerCase().includes(searchText);
-
-                return matchesStatus && matchesType && matchesSearch;
-            });
-
-            currentPage = 1;
-            updateTable();
-            updatePagination();
-        }
-
-        // PAGINATION CONTROLS
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
-            document.getElementById('prevPage').disabled = currentPage === 1;
-            document.getElementById('nextPage').disabled = currentPage === totalPages;
-        }
-
-        // CHANGE PAGE
-        function changePage(delta) {
-            const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-            const newPage = currentPage + delta;
-            
-            if (newPage >= 1 && newPage <= totalPages) {
-                currentPage = newPage;
-                updateTable();
-                updatePagination();
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                // Assuming dateString is in a format JS can parse (like ISO 8601)
+                 const date = new Date(dateString);
+                 // Format to YYYY-MM-DD HH:MM (adjust as needed)
+                 return date.toLocaleDateString('sv-SE') + ' ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            } catch (e) {
+                 console.error("Error formatting date:", dateString, e);
+                 return 'Invalid Date';
             }
         }
 
-        // MODAL
-        function viewRequestDetails(requestId) {
-            const request = sampleRequests.find(r => r.id === requestId);
+        // ------ NOTIFICATION ------
+         function showNotification(message, type = 'info') {
+            // Simple notification logic (replace with a more robust library if needed)
+            const notificationArea = document.getElementById('notificationArea') || createNotificationArea(); // Ensure area exists
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`; // Use CSS classes for styling
+            notification.textContent = message;
+
+            notificationArea.appendChild(notification);
+
+            // Auto-remove after a few seconds
+            setTimeout(() => {
+                notification.style.opacity = '0'; // Fade out
+                setTimeout(() => notification.remove(), 500); // Remove after fade
+            }, 3000); // Adjust time as needed
+        }
+
+        function createNotificationArea() {
+            const area = document.createElement('div');
+            area.id = 'notificationArea';
+            // Style the notification area (position fixed, top right, etc.)
+            area.style.position = 'fixed';
+            area.style.top = '20px';
+            area.style.right = '20px';
+            area.style.zIndex = '1002'; // Above loading overlay potentially
+            document.body.appendChild(area);
+            return area;
+        }
+
+        // ------ DATA FETCHING ------
+        async function fetchServiceRequests() {
+            showLoadingIndicator(true);
+            try {
+                const response = await fetch('/Staff/GetServiceRequests');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                allServiceRequests = await response.json();
+                console.log("Fetched Staff Requests:", allServiceRequests); // Debug
+                applyFiltersAndSort(); // Initial filter and sort
+            } catch (error) {
+                console.error("Error fetching service requests:", error);
+                showNotification("Failed to load service requests.", "error");
+                allServiceRequests = []; // Clear data on error
+                applyFiltersAndSort(); // Update tables even on error
+            } finally {
+                 showLoadingIndicator(false);
+            }
+        }
+
+        // ------ FILTERING AND SORTING ------
+        function applyFiltersAndSort() {
+            const statusFilter = document.getElementById('statusFilter')?.value || 'all';
+            const typeFilter = document.getElementById('typeFilter')?.value || 'all';
+            const searchText = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            const reportMonth = document.getElementById('reportMonthFilter')?.value || 'all';
+            const reportYear = document.getElementById('reportYearFilter')?.value || new Date().getFullYear().toString();
+
+            // --- Filter Main Request List ---
+            let tempFiltered = allServiceRequests.filter(request => {
+                const status = request.status?.toLowerCase() || '';
+                const type = request.serviceType?.toLowerCase() || '';
+
+                const matchesStatus = statusFilter === 'all' || status === statusFilter;
+                const matchesType = typeFilter === 'all' || type === typeFilter;
+                const matchesSearch = (request.requestId?.toLowerCase() || '').includes(searchText) ||
+                                    (request.homeownerName?.toLowerCase() || '').includes(searchText) ||
+                                    (request.serviceType?.toLowerCase() || '').includes(searchText) ||
+                                    (request.description?.toLowerCase() || '').includes(searchText);
+                
+                // Exclude completed/rejected from the main list *unless* specifically filtered for
+                const isFinalState = status === 'completed' || status === 'rejected';
+                let showInMain = false;
+                if (statusFilter === 'all') {
+                    showInMain = !isFinalState; // Only show non-final if filter is 'all'
+                } else {
+                    showInMain = matchesStatus; // Otherwise, show if filter matches exactly
+                }
+
+                return showInMain && matchesType && matchesSearch;
+            });
+
+            // --- Sort Main Request List ---
+            tempFiltered.sort((a, b) => {
+                let valA = a[currentSortColumn];
+                let valB = b[currentSortColumn];
+
+                // Handle different data types for sorting
+                if (currentSortColumn === 'dateSubmitted' || currentSortColumn === 'dateCompleted') {
+                    // Use 0 for null dates to avoid errors, sort nulls last/first as needed
+                    valA = a[currentSortColumn] ? new Date(a[currentSortColumn]) : (currentSortDirection === 'desc' ? new Date(0) : new Date(8640000000000000)); 
+                    valB = b[currentSortColumn] ? new Date(b[currentSortColumn]) : (currentSortDirection === 'desc' ? new Date(0) : new Date(8640000000000000));
+                } else if (currentSortColumn === 'requestId') {
+                     // Extract number part for sorting
+                     valA = parseInt((a.requestId || 'SR-0').split('-')[1] || 0);
+                     valB = parseInt((b.requestId || 'SR-0').split('-')[1] || 0);
+                 } else {
+                     // Basic string/number comparison
+                     valA = typeof valA === 'string' ? valA.toLowerCase() : valA;
+                     valB = typeof valB === 'string' ? valB.toLowerCase() : valB;
+                 }
+
+                if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            filteredRequests = tempFiltered;
+            currentRequestPage = 1; // Reset to first page after filtering/sorting
+            updateRequestsTable();
+            updateRequestPagination();
+            updateQuickStats();
+
+            // --- Filter Completed Requests Report ---
+            console.log("Filtering completed/rejected report..."); // Log start
+            console.log("Report Filters:", { month: reportMonth, year: reportYear }); // Log filter values
+
+            let tempCompletedFiltered = allServiceRequests.filter(request => {
+                const status = request.status?.toLowerCase();
+                const isReportableFinalState = status === 'completed' || status === 'rejected'; 
+
+                // Log initial check
+                // console.log(`Checking Request ID: ${request.requestId}, Status: ${status}, Is Reportable: ${isReportableFinalState}`);
+
+                if (!isReportableFinalState) return false; 
+
+                const filterDateStr = status === 'completed' ? request.dateCompleted : request.dateSubmitted;
+                
+                // Log date string being used
+                // console.log(`  Using Date String: ${filterDateStr}`);
+
+                if (!filterDateStr) {
+                    console.warn(`  Skipping Request ID: ${request.requestId} - No relevant date found.`);
+                    return false; // Cannot filter if no relevant date
+                }
+
+                try {
+                    const filterDate = new Date(filterDateStr);
+                    if (isNaN(filterDate.getTime())) { // Check if date parsing failed
+                       console.warn(`  Skipping Request ID: ${request.requestId} - Invalid date format: ${filterDateStr}`);
+                       return false;
+                    }
+                    
+                    const requestMonth = filterDate.getMonth() + 1;
+                    const requestYear = filterDate.getFullYear();
+                    
+                    const matchesMonth = reportMonth === 'all' || requestMonth === parseInt(reportMonth);
+                    const matchesYear = requestYear === parseInt(reportYear);
+                    
+                    // Log comparison results
+                    console.log(`  Request ID: ${request.requestId} (${status}) - Date: ${filterDate.toISOString().split('T')[0]}, Month: ${requestMonth}, Year: ${requestYear}. Filter Match (Month: ${matchesMonth}, Year: ${matchesYear})`);
+
+                    return matchesMonth && matchesYear;
+                } catch (e) {
+                    console.error(`  Error parsing date for report filter (Request ID: ${request.requestId}):`, filterDateStr, e);
+                    return false;
+                }
+            });
+
+            console.log("Filtered Completed/Rejected Count:", tempCompletedFiltered.length); // Log final count
+
+            // Sort completed/rejected requests (e.g., by completion/submission date descending)
+             tempCompletedFiltered.sort((a, b) => {
+                 const dateA = new Date(a.dateCompleted || a.dateSubmitted || 0);
+                 const dateB = new Date(b.dateCompleted || b.dateSubmitted || 0);
+                 return dateB - dateA; // Descending
+             });
+
+            filteredCompletedRequests = tempCompletedFiltered;
+            currentCompletedPage = 1; // Reset to first page
+            updateCompletedRequestsTable();
+            updateCompletedPagination();
+            updateReportSummary();
+        }
+        
+        function handleSort(column) {
+             if (currentSortColumn === column) {
+                 currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+             } else {
+                 currentSortColumn = column;
+                 // Default sort direction based on column type (optional)
+                 currentSortDirection = (column === 'dateSubmitted' || column === 'dateCompleted') ? 'desc' : 'asc'; 
+             }
+             
+             // Update header indicators (optional visual feedback)
+             updateSortIndicators();
+             
+             applyFiltersAndSort(); // Re-apply filters and sort
+         }
+         
+         function updateSortIndicators() {
+             document.querySelectorAll('.table-container th[data-sort-col]').forEach(th => {
+                 th.classList.remove('sort-asc', 'sort-desc');
+                 const sortIcon = th.querySelector('.sort-icon');
+                 if(sortIcon) sortIcon.innerHTML = ''; // Clear icon
+
+                 if (th.dataset.sortCol === currentSortColumn) {
+                     th.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                     if(sortIcon) sortIcon.innerHTML = currentSortDirection === 'asc' ? '▲' : '▼'; // Add icon
+                 }
+             });
+         }
+
+        // ------ TABLE RENDERING (MAIN REQUESTS) ------
+        function updateRequestsTable() {
+            const startIndex = (currentRequestPage - 1) * requestsPerPage;
+            const endIndex = startIndex + requestsPerPage;
+            const currentPageData = filteredRequests.slice(startIndex, endIndex);
+
+            const tableBody = document.getElementById('requestsTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            if (currentPageData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7">No matching service requests found.</td></tr>';
+                return;
+            }
+
+            currentPageData.forEach(request => {
+                const row = document.createElement('tr');
+                const statusClass = request.status?.toLowerCase().replace('-', '') || 'unknown'; // e.g., inprogress
+                const priorityClass = request.priority?.toLowerCase() || 'unknown';
+
+                // Determine available actions based on status
+                let actionButtons = '';
+                const currentStatusLower = request.status?.toLowerCase();
+
+                actionButtons += `
+                    <button class="action-btn view" onclick="viewRequestDetails(${request.id})" title="View Details">
+                        <i class='bx bx-detail'></i>
+                    </button>
+                `;
+
+                if (currentStatusLower === 'pending') {
+                    actionButtons += `
+                        <button class="action-btn accept" onclick="promptUpdateStatus(${request.id}, 'Accepted')" title="Accept Request">
+                            <i class='bx bx-check-double'></i>
+                        </button>
+                        <button class="action-btn reject" onclick="promptUpdateStatus(${request.id}, 'Rejected')" title="Reject Request">
+                            <i class='bx bx-x-circle'></i>
+                        </button>
+                    `;
+                } else if (currentStatusLower === 'accepted') {
+                    actionButtons += `
+                        <button class="action-btn progress" onclick="promptUpdateStatus(${request.id}, 'In-Progress')" title="Start Progress">
+                            <i class='bx bx-play-circle'></i>
+                        </button>
+                         <button class="action-btn reject" onclick="promptUpdateStatus(${request.id}, 'Rejected')" title="Reject Request">
+                            <i class='bx bx-x-circle'></i>
+                        </button>
+                         <button class="action-btn complete" onclick="promptUpdateStatus(${request.id}, 'Completed', true)" title="Mark Complete">
+                             <i class='bx bx-check-circle'></i>
+                         </button>
+                    `;
+                } else if (currentStatusLower === 'in-progress') {
+                     actionButtons += `
+                        <button class="action-btn complete" onclick="promptUpdateStatus(${request.id}, 'Completed', true)" title="Mark Complete">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                         <button class="action-btn reject" onclick="promptUpdateStatus(${request.id}, 'Rejected')" title="Reject Request">
+                            <i class='bx bx-x-circle'></i>
+                        </button>
+                    `;
+                }
+                 // Add edit notes button (always available for non-final states, or adjust logic)
+                 if (currentStatusLower !== 'completed' && currentStatusLower !== 'rejected') {
+                     actionButtons += `
+                         <button class="action-btn edit-notes" onclick="openStaffNotesModal(${request.id})" title="Edit/Add Staff Notes">
+                             <i class='bx bx-edit'></i>
+                         </button>
+                     `;
+                 }
+
+                row.innerHTML = `
+                    <td>${request.requestId || 'N/A'}</td>
+                    <td>${request.homeownerName || 'N/A'}</td>
+                    <td><span class="service-type ${request.serviceType?.toLowerCase() || 'unknown'}">${request.serviceType || 'N/A'}</span></td>
+                    <td><span class="priority ${priorityClass}">${request.priority || 'N/A'}</span></td>
+                    <td><span class="status ${statusClass}">${getStatusText(request.status)}</span></td>
+                    <td>${formatDate(request.dateSubmitted)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            ${actionButtons}
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // ------ PAGINATION (MAIN REQUESTS) ------
+        function updateRequestPagination() {
+            const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
+            const pageInfo = document.getElementById('pageInfo');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+
+            if (pageInfo) pageInfo.textContent = `Page ${totalPages > 0 ? currentRequestPage : 0} of ${totalPages}`;
+            if (prevBtn) prevBtn.disabled = currentRequestPage === 1 || totalPages === 0;
+            if (nextBtn) nextBtn.disabled = currentRequestPage === totalPages || totalPages === 0;
+        }
+
+        function changeRequestPage(delta) {
+            const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
+            const newPage = currentRequestPage + delta;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentRequestPage = newPage;
+                updateRequestsTable(); // Only re-render the table
+                updateRequestPagination(); // Update button states
+            }
+        }
+        
+        // ------ QUICK STATS ------
+        function updateQuickStats() {
+            const stats = {
+                total: 0,
+                pending: 0,
+                accepted: 0,
+                inProgress: 0,
+                completed: 0,
+                rejected: 0
+            };
+
+            allServiceRequests.forEach(req => {
+                stats.total++;
+                const status = req.status?.toLowerCase();
+                if (status === 'pending') stats.pending++;
+                else if (status === 'accepted') stats.accepted++;
+                else if (status === 'in-progress') stats.inProgress++;
+                else if (status === 'completed') stats.completed++;
+                else if (status === 'rejected') stats.rejected++;
+            });
+
+            const statsList = document.querySelector('.todo-list');
+            if (statsList) {
+                 // Use class names that match your CSS for coloring/styling
+                 statsList.innerHTML = `
+                     <li class="completed"> <!-- Or use a specific class if needed -->
+                         <p>Total Requests</p>
+                         <p>${stats.total}</p>
+                         <i class='bx bx-list-ul'></i>
+                     </li>
+                     <li class="${stats.pending > 0 ? 'status-pending' : 'completed'}">
+                         <p>Pending</p>
+                         <p>${stats.pending}</p>
+                         <i class='bx bx-time'></i>
+                     </li>
+                      <li class="${stats.accepted > 0 ? 'status-accepted' : 'completed'}">
+                         <p>Accepted</p>
+                         <p>${stats.accepted}</p>
+                         <i class='bx bx-check-shield'></i>
+                     </li>
+                     <li class="${stats.inProgress > 0 ? 'status-in-progress' : 'completed'}">
+                         <p>In Progress</p>
+                         <p>${stats.inProgress}</p>
+                         <i class='bx bx-loader-alt'></i>
+                     </li>
+                     <li class="completed"> <!-- Assuming completed is always styled as completed -->
+                         <p>Completed</p>
+                         <p>${stats.completed}</p>
+                         <i class='bx bx-check-circle'></i>
+                     </li>
+                     <li class="${stats.rejected > 0 ? 'status-rejected' : 'completed'}">
+                         <p>Rejected</p>
+                         <p>${stats.rejected}</p>
+                         <i class='bx bx-x-circle'></i>
+                     </li>
+                 `;
+            }
+        }
+
+        // ------ COMPLETED/REJECTED REQUESTS REPORT TABLE ------
+         function updateCompletedRequestsTable() {
+            const startIndex = (currentCompletedPage - 1) * completedPerPage;
+            const endIndex = startIndex + completedPerPage;
+            const currentPageData = filteredCompletedRequests.slice(startIndex, endIndex);
+
+            const tableBody = document.getElementById('completedRequestsTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            if (currentPageData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8">No completed or rejected requests found for the selected period.</td></tr>';
+                return;
+            }
+
+            currentPageData.forEach(request => {
+                const row = document.createElement('tr');
+                const priorityClass = request.priority?.toLowerCase() || 'unknown';
+                const statusClass = request.status?.toLowerCase().replace('-', '') || 'unknown';
+
+                row.innerHTML = `
+                    <td>${request.requestId || 'N/A'}</td>
+                    <td>${request.homeownerName || 'N/A'}</td>
+                    <td><span class="service-type ${request.serviceType?.toLowerCase() || 'unknown'}">${request.serviceType || 'N/A'}</span></td>
+                    <td><span class="priority ${priorityClass}">${request.priority || 'N/A'}</span></td>
+                    <td><span class="status ${statusClass}">${getStatusText(request.status)}</span></td> <!-- Show status -->
+                    <td>${formatDate(request.dateCompleted || request.dateSubmitted)}</td> <!-- Show completed or submitted date -->
+                    <td>${request.completionTime || 'N/A'}</td>
+                    <td>${request.staffNotes || '-'}</td>
+                    <td>
+                        <!-- Allow editing notes even for completed/rejected -->
+                        <button class="action-btn edit-notes" onclick="openStaffNotesModal(${request.id})" title="Edit Staff Notes">
+                            <i class='bx bx-edit'></i>
+                        </button>
+                         <button class="action-btn view" onclick="viewRequestDetails(${request.id})" title="View Details">
+                            <i class='bx bx-detail'></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function updateCompletedPagination() {
+            const totalPages = Math.ceil(filteredCompletedRequests.length / completedPerPage);
+            // Ensure unique IDs for report pagination controls if they exist
+            const pageInfo = document.getElementById('completedPageInfo'); // Make sure this ID exists in your HTML
+            const prevBtn = document.getElementById('prevCompletedPage'); // Make sure this ID exists
+            const nextBtn = document.getElementById('nextCompletedPage'); // Make sure this ID exists
+
+            if (pageInfo) pageInfo.textContent = `Page ${totalPages > 0 ? currentCompletedPage : 0} of ${totalPages}`;
+            if (prevBtn) prevBtn.disabled = currentCompletedPage === 1 || totalPages === 0;
+            if (nextBtn) nextBtn.disabled = currentCompletedPage === totalPages || totalPages === 0;
+        }
+
+        function changeCompletedPage(delta) {
+            const totalPages = Math.ceil(filteredCompletedRequests.length / completedPerPage);
+            const newPage = currentCompletedPage + delta;
+
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentCompletedPage = newPage;
+                updateCompletedRequestsTable();
+                updateCompletedPagination();
+            }
+        }
+
+        function updateReportSummary() {
+            const reportData = filteredCompletedRequests.filter(r => r.status?.toLowerCase() === 'completed'); // Only summarize 'completed'
+            const totalCompleted = reportData.length;
+            let totalCompletionSeconds = 0;
+            const serviceCounts = {};
+
+            reportData.forEach(req => {
+                if (req.dateCompleted && req.dateAccepted) { // Use accepted date as start for calculation
+                     try {
+                         const start = new Date(req.dateAccepted);
+                         const end = new Date(req.dateCompleted);
+                         totalCompletionSeconds += (end - start) / 1000; // Duration in seconds
+                     } catch (e) { /* Handle date parse error */ }
+                 }
+                 serviceCounts[req.serviceType] = (serviceCounts[req.serviceType] || 0) + 1;
+            });
+
+            const avgCompletionSeconds = totalCompleted > 0 ? totalCompletionSeconds / totalCompleted : 0;
+            let avgCompletionTimeStr = 'N/A';
+            if (avgCompletionSeconds > 0) {
+                 const avgDays = avgCompletionSeconds / (24 * 60 * 60);
+                 const avgHours = (avgCompletionSeconds % (24 * 60 * 60)) / (60 * 60);
+                 const avgMinutes = (avgCompletionSeconds % (60 * 60)) / 60;
+                 if (avgDays >= 1) {
+                      avgCompletionTimeStr = `${avgDays.toFixed(1)} days`;
+                 } else if (avgHours >= 1) {
+                      avgCompletionTimeStr = `${avgHours.toFixed(1)} hours`;
+                 } else {
+                     avgCompletionTimeStr = `${avgMinutes.toFixed(0)} minutes`;
+                 }
+             }
+
+            const mostCommonService = Object.entries(serviceCounts).sort(([,a],[,b]) => b-a)[0]?.[0] || 'N/A';
+
+            const summaryContainer = document.querySelector('.report-summary');
+            if (summaryContainer) {
+                 summaryContainer.innerHTML = `
+                     <div class="summary-item">
+                         <span>Total Completed:</span>
+                         <strong>${totalCompleted}</strong>
+                     </div>
+                     <div class="summary-item">
+                         <span>Avg. Completion Time:</span>
+                         <strong>${avgCompletionTimeStr}</strong>
+                     </div>
+                     <div class="summary-item">
+                         <span>Most Common Service:</span>
+                         <strong>${mostCommonService}</strong>
+                     </div>
+                 `;
+            }
+        }
+
+        // ------ MODALS AND ACTIONS ------
+
+        // Generic function to handle status updates
+        async function updateStatusOnServer(requestId, newStatus, staffNotes = null) {
+             showLoadingIndicator(true);
+             try {
+                 const response = await fetch('/Staff/UpdateServiceRequestStatus', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'RequestVerificationToken': antiForgeryToken
+                     },
+                     body: JSON.stringify({ requestId, newStatus, staffNotes })
+                 });
+
+                 const result = await response.json();
+
+                 if (response.ok && result.success) {
+                     showNotification(result.message || `Request status updated to ${newStatus}.`, 'success');
+                     await fetchServiceRequests(); // Refetch data to update UI correctly
+                 } else {
+                     throw new Error(result.message || 'Failed to update status.');
+                 }
+             } catch (error) {
+                 console.error("Error updating status:", error);
+                 showNotification(error.message || "An error occurred while updating the status.", "error");
+             } finally {
+                  showLoadingIndicator(false);
+             }
+        }
+
+        // Prompt before updating status
+        function promptUpdateStatus(requestId, newStatus, requireNotesForComplete = false) {
+            const request = allServiceRequests.find(r => r.id === requestId);
             if (!request) return;
 
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Request Details</h2>
-                        <span class="close-btn" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <div class="request-details">
-                            <div class="detail-row">
-                                <span class="detail-label">Request ID:</span>
-                                <span class="detail-value">#${request.id}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Homeowner:</span>
-                                <span class="detail-value">${request.homeowner}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Service Type:</span>
-                                <span class="detail-value">${request.serviceType}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Status:</span>
-                                <span class="detail-value status ${request.status}">${getStatusText(request.status)}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Priority:</span>
-                                <span class="detail-value priority ${request.priority.toLowerCase()}">${request.priority}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Date Submitted:</span>
-                                <span class="detail-value">${request.dateSubmitted}</span>
-                            </div>
-                            <div class="detail-row full-width">
-                                <span class="detail-label">Description:</span>
-                                <div class="detail-value description">${request.description}</div>
-                            </div>
-                            ${request.staffNotes ? `
-                                <div class="detail-row full-width">
-                                    <span class="detail-label">Staff Notes:</span>
-                                    <div class="detail-value description">${request.staffNotes}</div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
+            let message = `Are you sure you want to change the status to "${newStatus}"?`;
+            let requiresNotes = newStatus === 'Rejected' || (newStatus === 'Completed' && requireNotesForComplete);
+            let notes = null;
+
+            if (requiresNotes) {
+                 message += `\nPlease provide notes${newStatus === 'Rejected' ? ' (required)' : ' (optional)'}:`;
+                 notes = prompt(message, request.staffNotes || '');
+                 if (notes === null) return; // User cancelled prompt
+                 if (notes.trim() === '' && newStatus === 'Rejected') {
+                     showNotification('Notes are required when rejecting a request.', 'warning');
+                     return;
+                 }
+                 // Allow empty notes for 'Completed' if requireNotesForComplete is false or notes are optional
+            } else {
+                 if (!confirm(message)) {
+                     return; // User cancelled confirmation
+                 }
+             }
+             
+             // Proceed with the update
+             updateStatusOnServer(requestId, newStatus, notes);
+        }
+
+        // View Request Details Modal (Staff side)
+        function viewRequestDetails(requestId) {
+            // Use parseInt because the ID from the button click might be a string
+            const request = allServiceRequests.find(r => r.id === parseInt(requestId));
+            if (!request) {
+                 showNotification('Request details not found.', 'error');
+                 return;
+            }
+
+            const modal = document.getElementById('requestDetailsModal');
+            const content = document.getElementById('requestDetailsContent');
+            if (!modal || !content) return;
+
+            content.innerHTML = `
+                 <p><strong>Request ID:</strong> ${request.requestId || 'N/A'}</p>
+                 <p><strong>Homeowner:</strong> ${request.homeownerName || 'N/A'}</p>
+                 <p><strong>Service Type:</strong> ${request.serviceType || 'N/A'}</p>
+                 <p><strong>Priority:</strong> <span class="priority ${request.priority?.toLowerCase() || 'unknown'}">${request.priority || 'N/A'}</span></p>
+                 <p><strong>Status:</strong> <span class="status ${request.status?.toLowerCase().replace('-', '') || 'unknown'}">${getStatusText(request.status)}</span></p>
+                 <p><strong>Date Submitted:</strong> ${formatDate(request.dateSubmitted)}</p>
+                 <p><strong>Description:</strong></p>
+                 <p style="white-space: pre-wrap; max-height: 150px; overflow-y: auto;">${request.description || '-'}</p>
+                 <hr>
+                 <p><strong>Staff Notes:</strong></p>
+                 <p style="white-space: pre-wrap; max-height: 150px; overflow-y: auto;">${request.staffNotes || '-'}</p>
+                  <hr>
+                  ${request.dateAccepted ? `<p><strong>Date Accepted:</strong> ${formatDate(request.dateAccepted)}</p>` : ''}
+                  ${request.dateStarted ? `<p><strong>Date Started:</strong> ${formatDate(request.dateStarted)}</p>` : ''}
+                  ${request.dateCompleted ? `<p><strong>Date Completed:</strong> ${formatDate(request.dateCompleted)}</p>` : ''}
+                  ${request.completionTime ? `<p><strong>Completion Time:</strong> ${request.completionTime}</p>` : ''}
+             `;
+
             modal.style.display = 'block';
         }
 
-        function updateRequestStatus(requestId, newStatus) {
-            const request = sampleRequests.find(r => r.id === requestId);
-            if (!request) return;
-
-            const modal = document.getElementById('updateStatusModal');
-            const form = document.getElementById('updateStatusForm');
-            
-            document.getElementById('newStatus').value = newStatus;
-            document.getElementById('staffNotes').value = '';
-            
-            const confirmMessage = `Are you sure you want to ${newStatus} this request?`;
-            if (confirm(confirmMessage)) {
-                request.status = newStatus;
-                showNotification(`Request ${newStatus} successfully!`, 'success');
-                filterRequests();
-            }
+        function closeRequestDetailsModal() {
+            const modal = document.getElementById('requestDetailsModal');
+            if (modal) modal.style.display = 'none';
         }
 
-        // FORM SUBMISSION
-        document.getElementById('updateStatusForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const newStatus = document.getElementById('newStatus').value;
-            const staffNotes = document.getElementById('staffNotes').value;
-            
-            if (!newStatus) {
-                showNotification('Please select a status', 'error');
-                return;
-            }
-            
-            showNotification('Status updated successfully!', 'success');
-            closeUpdateStatusModal();
-            
-            filterRequests();
-        });
-
-        // NOFIFICAION
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // REPORTS
-        function filterReport() {
-            const month = document.getElementById('reportMonthFilter').value;
-            const year = document.getElementById('reportYearFilter').value;
-            
-            
-            showNotification(`Filtering completed requests for ${month === 'all' ? 'all time' : `Month ${month}`} of ${year}`, 'info');
-        }
-
-        // SSTAFF NOTES
+        // Staff Notes Modal
         function openStaffNotesModal(requestId) {
             const modal = document.getElementById('staffNotesModal');
-            const request = sampleRequests.find(r => r.id === requestId);
+             // Use parseInt here as well
+            const request = allServiceRequests.find(r => r.id === parseInt(requestId));
             
-            if (request) {
-                document.getElementById('requestId').value = request.id;
-                document.getElementById('homeownerName').value = request.homeowner;
-                document.getElementById('serviceType').value = request.serviceType;
-                document.getElementById('staffNotes').value = request.staffNotes || '';
+            if (request && modal) {
+                // Use request.id (the actual database ID) for the hidden input
+                document.getElementById('staffNotesForm-requestId').value = request.id;
+                // Display formatted ID for the user
+                document.getElementById('staffNotesForm-requestIdDisplay').value = request.requestId || 'N/A'; 
+                document.getElementById('staffNotesForm-homeownerName').value = request.homeownerName || 'N/A';
+                document.getElementById('staffNotesForm-serviceType').value = request.serviceType || 'N/A';
+                document.getElementById('staffNotesForm-notes').value = request.staffNotes || '';
                 
                 modal.style.display = 'block';
+            } else {
+                showNotification('Could not load request details for notes.', 'error');
             }
         }
 
         function closeStaffNotesModal() {
             const modal = document.getElementById('staffNotesModal');
-            modal.style.display = 'none';
+            if (modal) modal.style.display = 'none';
         }
 
-        document.getElementById('staffNotesForm').addEventListener('submit', function(e) {
+        // Staff Notes Form Submission
+        document.getElementById('staffNotesForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const requestId = document.getElementById('requestId').value;
-            const staffNotes = document.getElementById('staffNotes').value;
-            
-            const request = sampleRequests.find(r => r.id === requestId);
-            if (request) {
-                request.staffNotes = staffNotes;
-                
-                const tableRow = document.querySelector(`tr[data-request-id="${requestId}"]`);
-                if (tableRow) {
-                    const notesCell = tableRow.querySelector('td:nth-child(7)');
-                    notesCell.textContent = staffNotes;
-                }
-                
-                showNotification('Staff notes updated successfully!', 'success');
+            showLoadingIndicator(true);
+
+            // Get the actual ID from the hidden input
+            const requestId = parseInt(document.getElementById('staffNotesForm-requestId')?.value);
+            const staffNotes = document.getElementById('staffNotesForm-notes')?.value;
+
+            if (isNaN(requestId)) {
+                 showNotification('Invalid Request ID.', 'error');
+                 showLoadingIndicator(false);
+                 return;
+            }
+
+            try {
+                 const response = await fetch('/Staff/UpdateStaffNotes', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'RequestVerificationToken': antiForgeryToken
+                     },
+                     body: JSON.stringify({ requestId, staffNotes })
+                 });
+
+                 const result = await response.json();
+
+                 if (response.ok && result.success) {
+                     showNotification(result.message || 'Staff notes updated successfully!', 'success');
+                     closeStaffNotesModal();
+                     // Find the request in the local array and update notes for immediate UI feedback
+                     const updatedRequest = allServiceRequests.find(r => r.id === requestId);
+                     if (updatedRequest) {
+                         updatedRequest.staffNotes = staffNotes;
+                         // Re-apply filters and sort to update both tables if necessary
+                         applyFiltersAndSort(); 
+                     }
+                 } else {
+                     throw new Error(result.message || 'Failed to update notes.');
+                 }
+             } catch (error) {
+                 console.error("Error updating staff notes:", error);
+                 showNotification(error.message || "An error occurred while updating notes.", "error");
+             } finally {
+                  showLoadingIndicator(false);
+             }
+        });
+        
+        // ------ LOADING INDICATOR ------
+        function showLoadingIndicator(show) {
+             const overlay = document.getElementById('loadingOverlay'); 
+             if (overlay) {
+                 overlay.style.display = show ? 'flex' : 'none';
+             }
+        }
+
+        // ------ INITIALIZATION AND EVENT LISTENERS ------
+        window.onclick = function(event) {
+            const detailsModal = document.getElementById('requestDetailsModal');
+            const notesModal = document.getElementById('staffNotesModal');
+            // Close modals if clicked outside their content area
+            if (event.target === detailsModal) {
+                closeRequestDetailsModal();
+            }
+            if (event.target === notesModal) {
                 closeStaffNotesModal();
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchServiceRequests(); // Initial load
+
+            // Filter listeners
+            document.getElementById('statusFilter')?.addEventListener('change', applyFiltersAndSort);
+            document.getElementById('typeFilter')?.addEventListener('change', applyFiltersAndSort);
+            document.getElementById('searchInput')?.addEventListener('keyup', applyFiltersAndSort);
+            document.getElementById('reportMonthFilter')?.addEventListener('change', applyFiltersAndSort);
+            document.getElementById('reportYearFilter')?.addEventListener('change', applyFiltersAndSort);
+
+            // Pagination Listeners (Main Table)
+            document.getElementById('prevPage')?.addEventListener('click', () => changeRequestPage(-1));
+            document.getElementById('nextPage')?.addEventListener('click', () => changeRequestPage(1));
+            
+            // Pagination Listeners (Completed/Report Table - ensure unique IDs)
+            document.getElementById('prevCompletedPage')?.addEventListener('click', () => changeCompletedPage(-1));
+            document.getElementById('nextCompletedPage')?.addEventListener('click', () => changeCompletedPage(1));
+            
+             // Add sorting listeners to main table headers
+             document.querySelectorAll('.table-data .order table thead th[data-sort-col]').forEach(th => {
+                 th.style.cursor = 'pointer'; // Indicate clickable
+                 // Add a span for the sort icon if it doesn't exist
+                 if (!th.querySelector('.sort-icon')) {
+                    const iconSpan = document.createElement('span');
+                    iconSpan.className = 'sort-icon';
+                    iconSpan.style.marginLeft = '5px';
+                    th.appendChild(iconSpan);
+                 }
+                 th.addEventListener('click', () => handleSort(th.dataset.sortCol));
+             });
+             
+            // Initial sort indicator update
+            updateSortIndicators();
+             
+            // Add sorting listeners to completed table headers (optional, if needed)
+             // ... similar logic for completed table headers ...
         });
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('staffNotesModal');
-            if (event.target === modal) {
-                closeStaffNotesModal();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', initializeTable);
     </script>
 </body>

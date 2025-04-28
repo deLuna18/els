@@ -69,6 +69,10 @@
       "PackagePath": "staticwebassets\\css\\staff_community_forum.css"
     },
     {
+      "Id": "C:\\Users\\alexa\\Desktop\\elnet\\wwwroot\\css\\staff_contact_and_support.css",
+      "PackagePath": "staticwebassets\\css\\staff_contact_and_support.css"
+    },
+    {
       "Id": "C:\\Users\\alexa\\Desktop\\elnet\\wwwroot\\css\\staff_facility_reservation.css",
       "PackagePath": "staticwebassets\\css\\staff_facility_reservation.css"
     },

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3OhpY3DyiqYYdI7wV6QEHkCtFp+IArolAOQ21NR2nh4=",
+  "Hash": "jUmIcYCn0BTSsQgbKC+LVqjD/IqCXhcyx+a3EtWEW7A=",
   "Source": "SubdivisionManagement",
   "BasePath": "_content/SubdivisionManagement",
   "Mode": "Default",
@@ -357,6 +357,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\staff_community_forum.css"
+    },
+    {
+      "Identity": "C:\\Users\\alexa\\Desktop\\elnet\\wwwroot\\css\\staff_contact_and_support.css",
+      "SourceId": "SubdivisionManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\alexa\\Desktop\\elnet\\wwwroot\\",
+      "BasePath": "_content/SubdivisionManagement",
+      "RelativePath": "css/staff_contact_and_support.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\staff_contact_and_support.css"
     },
     {
       "Identity": "C:\\Users\\alexa\\Desktop\\elnet\\wwwroot\\css\\staff_facility_reservation.css",

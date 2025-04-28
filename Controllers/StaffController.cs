@@ -114,13 +114,11 @@ namespace SubdivisionManagement.Controllers
 
             try 
             {
-                // Step 1: Fetch raw data from the database
                 var rawRequests = await _context.ServiceRequests
-                    .Include(r => r.Homeowner) // Still include homeowner for the name
+                    .Include(r => r.Homeowner) 
                     .OrderByDescending(r => r.DateSubmitted)
-                    .ToListAsync(); // Fetch the full entities
+                    .ToListAsync(); 
 
-                // Step 2: Project the data into the desired format in memory
                 var projectedRequests = rawRequests.Select(r => new 
                 {
                     r.Id,
@@ -130,13 +128,13 @@ namespace SubdivisionManagement.Controllers
                     r.ServiceType,
                     r.Priority,
                     r.Status,
-                    DateSubmitted = r.DateSubmitted.ToString("yyyy-MM-dd HH:mm"), 
+                    DateSubmitted = r.DateSubmitted.ToString("o"),
                     r.Description,
-                    DateCompleted = r.DateCompleted.HasValue ? r.DateCompleted.Value.ToString("yyyy-MM-dd HH:mm") : null,
+                    DateCompleted = r.DateCompleted.HasValue ? r.DateCompleted.Value.ToString("o") : null,
                     CompletionTime = CalculateCompletionTime(r.DateAccepted, r.DateCompleted),
                     r.StaffNotes,
                     r.StaffId
-                }).ToList(); // Perform the Select in memory
+                }).ToList(); 
 
                 return Json(projectedRequests);
             }
@@ -156,7 +154,7 @@ namespace SubdivisionManagement.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var staff = GetLoggedInStaffUser(username);
-            if (staff == null) return Forbid(); // Should not happen if logged in
+            if (staff == null) return Forbid(); 
 
             var request = await _context.ServiceRequests.FindAsync(updateDto.RequestId);
             if (request == null)
@@ -164,34 +162,30 @@ namespace SubdivisionManagement.Controllers
                 return NotFound(new { success = false, message = "Service request not found." });
             }
 
-            // Basic state transition validation (can be expanded)
             if (!IsValidStatusTransition(request.Status, updateDto.NewStatus))
             {
                 return BadRequest(new { success = false, message = $"Invalid status transition from {request.Status} to {updateDto.NewStatus}." });
             }
 
-            // Update fields
             request.Status = updateDto.NewStatus;
-            request.StaffId = staff.Id; // Assign current staff
-            request.StaffNotes = updateDto.StaffNotes ?? request.StaffNotes; // Update notes if provided
+            request.StaffId = staff.Id; 
+            request.StaffNotes = updateDto.StaffNotes ?? request.StaffNotes; 
 
-            // Update timestamps based on new status
             switch (updateDto.NewStatus.ToLower())
             {
                 case "accepted":
                     request.DateAccepted = DateTime.UtcNow;
                     break;
                 case "in-progress":
-                    if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow; // Set accepted if not already
+                    if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow; 
                     request.DateStarted = DateTime.UtcNow;
                     break;
                 case "completed":
                     if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow;
-                    if (request.DateStarted == null) request.DateStarted = DateTime.UtcNow; // Assume started if completing directly
+                    if (request.DateStarted == null) request.DateStarted = DateTime.UtcNow; 
                     request.DateCompleted = DateTime.UtcNow;
                     break;
                 case "rejected":
-                    // Maybe clear dates if rejected?
                     request.DateAccepted = null;
                     request.DateStarted = null;
                     request.DateCompleted = null;
@@ -232,14 +226,9 @@ namespace SubdivisionManagement.Controllers
                  return NotFound(new { success = false, message = "Service request not found." });
              }
 
-             // Optional: Check if the request is assigned to this staff or if any staff can edit notes
-             // if (request.StaffId != null && request.StaffId != staff.Id) {
-             //     return Forbid(new { success = false, message = "You are not assigned to this request." });
-             // }
-
+             
              request.StaffNotes = notesDto.StaffNotes;
-             request.StaffId = staff.Id; // Ensure staff is assigned if adding notes
-
+             request.StaffId = staff.Id; 
              try
              {
                  _context.ServiceRequests.Update(request);
@@ -253,29 +242,27 @@ namespace SubdivisionManagement.Controllers
              }
         }
 
-        // Basic validation for status transitions
         private bool IsValidStatusTransition(string currentStatus, string newStatus)
         {
             currentStatus = currentStatus.ToLower();
             newStatus = newStatus.ToLower();
 
-            if (currentStatus == newStatus) return true; // No change
-            if (currentStatus == "completed" || currentStatus == "rejected") return false; // Cannot change from final states
+            if (currentStatus == newStatus) return true; 
+            if (currentStatus == "completed" || currentStatus == "rejected") return false; 
 
             switch (currentStatus)
             {
                 case "pending":
                     return newStatus == "accepted" || newStatus == "rejected";
                 case "accepted":
-                    return newStatus == "in-progress" || newStatus == "completed" || newStatus == "rejected"; // Allow reject even if accepted?
+                    return newStatus == "in-progress" || newStatus == "completed" || newStatus == "rejected"; 
                 case "in-progress":
-                    return newStatus == "completed" || newStatus == "rejected"; // Allow reject while in progress?
+                    return newStatus == "completed" || newStatus == "rejected"; 
                 default:
-                    return false; // Unknown current status
+                    return false; 
             }
         }
 
-        // DTO for updating service request status
         public class UpdateServiceRequestDto
         {
             [Required] public int RequestId { get; set; }
@@ -283,24 +270,21 @@ namespace SubdivisionManagement.Controllers
             public string? StaffNotes { get; set; }
         }
 
-        // DTO for updating staff notes separately
         public class UpdateStaffNotesDto
         {
             [Required] public int RequestId { get; set; }
             [Required] public string StaffNotes { get; set; } = string.Empty;
         }
 
-        // Helper to calculate completion time string safely
         private string? CalculateCompletionTime(DateTime? start, DateTime? end)
         {
              if (!start.HasValue || !end.HasValue || end.Value < start.Value) 
              {
-                return null; // Cannot calculate if start/end are invalid or null
+                return null; 
              }
-             return CalculateBusinessTime(start.Value, end.Value); // Use the existing helper if dates are valid
+             return CalculateBusinessTime(start.Value, end.Value); 
         }
 
-        // Helper to calculate business time (example - ignores weekends/holidays)
         private string CalculateBusinessTime(DateTime start, DateTime end)
         {
             TimeSpan duration = end - start;
@@ -318,7 +302,6 @@ namespace SubdivisionManagement.Controllers
             }
         }
 
-        // Staff Logout
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

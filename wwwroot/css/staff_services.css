@@ -469,7 +469,6 @@ body.dark .report-filters select {
     color: var(--dark);
 }
 
-/* STAFF NOTES MODAL */
 #staffNotesModal .modal-content {
     max-width: 500px;
     width: 90%;

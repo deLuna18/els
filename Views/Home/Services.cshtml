@@ -467,7 +467,6 @@
             </div>
             <div class="modal-body">
                 <div id="requestDetailsContent" class="request-details">
-                    <!-- Dynamic content will be injected here -->
                 </div>
             </div>
         </div>
@@ -532,7 +531,7 @@
         });
 
         // ------ DATA FETCHING AND TABLE RENDERING ------
-        let allRequests = []; // Store all fetched requests
+        let allRequests = []; 
         let activeRequests = [];
         let completedRequests = [];
 
@@ -544,10 +543,8 @@
         const completedItemsPerPage = 5;
         let filteredCompletedRequests = [];
 
-        // Get the anti-forgery token
         const antiForgeryToken = document.getElementById('antiForgeryToken')?.value;
 
-        // Fetch data from the server
         async function fetchServiceRequests() {
             try {
                 const response = await fetch('/Home/GetHomeownerServiceRequests');
@@ -555,13 +552,11 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 allRequests = await response.json();
-                console.log("Fetched Requests:", allRequests); // Debug log
+                console.log("Fetched Requests:", allRequests);
 
-                // Separate requests into active and completed
                 activeRequests = allRequests.filter(r => r.status.toLowerCase() !== 'completed' && r.status.toLowerCase() !== 'rejected');
                 completedRequests = allRequests.filter(r => r.status.toLowerCase() === 'completed' || r.status.toLowerCase() === 'rejected');
 
-                // Initialize/Filter both tables
                 filterActiveRequests(); 
                 filterCompletedServices();
 
@@ -584,7 +579,7 @@
 
             const tableBody = document.getElementById('requestsTableBody');
             if (!tableBody) return;
-            tableBody.innerHTML = ''; // Clear existing rows
+            tableBody.innerHTML = ''; 
 
             if (currentPageData.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="5">No active requests found.</td></tr>';
@@ -657,7 +652,7 @@
 
             const tableBody = document.getElementById('completedServicesTableBody');
             if (!tableBody) return;
-            tableBody.innerHTML = ''; // Clear existing rows
+            tableBody.innerHTML = ''; 
 
              if (currentPageData.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="5">No completed or rejected requests found.</td></tr>';
@@ -666,7 +661,6 @@
 
             currentPageData.forEach(service => {
                 const row = document.createElement('tr');
-                // Display different info for completed vs rejected
                 let statusClass = service.status.toLowerCase().replace(' ', '-');
                 let completionDetails = service.status.toLowerCase() === 'completed' 
                     ? `<td>${service.dateCompleted || 'N/A'}</td>
@@ -744,7 +738,6 @@
         }
 
         function viewRequestDetails(requestId) {
-            // Find the request in the *original* allRequests array using the database ID (which is a number)
             const request = allRequests.find(r => r.id === parseInt(requestId)); 
             if (!request) {
                 console.error("Request not found for ID:", requestId);
@@ -871,7 +864,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'RequestVerificationToken': antiForgeryToken // Send token
+                        'RequestVerificationToken': antiForgeryToken 
                     },
                     body: JSON.stringify(requestData)
                 });
@@ -882,13 +875,11 @@
                     showNotification(result.message || 'Service request submitted successfully!', 'success');
                     closeNewRequestModal();
                     
-                    // Add the new request to the lists and refresh tables
                     if (result.request) {
-                         allRequests.unshift(result.request); // Add to the beginning
+                         allRequests.unshift(result.request); 
                          activeRequests.unshift(result.request);
-                         filterActiveRequests(); // This updates table and pagination
+                         filterActiveRequests(); 
                     } else {
-                         // Fallback: refetch all if specific data wasn't returned
                         await fetchServiceRequests(); 
                     }
                 } else {
@@ -900,22 +891,18 @@
             }
         });
 
-        // Initial Load and Event Listeners
         document.addEventListener('DOMContentLoaded', () => {
-            fetchServiceRequests(); // Initial data fetch
+            fetchServiceRequests(); 
             
-            // Add listeners for search inputs
             document.getElementById('searchInput')?.addEventListener('keyup', filterActiveRequests);
             document.getElementById('completedSearchInput')?.addEventListener('keyup', filterCompletedServices);
 
-            // Pagination listeners (ensure they are correct)
             document.getElementById('prevPage')?.addEventListener('click', () => changeActivePage(-1));
             document.getElementById('nextPage')?.addEventListener('click', () => changeActivePage(1));
             document.getElementById('prevCompletedPage')?.addEventListener('click', () => changeCompletedPage(-1));
             document.getElementById('nextCompletedPage')?.addEventListener('click', () => changeCompletedPage(1));
         });
 
-        // Close modals if clicked outside
         window.onclick = function(event) {
             const newRequestModal = document.getElementById('newRequestModal');
             const viewRequestModal = document.getElementById('viewRequestModal');

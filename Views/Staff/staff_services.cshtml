@@ -318,7 +318,7 @@
             <!-- COMPLETED REQUESTS REPORT -->
             <div class="completed-requests-report">
                 <div class="head">
-                    <h3>Completed Service Requests Report</h3>
+                    <h3>Completed/Rejected Service Requests Report</h3>
                     <div class="report-filters">
                         <select id="reportMonthFilter" onchange="filterReport()">
                             <option value="all">All Time</option>
@@ -336,8 +336,6 @@
                             <option value="12">December</option>
                         </select>
                         <select id="reportYearFilter" onchange="filterReport()">
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
                         </select>
                     </div>
                 </div>
@@ -349,15 +347,15 @@
                                 <th>Homeowner</th>
                                 <th>Service Type</th>
                                 <th>Priority</th>
-                                <th>Date Completed</th>
+                                <th>Status</th>
+                                <th>Date Completed/Rejected</th>
                                 <th>Completion Time</th>
                                 <th>Staff Notes</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="completedRequestsTableBody">
-                            <!-- Dynamic Content will be loaded here by JavaScript -->
-                            <!-- Removing sample static rows -->
+                     
                         </tbody>
                     </table>
                 </div>
@@ -369,15 +367,19 @@
                 <div class="report-summary">
                     <div class="summary-item">
                         <span>Total Completed:</span>
-                        <strong>4</strong>
+                        <strong id="reportTotalCompleted">0</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>Total Rejected:</span>
+                        <strong id="reportTotalRejected">0</strong>
                     </div>
                     <div class="summary-item">
                         <span>Average Completion Time:</span>
-                        <strong>2.75 days</strong>
+                        <strong id="reportAvgCompletionTime">N/A</strong>
                     </div>
                     <div class="summary-item">
                         <span>Most Common Service:</span>
-                        <strong>Maintenance</strong>
+                        <strong id="reportMostCommonService">N/A</strong>
                     </div>
                 </div>
             </div>
@@ -394,7 +396,6 @@
             </div>
             <div class="modal-body">
                 <div id="requestDetailsContent">
-                    <!-- Dynamic content -->
                 </div>
             </div>
         </div>
@@ -432,9 +433,9 @@
             </div>
             <div class="modal-body">
                 <form id="staffNotesForm">
-                     <input type="hidden" id="staffNotesForm-requestId"> <!-- Hidden input for actual ID -->
+                     <input type="hidden" id="staffNotesForm-requestId"> 
                     <div class="form-group">
-                        <label for="staffNotesForm-requestIdDisplay">Request ID:</label> <!-- Display only -->
+                        <label for="staffNotesForm-requestIdDisplay">Request ID:</label>
                         <input type="text" id="staffNotesForm-requestIdDisplay" readonly>
                     </div>
                     <div class="form-group">
@@ -458,7 +459,6 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); color: white; display: none; justify-content: center; align-items: center; z-index: 1001;">
         <span>Loading...</span>
     </div>
@@ -496,9 +496,9 @@
         let filteredRequests = [];
         let filteredCompletedRequests = [];
         let currentRequestPage = 1;
-        const requestsPerPage = 10; // Adjust as needed
+        const requestsPerPage = 10; 
         let currentCompletedPage = 1;
-        const completedPerPage = 10; // Adjust as needed
+        const completedPerPage = 10; 
 
         const antiForgeryToken = document.getElementById('antiForgeryToken')?.value;
         let currentSortColumn = 'dateSubmitted'; // Default sort
@@ -520,10 +520,9 @@
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             try {
-                // Assuming dateString is in a format JS can parse (like ISO 8601)
                  const date = new Date(dateString);
-                 // Format to YYYY-MM-DD HH:MM (adjust as needed)
-                 return date.toLocaleDateString('sv-SE') + ' ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                 return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) + ' ' +
+                        date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
             } catch (e) {
                  console.error("Error formatting date:", dateString, e);
                  return 'Invalid Date';
@@ -532,29 +531,27 @@
 
         // ------ NOTIFICATION ------
          function showNotification(message, type = 'info') {
-            // Simple notification logic (replace with a more robust library if needed)
             const notificationArea = document.getElementById('notificationArea') || createNotificationArea(); // Ensure area exists
             const notification = document.createElement('div');
-            notification.className = `notification ${type}`; // Use CSS classes for styling
+            notification.className = `notification ${type}`; 
             notification.textContent = message;
 
             notificationArea.appendChild(notification);
 
-            // Auto-remove after a few seconds
+            
             setTimeout(() => {
-                notification.style.opacity = '0'; // Fade out
-                setTimeout(() => notification.remove(), 500); // Remove after fade
-            }, 3000); // Adjust time as needed
+                notification.style.opacity = '0'; 
+                setTimeout(() => notification.remove(), 500); 
+            }, 3000); 
         }
 
         function createNotificationArea() {
             const area = document.createElement('div');
             area.id = 'notificationArea';
-            // Style the notification area (position fixed, top right, etc.)
             area.style.position = 'fixed';
             area.style.top = '20px';
             area.style.right = '20px';
-            area.style.zIndex = '1002'; // Above loading overlay potentially
+            area.style.zIndex = '1002'; 
             document.body.appendChild(area);
             return area;
         }
@@ -568,13 +565,13 @@
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 allServiceRequests = await response.json();
-                console.log("Fetched Staff Requests:", allServiceRequests); // Debug
-                applyFiltersAndSort(); // Initial filter and sort
+                console.log("Fetched Staff Requests:", allServiceRequests); 
+                applyFiltersAndSort(); 
             } catch (error) {
                 console.error("Error fetching service requests:", error);
                 showNotification("Failed to load service requests.", "error");
-                allServiceRequests = []; // Clear data on error
-                applyFiltersAndSort(); // Update tables even on error
+                allServiceRequests = []; 
+                applyFiltersAndSort(); 
             } finally {
                  showLoadingIndicator(false);
             }
@@ -600,13 +597,12 @@
                                     (request.serviceType?.toLowerCase() || '').includes(searchText) ||
                                     (request.description?.toLowerCase() || '').includes(searchText);
                 
-                // Exclude completed/rejected from the main list *unless* specifically filtered for
                 const isFinalState = status === 'completed' || status === 'rejected';
                 let showInMain = false;
                 if (statusFilter === 'all') {
-                    showInMain = !isFinalState; // Only show non-final if filter is 'all'
+                    showInMain = !isFinalState; 
                 } else {
-                    showInMain = matchesStatus; // Otherwise, show if filter matches exactly
+                    showInMain = matchesStatus; 
                 }
 
                 return showInMain && matchesType && matchesSearch;
@@ -617,17 +613,13 @@
                 let valA = a[currentSortColumn];
                 let valB = b[currentSortColumn];
 
-                // Handle different data types for sorting
                 if (currentSortColumn === 'dateSubmitted' || currentSortColumn === 'dateCompleted') {
-                    // Use 0 for null dates to avoid errors, sort nulls last/first as needed
                     valA = a[currentSortColumn] ? new Date(a[currentSortColumn]) : (currentSortDirection === 'desc' ? new Date(0) : new Date(8640000000000000)); 
                     valB = b[currentSortColumn] ? new Date(b[currentSortColumn]) : (currentSortDirection === 'desc' ? new Date(0) : new Date(8640000000000000));
                 } else if (currentSortColumn === 'requestId') {
-                     // Extract number part for sorting
                      valA = parseInt((a.requestId || 'SR-0').split('-')[1] || 0);
                      valB = parseInt((b.requestId || 'SR-0').split('-')[1] || 0);
                  } else {
-                     // Basic string/number comparison
                      valA = typeof valA === 'string' ? valA.toLowerCase() : valA;
                      valB = typeof valB === 'string' ? valB.toLowerCase() : valB;
                  }
@@ -638,68 +630,80 @@
             });
 
             filteredRequests = tempFiltered;
-            currentRequestPage = 1; // Reset to first page after filtering/sorting
+            currentRequestPage = 1; 
             updateRequestsTable();
             updateRequestPagination();
             updateQuickStats();
 
             // --- Filter Completed Requests Report ---
-            console.log("Filtering completed/rejected report..."); // Log start
-            console.log("Report Filters:", { month: reportMonth, year: reportYear }); // Log filter values
+            console.log("Filtering completed/rejected report..."); 
+            console.log("Report Filters:", { month: reportMonth, year: reportYear }); 
+            console.log("Total requests before report filter:", allServiceRequests.length);
 
             let tempCompletedFiltered = allServiceRequests.filter(request => {
                 const status = request.status?.toLowerCase();
                 const isReportableFinalState = status === 'completed' || status === 'rejected'; 
 
-                // Log initial check
-                // console.log(`Checking Request ID: ${request.requestId}, Status: ${status}, Is Reportable: ${isReportableFinalState}`);
-
-                if (!isReportableFinalState) return false; 
+                console.log(`--- Checking Request ID: ${request.requestId}, Status: ${status} ---`);
+                if (!isReportableFinalState) {
+                    console.log(`  -> Skipping: Not a reportable state.`);
+                    return false;
+                }
 
                 const filterDateStr = status === 'completed' ? request.dateCompleted : request.dateSubmitted;
-                
-                // Log date string being used
-                // console.log(`  Using Date String: ${filterDateStr}`);
+                console.log(`  Using Date String: ${filterDateStr}`);
 
                 if (!filterDateStr) {
-                    console.warn(`  Skipping Request ID: ${request.requestId} - No relevant date found.`);
-                    return false; // Cannot filter if no relevant date
+                    console.warn(`  -> Skipping: No relevant date string found.`);
+                    return false; 
                 }
 
                 try {
                     const filterDate = new Date(filterDateStr);
-                    if (isNaN(filterDate.getTime())) { // Check if date parsing failed
-                       console.warn(`  Skipping Request ID: ${request.requestId} - Invalid date format: ${filterDateStr}`);
+                    console.log(`  Parsed Date Object: ${filterDate}`);
+
+                    if (isNaN(filterDate.getTime())) {
+                       console.warn(`  -> Skipping: Invalid date object after parsing.`);
                        return false;
                     }
-                    
-                    const requestMonth = filterDate.getMonth() + 1;
-                    const requestYear = filterDate.getFullYear();
-                    
-                    const matchesMonth = reportMonth === 'all' || requestMonth === parseInt(reportMonth);
-                    const matchesYear = requestYear === parseInt(reportYear);
-                    
-                    // Log comparison results
-                    console.log(`  Request ID: ${request.requestId} (${status}) - Date: ${filterDate.toISOString().split('T')[0]}, Month: ${requestMonth}, Year: ${requestYear}. Filter Match (Month: ${matchesMonth}, Year: ${matchesYear})`);
 
-                    return matchesMonth && matchesYear;
+                    const requestMonth = filterDate.getMonth() + 1; 
+                    const requestYear = filterDate.getFullYear();
+                    console.log(`  Extracted Month: ${requestMonth}, Year: ${requestYear}`);
+
+                    const reportYearNum = parseInt(reportYear);
+                    const reportMonthNum = reportMonth === 'all' ? 'all' : parseInt(reportMonth);
+                    console.log(`  Filter Month: ${reportMonthNum}, Filter Year: ${reportYearNum}`);
+
+                    const matchesMonth = reportMonthNum === 'all' || requestMonth === reportMonthNum;
+                    const matchesYear = requestYear === reportYearNum;
+                    console.log(`  Month Matches: ${matchesMonth}, Year Matches: ${matchesYear}`);
+
+                    if (matchesMonth && matchesYear) {
+                        console.log('  -> KEEPING: Passes filter.');
+                        return true; 
+                    } else {
+                        console.log('  -> Skipping: Failed filter match.');
+                        return false; 
+                    }
                 } catch (e) {
-                    console.error(`  Error parsing date for report filter (Request ID: ${request.requestId}):`, filterDateStr, e);
-                    return false;
+                    console.error(`  -> Skipping: Error processing date for report filter (Request ID: ${request.requestId}):`, filterDateStr, e);
+                    return false; 
                 }
             });
 
-            console.log("Filtered Completed/Rejected Count:", tempCompletedFiltered.length); // Log final count
+            console.log("Filtered Completed/Rejected Count:", tempCompletedFiltered.length); 
 
-            // Sort completed/rejected requests (e.g., by completion/submission date descending)
-             tempCompletedFiltered.sort((a, b) => {
-                 const dateA = new Date(a.dateCompleted || a.dateSubmitted || 0);
-                 const dateB = new Date(b.dateCompleted || b.dateSubmitted || 0);
-                 return dateB - dateA; // Descending
+            tempCompletedFiltered.sort((a, b) => {
+                 const dateAStr = a.status?.toLowerCase() === 'completed' ? a.dateCompleted : a.dateSubmitted;
+                 const dateBStr = b.status?.toLowerCase() === 'completed' ? b.dateCompleted : b.dateSubmitted;
+                 const dateA = dateAStr ? new Date(dateAStr) : new Date(0); 
+                 const dateB = dateBStr ? new Date(dateBStr) : new Date(0);
+                 return dateB - dateA; 
              });
 
             filteredCompletedRequests = tempCompletedFiltered;
-            currentCompletedPage = 1; // Reset to first page
+            currentCompletedPage = 1; 
             updateCompletedRequestsTable();
             updateCompletedPagination();
             updateReportSummary();
@@ -710,25 +714,23 @@
                  currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
              } else {
                  currentSortColumn = column;
-                 // Default sort direction based on column type (optional)
                  currentSortDirection = (column === 'dateSubmitted' || column === 'dateCompleted') ? 'desc' : 'asc'; 
              }
              
-             // Update header indicators (optional visual feedback)
              updateSortIndicators();
              
-             applyFiltersAndSort(); // Re-apply filters and sort
+             applyFiltersAndSort(); 
          }
          
          function updateSortIndicators() {
              document.querySelectorAll('.table-container th[data-sort-col]').forEach(th => {
                  th.classList.remove('sort-asc', 'sort-desc');
                  const sortIcon = th.querySelector('.sort-icon');
-                 if(sortIcon) sortIcon.innerHTML = ''; // Clear icon
+                 if(sortIcon) sortIcon.innerHTML = ''; 
 
                  if (th.dataset.sortCol === currentSortColumn) {
                      th.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
-                     if(sortIcon) sortIcon.innerHTML = currentSortDirection === 'asc' ? '▲' : '▼'; // Add icon
+                     if(sortIcon) sortIcon.innerHTML = currentSortDirection === 'asc' ? '▲' : '▼'; 
                  }
              });
          }
@@ -741,7 +743,7 @@
 
             const tableBody = document.getElementById('requestsTableBody');
             if (!tableBody) return;
-            tableBody.innerHTML = ''; // Clear existing rows
+            tableBody.innerHTML = ''; 
 
             if (currentPageData.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="7">No matching service requests found.</td></tr>';
@@ -750,10 +752,9 @@
 
             currentPageData.forEach(request => {
                 const row = document.createElement('tr');
-                const statusClass = request.status?.toLowerCase().replace('-', '') || 'unknown'; // e.g., inprogress
+                const statusClass = request.status?.toLowerCase().replace('-', '') || 'unknown'; 
                 const priorityClass = request.priority?.toLowerCase() || 'unknown';
 
-                // Determine available actions based on status
                 let actionButtons = '';
                 const currentStatusLower = request.status?.toLowerCase();
 
@@ -794,7 +795,7 @@
                         </button>
                     `;
                 }
-                 // Add edit notes button (always available for non-final states, or adjust logic)
+                    
                  if (currentStatusLower !== 'completed' && currentStatusLower !== 'rejected') {
                      actionButtons += `
                          <button class="action-btn edit-notes" onclick="openStaffNotesModal(${request.id})" title="Edit/Add Staff Notes">
@@ -838,8 +839,8 @@
             
             if (newPage >= 1 && newPage <= totalPages) {
                 currentRequestPage = newPage;
-                updateRequestsTable(); // Only re-render the table
-                updateRequestPagination(); // Update button states
+                updateRequestsTable(); 
+                updateRequestPagination(); 
             }
         }
         
@@ -866,9 +867,8 @@
 
             const statsList = document.querySelector('.todo-list');
             if (statsList) {
-                 // Use class names that match your CSS for coloring/styling
                  statsList.innerHTML = `
-                     <li class="completed"> <!-- Or use a specific class if needed -->
+                     <li class="completed"> 
                          <p>Total Requests</p>
                          <p>${stats.total}</p>
                          <i class='bx bx-list-ul'></i>
@@ -888,7 +888,7 @@
                          <p>${stats.inProgress}</p>
                          <i class='bx bx-loader-alt'></i>
                      </li>
-                     <li class="completed"> <!-- Assuming completed is always styled as completed -->
+                     <li class="completed"> 
                          <p>Completed</p>
                          <p>${stats.completed}</p>
                          <i class='bx bx-check-circle'></i>
@@ -910,7 +910,7 @@
 
             const tableBody = document.getElementById('completedRequestsTableBody');
             if (!tableBody) return;
-            tableBody.innerHTML = ''; // Clear existing rows
+            tableBody.innerHTML = ''; 
 
             if (currentPageData.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="8">No completed or rejected requests found for the selected period.</td></tr>';
@@ -921,24 +921,27 @@
                 const row = document.createElement('tr');
                 const priorityClass = request.priority?.toLowerCase() || 'unknown';
                 const statusClass = request.status?.toLowerCase().replace('-', '') || 'unknown';
+                const displayDate = request.status?.toLowerCase() === 'completed' ? request.dateCompleted : request.dateSubmitted; 
 
                 row.innerHTML = `
                     <td>${request.requestId || 'N/A'}</td>
                     <td>${request.homeownerName || 'N/A'}</td>
                     <td><span class="service-type ${request.serviceType?.toLowerCase() || 'unknown'}">${request.serviceType || 'N/A'}</span></td>
                     <td><span class="priority ${priorityClass}">${request.priority || 'N/A'}</span></td>
-                    <td><span class="status ${statusClass}">${getStatusText(request.status)}</span></td> <!-- Show status -->
-                    <td>${formatDate(request.dateCompleted || request.dateSubmitted)}</td> <!-- Show completed or submitted date -->
-                    <td>${request.completionTime || 'N/A'}</td>
+                    <td><span class="status ${statusClass}">${getStatusText(request.status)}</span></td> 
+                    <td>${formatDate(displayDate)}</td> 
+                    <td>${request.status?.toLowerCase() === 'completed' ? (request.completionTime || 'N/A') : 'N/A'}</td> <!-- Completion time only for completed -->
                     <td>${request.staffNotes || '-'}</td>
                     <td>
-                        <!-- Allow editing notes even for completed/rejected -->
-                        <button class="action-btn edit-notes" onclick="openStaffNotesModal(${request.id})" title="Edit Staff Notes">
-                            <i class='bx bx-edit'></i>
-                        </button>
-                         <button class="action-btn view" onclick="viewRequestDetails(${request.id})" title="View Details">
-                            <i class='bx bx-detail'></i>
-                        </button>
+                         <div class="action-buttons">
+                            <!-- Allow editing notes even for completed/rejected -->
+                            <button class="action-btn edit-notes" onclick="openStaffNotesModal(${request.id})" title="Edit/Add Staff Notes">
+                                <i class='bx bx-edit'></i>
+                            </button>
+                             <button class="action-btn view" onclick="viewRequestDetails(${request.id})" title="View Details">
+                                <i class='bx bx-detail'></i>
+                            </button>
+                         </div>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -947,10 +950,9 @@
         
         function updateCompletedPagination() {
             const totalPages = Math.ceil(filteredCompletedRequests.length / completedPerPage);
-            // Ensure unique IDs for report pagination controls if they exist
-            const pageInfo = document.getElementById('completedPageInfo'); // Make sure this ID exists in your HTML
-            const prevBtn = document.getElementById('prevCompletedPage'); // Make sure this ID exists
-            const nextBtn = document.getElementById('nextCompletedPage'); // Make sure this ID exists
+            const pageInfo = document.getElementById('completedPageInfo'); 
+            const prevBtn = document.getElementById('prevCompletedPage'); 
+            const nextBtn = document.getElementById('nextCompletedPage'); 
 
             if (pageInfo) pageInfo.textContent = `Page ${totalPages > 0 ? currentCompletedPage : 0} of ${totalPages}`;
             if (prevBtn) prevBtn.disabled = currentCompletedPage === 1 || totalPages === 0;
@@ -969,17 +971,22 @@
         }
 
         function updateReportSummary() {
-            const reportData = filteredCompletedRequests.filter(r => r.status?.toLowerCase() === 'completed'); // Only summarize 'completed'
-            const totalCompleted = reportData.length;
-            let totalCompletionSeconds = 0;
-            const serviceCounts = {};
+            const completedData = filteredCompletedRequests.filter(r => r.status?.toLowerCase() === 'completed');
+            const rejectedData = filteredCompletedRequests.filter(r => r.status?.toLowerCase() === 'rejected');
 
-            reportData.forEach(req => {
-                if (req.dateCompleted && req.dateAccepted) { // Use accepted date as start for calculation
+            const totalCompleted = completedData.length;
+            const totalRejected = rejectedData.length;
+            let totalCompletionSeconds = 0;
+            const serviceCounts = {}; 
+
+            completedData.forEach(req => {
+                if (req.dateCompleted && req.dateAccepted) { 
                      try {
                          const start = new Date(req.dateAccepted);
                          const end = new Date(req.dateCompleted);
-                         totalCompletionSeconds += (end - start) / 1000; // Duration in seconds
+                         if (end > start) { 
+                             totalCompletionSeconds += (end - start) / 1000; 
+                         }
                      } catch (e) { /* Handle date parse error */ }
                  }
                  serviceCounts[req.serviceType] = (serviceCounts[req.serviceType] || 0) + 1;
@@ -996,34 +1003,25 @@
                  } else if (avgHours >= 1) {
                       avgCompletionTimeStr = `${avgHours.toFixed(1)} hours`;
                  } else {
-                     avgCompletionTimeStr = `${avgMinutes.toFixed(0)} minutes`;
+                     avgCompletionTimeStr = `${Math.max(0, avgMinutes.toFixed(0))} minutes`; 
                  }
              }
 
             const mostCommonService = Object.entries(serviceCounts).sort(([,a],[,b]) => b-a)[0]?.[0] || 'N/A';
 
-            const summaryContainer = document.querySelector('.report-summary');
-            if (summaryContainer) {
-                 summaryContainer.innerHTML = `
-                     <div class="summary-item">
-                         <span>Total Completed:</span>
-                         <strong>${totalCompleted}</strong>
-                     </div>
-                     <div class="summary-item">
-                         <span>Avg. Completion Time:</span>
-                         <strong>${avgCompletionTimeStr}</strong>
-                     </div>
-                     <div class="summary-item">
-                         <span>Most Common Service:</span>
-                         <strong>${mostCommonService}</strong>
-                     </div>
-                 `;
-            }
+            const totalCompletedElem = document.getElementById('reportTotalCompleted');
+            const totalRejectedElem = document.getElementById('reportTotalRejected');
+            const avgTimeElem = document.getElementById('reportAvgCompletionTime');
+            const commonServiceElem = document.getElementById('reportMostCommonService');
+
+            if (totalCompletedElem) totalCompletedElem.textContent = totalCompleted;
+            if (totalRejectedElem) totalRejectedElem.textContent = totalRejected;
+            if (avgTimeElem) avgTimeElem.textContent = avgCompletionTimeStr;
+            if (commonServiceElem) commonServiceElem.textContent = mostCommonService;
         }
 
         // ------ MODALS AND ACTIONS ------
 
-        // Generic function to handle status updates
         async function updateStatusOnServer(requestId, newStatus, staffNotes = null) {
              showLoadingIndicator(true);
              try {
@@ -1040,7 +1038,7 @@
 
                  if (response.ok && result.success) {
                      showNotification(result.message || `Request status updated to ${newStatus}.`, 'success');
-                     await fetchServiceRequests(); // Refetch data to update UI correctly
+                     await fetchServiceRequests(); 
                  } else {
                      throw new Error(result.message || 'Failed to update status.');
                  }
@@ -1052,7 +1050,6 @@
              }
         }
 
-        // Prompt before updating status
         function promptUpdateStatus(requestId, newStatus, requireNotesForComplete = false) {
             const request = allServiceRequests.find(r => r.id === requestId);
             if (!request) return;
@@ -1064,25 +1061,22 @@
             if (requiresNotes) {
                  message += `\nPlease provide notes${newStatus === 'Rejected' ? ' (required)' : ' (optional)'}:`;
                  notes = prompt(message, request.staffNotes || '');
-                 if (notes === null) return; // User cancelled prompt
+                 if (notes === null) return;
                  if (notes.trim() === '' && newStatus === 'Rejected') {
                      showNotification('Notes are required when rejecting a request.', 'warning');
                      return;
                  }
-                 // Allow empty notes for 'Completed' if requireNotesForComplete is false or notes are optional
             } else {
                  if (!confirm(message)) {
-                     return; // User cancelled confirmation
+                     return;
                  }
              }
              
-             // Proceed with the update
              updateStatusOnServer(requestId, newStatus, notes);
         }
 
         // View Request Details Modal (Staff side)
         function viewRequestDetails(requestId) {
-            // Use parseInt because the ID from the button click might be a string
             const request = allServiceRequests.find(r => r.id === parseInt(requestId));
             if (!request) {
                  showNotification('Request details not found.', 'error');
@@ -1123,13 +1117,10 @@
         // Staff Notes Modal
         function openStaffNotesModal(requestId) {
             const modal = document.getElementById('staffNotesModal');
-             // Use parseInt here as well
             const request = allServiceRequests.find(r => r.id === parseInt(requestId));
             
             if (request && modal) {
-                // Use request.id (the actual database ID) for the hidden input
                 document.getElementById('staffNotesForm-requestId').value = request.id;
-                // Display formatted ID for the user
                 document.getElementById('staffNotesForm-requestIdDisplay').value = request.requestId || 'N/A'; 
                 document.getElementById('staffNotesForm-homeownerName').value = request.homeownerName || 'N/A';
                 document.getElementById('staffNotesForm-serviceType').value = request.serviceType || 'N/A';
@@ -1151,7 +1142,6 @@
             e.preventDefault();
             showLoadingIndicator(true);
 
-            // Get the actual ID from the hidden input
             const requestId = parseInt(document.getElementById('staffNotesForm-requestId')?.value);
             const staffNotes = document.getElementById('staffNotesForm-notes')?.value;
 
@@ -1176,11 +1166,9 @@
                  if (response.ok && result.success) {
                      showNotification(result.message || 'Staff notes updated successfully!', 'success');
                      closeStaffNotesModal();
-                     // Find the request in the local array and update notes for immediate UI feedback
                      const updatedRequest = allServiceRequests.find(r => r.id === requestId);
                      if (updatedRequest) {
                          updatedRequest.staffNotes = staffNotes;
-                         // Re-apply filters and sort to update both tables if necessary
                          applyFiltersAndSort(); 
                      }
                  } else {
@@ -1206,7 +1194,6 @@
         window.onclick = function(event) {
             const detailsModal = document.getElementById('requestDetailsModal');
             const notesModal = document.getElementById('staffNotesModal');
-            // Close modals if clicked outside their content area
             if (event.target === detailsModal) {
                 closeRequestDetailsModal();
             }
@@ -1215,28 +1202,27 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchServiceRequests(); // Initial load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchServiceRequests(); 
 
-            // Filter listeners
+            populateYearFilter(); 
+            
+            applyFiltersAndSort(); 
+
             document.getElementById('statusFilter')?.addEventListener('change', applyFiltersAndSort);
             document.getElementById('typeFilter')?.addEventListener('change', applyFiltersAndSort);
             document.getElementById('searchInput')?.addEventListener('keyup', applyFiltersAndSort);
             document.getElementById('reportMonthFilter')?.addEventListener('change', applyFiltersAndSort);
             document.getElementById('reportYearFilter')?.addEventListener('change', applyFiltersAndSort);
 
-            // Pagination Listeners (Main Table)
             document.getElementById('prevPage')?.addEventListener('click', () => changeRequestPage(-1));
             document.getElementById('nextPage')?.addEventListener('click', () => changeRequestPage(1));
             
-            // Pagination Listeners (Completed/Report Table - ensure unique IDs)
             document.getElementById('prevCompletedPage')?.addEventListener('click', () => changeCompletedPage(-1));
             document.getElementById('nextCompletedPage')?.addEventListener('click', () => changeCompletedPage(1));
             
-             // Add sorting listeners to main table headers
-             document.querySelectorAll('.table-data .order table thead th[data-sort-col]').forEach(th => {
-                 th.style.cursor = 'pointer'; // Indicate clickable
-                 // Add a span for the sort icon if it doesn't exist
+            document.querySelectorAll('.table-data .order table thead th[data-sort-col]').forEach(th => {
+                 th.style.cursor = 'pointer'; 
                  if (!th.querySelector('.sort-icon')) {
                     const iconSpan = document.createElement('span');
                     iconSpan.className = 'sort-icon';
@@ -1246,12 +1232,45 @@
                  th.addEventListener('click', () => handleSort(th.dataset.sortCol));
              });
              
-            // Initial sort indicator update
             updateSortIndicators();
              
-            // Add sorting listeners to completed table headers (optional, if needed)
-             // ... similar logic for completed table headers ...
+            applyFiltersAndSort(); 
+
         });
+
+        // ------ DYNAMIC YEAR FILTER POPULATION ------
+        function populateYearFilter() {
+            const yearFilterSelect = document.getElementById('reportYearFilter');
+            if (!yearFilterSelect) return;
+
+            const currentYear = new Date().getFullYear();
+            let years = new Set([currentYear]); 
+
+            allServiceRequests.forEach(req => {
+                const dateStr = req.dateCompleted || req.dateSubmitted;
+                if (dateStr) {
+                    try {
+                        const date = new Date(dateStr);
+                        if (!isNaN(date.getTime())) {
+                            years.add(date.getFullYear());
+                        }
+                    } catch(e) { /* Ignore parsing errors for this */ }
+                }
+            });
+
+            const sortedYears = Array.from(years).sort((a, b) => b - a);
+
+            yearFilterSelect.innerHTML = ''; 
+            sortedYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === currentYear) {
+                    option.selected = true;
+                }
+                yearFilterSelect.appendChild(option);
+            });
+        }
 
     </script>
 </body>

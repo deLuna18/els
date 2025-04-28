@@ -21,7 +21,7 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddDbContext<HomeContext>(options =>
 {
-    options.UseSqlServer("Server=ALEXA\\SQLEXPRESS;Database=SubdivisionManagement_db;Trusted_Connection=True;TrustServerCertificate=True;");
+    options.UseSqlServer("Server=AMBL;Database=SubdivisionManagement_db;Trusted_Connection=True;TrustServerCertificate=True;");
 });
 
 var app = builder.Build();

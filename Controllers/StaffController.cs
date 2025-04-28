@@ -569,6 +569,31 @@ namespace SubdivisionManagement.Controllers
             }
         }
 
+        public IActionResult Staff_Contact_And_Support()
+        {
+            if (!IsStaffLoggedIn(out _))
+            {
+                return RedirectToAction("Login");
+            }
+
+            try
+            {
+                var contactRequests = _context.ContactRequests
+                    .Include(c => c.Homeowner)
+                    .OrderByDescending(c => c.DateSubmitted)
+                    .ToList();
+
+                // Return the view with the model
+                return View(contactRequests);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading contact requests: {ex.Message}");
+                return View(new List<ContactRequest>());
+            }
+        }
+        
+
         public IActionResult Announcements()
         {
             if (!IsStaffLoggedIn(out _)) return RedirectToAction("Login"); // Check login
@@ -594,11 +619,11 @@ namespace SubdivisionManagement.Controllers
 
             return View("staff_community_forum");
         }
-    }
 
-    public class UpdateStatusModel
-    {
-        public int HomeownerId { get; set; }
-        public string NewStatus { get; set; } = string.Empty;
+        public class UpdateStatusModel
+        {
+            public int HomeownerId { get; set; }
+            public string NewStatus { get; set; } = string.Empty;
+        }
     }
 }

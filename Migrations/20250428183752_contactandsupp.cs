@@ -5,7 +5,7 @@
 namespace SubdivisionManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class contactandsupp : Migration
+    public partial class ContactAndSupp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

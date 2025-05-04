@@ -12,6 +12,7 @@ namespace SubdivisionManagement.Model
         public DbSet<Announcement> Announcements { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<ContactRequest> ContactRequests { get; set; }
+        public DbSet<ServiceCategory> ServiceCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,11 @@ namespace SubdivisionManagement.Model
                 .WithMany()
                 .HasForeignKey(cr => cr.HomeownerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Add ServiceCategory configuration
+            modelBuilder.Entity<ServiceCategory>()
+                .HasIndex(sc => sc.Name)
+                .IsUnique();
         }
     }
 }

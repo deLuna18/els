@@ -21,7 +21,7 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddDbContext<HomeContext>(options =>
 {
-    options.UseSqlServer("Server=ALEXA\\SQLEXPRESS;Database=SubdivisionManagement_db;Trusted_Connection=True;TrustServerCertificate=True;");
+    options.UseSqlServer("Server=DESKTOP-EPCAAU1\\SQLEXPRESS;Database=SubdivisionManagement_db;Trusted_Connection=True;TrustServerCertificate=True;");
 });
 
 var app = builder.Build();
@@ -61,14 +61,16 @@ void SeedDatabase(IServiceProvider services)
 {
     using var scope = services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<HomeContext>();
+    
+    // Only migrate the database, don't delete it
     context.Database.Migrate();
 
+    // Only seed admin if none exists
     if (!context.Admins.Any())
-{
-    context.Admins.Add(new Admin("admin", HashPassword("password123")));
-    context.SaveChanges();
-}
-
+    {
+        context.Admins.Add(new Admin("admin", HashPassword("password123")));
+        context.SaveChanges();
+    }
 }
 
 static string HashPassword(string password)

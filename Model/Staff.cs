@@ -34,6 +34,16 @@ namespace SubdivisionManagement.Model
         [Required]
         public string Department { get; set; } = string.Empty;
 
+        // Additional properties for service functionality
+        [MaxLength(20)]
+        public string Status { get; set; } = "Active";
+
+        [MaxLength(50)]
+        public string Role { get; set; } = "Staff";
+
+        [MaxLength(100)]
+        public string? Specialization { get; set; }
+
         // Add parameterless constructor for Entity Framework
         public Staff()
         {
@@ -50,7 +60,8 @@ namespace SubdivisionManagement.Model
             Username = username;
             Date_Hired = dateHired;
             Department = department;
+            Status = "Active";
+            Role = "Staff";
         }
-
     }
 }

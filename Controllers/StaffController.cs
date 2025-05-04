@@ -115,7 +115,7 @@ namespace SubdivisionManagement.Controllers
             try 
             {
                 var rawRequests = await _context.ServiceRequests
-                    .Include(r => r.Homeowner) 
+                    .Include(r => r.Homeowner)
                     .OrderByDescending(r => r.DateSubmitted)
                     .ToListAsync(); 
 
@@ -133,7 +133,9 @@ namespace SubdivisionManagement.Controllers
                     DateCompleted = r.DateCompleted.HasValue ? r.DateCompleted.Value.ToString("o") : null,
                     CompletionTime = CalculateCompletionTime(r.DateAccepted, r.DateCompleted),
                     r.StaffNotes,
-                    r.StaffId
+                    r.StaffId,
+                    DateAccepted = r.DateAccepted?.ToString("o"),
+                    DateStarted = r.DateStarted?.ToString("o")
                 }).ToList(); 
 
                 return Json(projectedRequests);
@@ -142,6 +144,36 @@ namespace SubdivisionManagement.Controllers
             {
                 _logger.LogError(ex, "Error fetching service requests in GetServiceRequests action.");
                 return StatusCode(500, new { message = "An internal error occurred while retrieving service requests." }); 
+            }
+        }
+
+        // GET: /Staff/GetServiceEmployees
+        [HttpGet]
+        public async Task<IActionResult> GetServiceEmployees()
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                var employees = await _context.Staffs
+                    .Where(s => s.Role == "ServiceEmployee")
+                    .Select(s => new
+                    {
+                        s.Id,
+                        Name = s.FullName,
+                        s.Email,
+                        Phone = s.ContactNumber,
+                        s.Status,
+                        s.Specialization
+                    })
+                    .ToListAsync();
+
+                return Json(employees);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching service employees");
+                return StatusCode(500, new { message = "Error fetching service employees" });
             }
         }
 
@@ -154,7 +186,7 @@ namespace SubdivisionManagement.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var staff = GetLoggedInStaffUser(username);
-            if (staff == null) return Forbid(); 
+            if (staff == null) return Forbid();
 
             var request = await _context.ServiceRequests.FindAsync(updateDto.RequestId);
             if (request == null)
@@ -167,9 +199,19 @@ namespace SubdivisionManagement.Controllers
                 return BadRequest(new { success = false, message = $"Invalid status transition from {request.Status} to {updateDto.NewStatus}." });
             }
 
+            // Update assigned employee if provided
+            if (updateDto.AssignedEmployeeId.HasValue)
+            {
+                var employee = await _context.Staffs.FindAsync(updateDto.AssignedEmployeeId.Value);
+                if (employee == null || employee.Role != "ServiceEmployee")
+                {
+                    return BadRequest(new { success = false, message = "Invalid employee assignment." });
+                }
+                request.StaffId = employee.Id;
+            }
+
             request.Status = updateDto.NewStatus;
-            request.StaffId = staff.Id; 
-            request.StaffNotes = updateDto.StaffNotes ?? request.StaffNotes; 
+            request.StaffNotes = updateDto.StaffNotes ?? request.StaffNotes;
 
             switch (updateDto.NewStatus.ToLower())
             {
@@ -177,12 +219,12 @@ namespace SubdivisionManagement.Controllers
                     request.DateAccepted = DateTime.UtcNow;
                     break;
                 case "in-progress":
-                    if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow; 
+                    if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow;
                     request.DateStarted = DateTime.UtcNow;
                     break;
                 case "completed":
                     if (request.DateAccepted == null) request.DateAccepted = DateTime.UtcNow;
-                    if (request.DateStarted == null) request.DateStarted = DateTime.UtcNow; 
+                    if (request.DateStarted == null) request.DateStarted = DateTime.UtcNow;
                     request.DateCompleted = DateTime.UtcNow;
                     break;
                 case "rejected":
@@ -200,7 +242,7 @@ namespace SubdivisionManagement.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                 return Conflict(new { success = false, message = "The request was modified by another user. Please refresh and try again." });
+                return Conflict(new { success = false, message = "The request was modified by another user. Please refresh and try again." });
             }
             catch (Exception ex)
             {
@@ -268,6 +310,7 @@ namespace SubdivisionManagement.Controllers
             [Required] public int RequestId { get; set; }
             [Required] public string NewStatus { get; set; } = string.Empty;
             public string? StaffNotes { get; set; }
+            public int? AssignedEmployeeId { get; set; }
         }
 
         public class UpdateStaffNotesDto
@@ -607,6 +650,34 @@ namespace SubdivisionManagement.Controllers
         {
             public int HomeownerId { get; set; }
             public string NewStatus { get; set; } = string.Empty;
+        }
+
+        // GET: /Staff/GetServiceCategories
+        [HttpGet]
+        public async Task<IActionResult> GetServiceCategories()
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                var categories = await _context.ServiceCategories
+                    .OrderBy(c => c.Name)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Name,
+                        c.Description,
+                        c.Icon
+                    })
+                    .ToListAsync();
+
+                return Json(categories);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching service categories");
+                return StatusCode(500, new { message = "Error fetching service categories" });
+            }
         }
     }
 }

@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\css\\admin_login.css"
     },
     {
+      "Id": "C:\\Users\\Home\\OneDrive\\Documents\\elnet\\wwwroot\\css\\admin_security_visitors.css",
+      "PackagePath": "staticwebassets\\css\\admin_security_visitors.css"
+    },
+    {
       "Id": "C:\\Users\\Home\\OneDrive\\Documents\\elnet\\wwwroot\\css\\admin_services.css",
       "PackagePath": "staticwebassets\\css\\admin_services.css"
     },

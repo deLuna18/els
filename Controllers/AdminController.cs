@@ -121,6 +121,19 @@ public class AdminController : Controller
         return View("admin_services");
     }
 
+    public IActionResult SecurityVisitors()
+    {
+        if (HttpContext.Session.GetString("AdminUser") == null)
+        {
+            return RedirectToAction("Login");
+        }
+
+        var tokens = _antiforgery.GetAndStoreTokens(HttpContext);
+        ViewBag.AntiForgeryToken = tokens.RequestToken;
+        ViewBag.AdminName = HttpContext.Session.GetString("AdminUser");
+        return View("admin_security_visitors");
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetServiceCategories()
     {
@@ -380,6 +393,78 @@ public class AdminController : Controller
         {
             _logger.LogError(ex, "Error updating service employee");
             return StatusCode(500, new { success = false, message = "Error updating employee" });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllVisitorPasses()
+    {
+        if (HttpContext.Session.GetString("AdminUser") == null)
+            return Unauthorized();
+
+        try
+        {
+            _logger.LogInformation("Fetching visitor passes from database");
+            
+            var passes = await _context.VisitorPasses
+                .Include(vp => vp.Homeowner)
+                .OrderByDescending(vp => vp.VisitDate)
+                .Select(vp => new
+                {
+                    vp.Id,
+                    vp.VisitorName,
+                    vp.VisitDate,
+                    vp.Purpose,
+                    vp.Status,
+                    vp.EntryTime,
+                    vp.ExitTime,
+                    HomeownerName = vp.Homeowner != null ? $"{vp.Homeowner.FirstName} {vp.Homeowner.LastName}" : "N/A",
+                    RequestDate = vp.VisitDate
+                })
+                .ToListAsync();
+
+            _logger.LogInformation($"Retrieved {passes.Count} visitor passes");
+            return Json(passes);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching visitor passes");
+            return StatusCode(500, new { message = "Error fetching visitor passes", error = ex.Message });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllVehicleRegistrations()
+    {
+        if (HttpContext.Session.GetString("AdminUser") == null)
+            return Unauthorized();
+
+        try
+        {
+            _logger.LogInformation("Fetching vehicle registrations from database");
+            
+            var registrations = await _context.VehicleRegistrations
+                .Include(vr => vr.Homeowner)
+                .OrderByDescending(vr => vr.RegistrationDate)
+                .Select(vr => new
+                {
+                    vr.Id,
+                    vr.VehicleMake,
+                    vr.VehicleModel,
+                    vr.PlateNumber,
+                    vr.Status,
+                    vr.RegistrationDate,
+                    HomeownerName = vr.Homeowner != null ? $"{vr.Homeowner.FirstName} {vr.Homeowner.LastName}" : "N/A"
+                })
+                .ToListAsync();
+
+            _logger.LogInformation($"Retrieved {registrations.Count} vehicle registrations");
+            return Json(registrations);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching vehicle registrations");
+            return StatusCode(500, new { message = "Error fetching vehicle registrations", error = ex.Message });
         }
     }
 

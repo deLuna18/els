@@ -797,15 +797,15 @@ namespace SubdivisionManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateVisitorPassStatus([FromBody] VisitorPassActionDto actionDto)
         {
-            if (!IsStaffLoggedIn(out _)) 
-                return Unauthorized(new { success = false, message = "Please log in to continue." });
-
-            if (!ModelState.IsValid)
-                return BadRequest(new { success = false, message = "Invalid request data." });
+            if (!IsStaffLoggedIn(out var username)) return Unauthorized();
 
             try
             {
-                var pass = await _context.VisitorPasses.FindAsync(actionDto.PassId);
+                var staff = GetLoggedInStaffUser(username);
+                var pass = await _context.VisitorPasses
+                    .Include(v => v.Homeowner)
+                    .FirstOrDefaultAsync(v => v.Id == actionDto.PassId);
+
                 if (pass == null)
                 {
                     return NotFound(new { success = false, message = "Visitor pass not found." });
@@ -820,6 +820,7 @@ namespace SubdivisionManagement.Controllers
                         }
                         pass.Status = "Approved";
                         pass.ApprovalDate = DateTime.UtcNow;
+                        pass.EntryTime = DateTime.UtcNow; // Record entry time when approved
                         break;
 
                     case "reject":
@@ -844,7 +845,21 @@ namespace SubdivisionManagement.Controllers
 
                 _context.VisitorPasses.Update(pass);
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, message = $"Visitor pass {actionDto.Action.ToLower()}ed successfully!" });
+
+                // Return additional information for immediate display
+                return Json(new { 
+                    success = true, 
+                    message = $"Visitor pass {actionDto.Action.ToLower()}ed successfully!",
+                    passDetails = new {
+                        id = pass.Id,
+                        visitorName = pass.VisitorName,
+                        visitDate = pass.VisitDate.ToString("yyyy-MM-dd"),
+                        purpose = pass.Purpose,
+                        status = pass.Status,
+                        entryTime = pass.EntryTime?.ToString("yyyy-MM-dd HH:mm"),
+                        homeownerName = pass.Homeowner != null ? $"{pass.Homeowner.FirstName} {pass.Homeowner.LastName}" : "N/A"
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -857,7 +872,7 @@ namespace SubdivisionManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateVehicleRegistrationStatus([FromBody] VehicleRegistrationActionDto actionDto)
         {
-            if (!IsStaffLoggedIn(out _))
+            if (!IsStaffLoggedIn(out var username))
                 return Unauthorized(new { success = false, message = "Please log in to continue." });
 
             if (!ModelState.IsValid)
@@ -865,6 +880,7 @@ namespace SubdivisionManagement.Controllers
 
             try
             {
+                var staff = GetLoggedInStaffUser(username);
                 var registration = await _context.VehicleRegistrations.FindAsync(actionDto.RegistrationId);
                 if (registration == null)
                 {
@@ -913,6 +929,54 @@ namespace SubdivisionManagement.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecordVisitorExit([FromBody] VisitorExitDto exitDto)
+        {
+            if (!IsStaffLoggedIn(out var username)) return Unauthorized();
+
+            try
+            {
+                var pass = await _context.VisitorPasses
+                    .Include(v => v.Homeowner)
+                    .FirstOrDefaultAsync(v => v.Id == exitDto.PassId);
+
+                if (pass == null)
+                {
+                    return NotFound(new { success = false, message = "Visitor pass not found." });
+                }
+
+                if (pass.Status != "Approved" || pass.ExitTime.HasValue)
+                {
+                    return BadRequest(new { success = false, message = "Invalid visitor pass status or exit already recorded." });
+                }
+
+                // Record exit time
+                pass.ExitTime = DateTime.UtcNow;
+                pass.Status = "Completed";
+
+                await _context.SaveChangesAsync();
+
+                // Return additional information for immediate display
+                return Json(new { 
+                    success = true, 
+                    message = "Visitor exit recorded successfully!",
+                    exitDetails = new {
+                        visitorName = pass.VisitorName,
+                        entryTime = pass.EntryTime?.ToString("yyyy-MM-dd HH:mm"),
+                        exitTime = pass.ExitTime?.ToString("yyyy-MM-dd HH:mm"),
+                        purpose = pass.Purpose,
+                        homeownerName = pass.Homeowner != null ? $"{pass.Homeowner.FirstName} {pass.Homeowner.LastName}" : "N/A"
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error recording visitor exit for pass ID {PassId}", exitDto.PassId);
+                return StatusCode(500, new { success = false, message = "An error occurred while recording the visitor exit." });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetActiveVisitors()
         {
@@ -920,9 +984,14 @@ namespace SubdivisionManagement.Controllers
 
             try
             {
+                var today = DateTime.UtcNow.Date;
+                
                 var activeVisitors = await _context.VisitorPasses
                     .Include(v => v.Homeowner)
-                    .Where(v => v.Status == "Approved" && v.ExitTime == null)
+                    .Where(v => v.Status == "Approved" && 
+                            v.ExitTime == null && 
+                            v.EntryTime != null &&
+                            v.VisitDate.Date == today)
                     .OrderBy(v => v.EntryTime)
                     .Select(v => new
                     {
@@ -930,7 +999,8 @@ namespace SubdivisionManagement.Controllers
                         v.VisitorName,
                         EntryTime = v.EntryTime.HasValue ? v.EntryTime.Value.ToString("yyyy-MM-dd HH:mm") : null,
                         v.Purpose,
-                        HomeownerName = v.Homeowner != null ? $"{v.Homeowner.FirstName} {v.Homeowner.LastName}" : "N/A"
+                        HomeownerName = v.Homeowner != null ? $"{v.Homeowner.FirstName} {v.Homeowner.LastName}" : "N/A",
+                        VisitDuration = v.EntryTime.HasValue ? CalculateVisitDuration(v.EntryTime.Value) : "Not recorded"
                     })
                     .ToListAsync();
 
@@ -939,8 +1009,22 @@ namespace SubdivisionManagement.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching active visitors");
-                return StatusCode(500, new { message = "Error retrieving active visitors" });
+                return StatusCode(500, new { message = "Error retrieving active visitors. Please try again later." });
             }
+        }
+
+        private string CalculateVisitDuration(DateTime entryTime)
+        {
+            var duration = DateTime.UtcNow - entryTime;
+            if (duration.TotalHours >= 24)
+            {
+                return $"{Math.Floor(duration.TotalDays)} days";
+            }
+            if (duration.TotalHours >= 1)
+            {
+                return $"{Math.Floor(duration.TotalHours)} hours";
+            }
+            return $"{Math.Floor(duration.TotalMinutes)} minutes";
         }
 
         [HttpGet]
@@ -962,7 +1046,8 @@ namespace SubdivisionManagement.Controllers
                         EntryTime = v.EntryTime.HasValue ? v.EntryTime.Value.ToString("yyyy-MM-dd HH:mm") : null,
                         ExitTime = v.ExitTime.HasValue ? v.ExitTime.Value.ToString("yyyy-MM-dd HH:mm") : null,
                         v.Purpose,
-                        HomeownerName = v.Homeowner != null ? $"{v.Homeowner.FirstName} {v.Homeowner.LastName}" : "N/A"
+                        HomeownerName = v.Homeowner != null ? $"{v.Homeowner.FirstName} {v.Homeowner.LastName}" : "N/A",
+                        v.Status
                     })
                     .ToListAsync();
 
@@ -972,52 +1057,6 @@ namespace SubdivisionManagement.Controllers
             {
                 _logger.LogError(ex, "Error fetching today's visitor exits");
                 return StatusCode(500, new { message = "Error retrieving visitor exits" });
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RecordVisitorExit([FromBody] VisitorExitDto exitDto)
-        {
-            if (!IsStaffLoggedIn(out _)) return Unauthorized();
-
-            try
-            {
-                var pass = await _context.VisitorPasses.FindAsync(exitDto.PassId);
-                if (pass == null)
-                {
-                    return NotFound(new { success = false, message = "Visitor pass not found." });
-                }
-
-                if (pass.Status != "Approved" || pass.ExitTime.HasValue)
-                {
-                    return BadRequest(new { success = false, message = "Invalid visitor pass status or exit already recorded." });
-                }
-
-                // Record exit time
-                pass.ExitTime = DateTime.UtcNow;
-                pass.Status = "Completed";
-
-                await _context.SaveChangesAsync();
-
-                // Create a security log entry for the exit
-                var securityLog = new SecurityLog
-                {
-                    Type = "Visitor Exit",
-                    Message = $"Visitor {pass.VisitorName} exited the premises",
-                    Timestamp = DateTime.UtcNow,
-                    Status = "Completed"
-                };
-
-                _context.SecurityLogs.Add(securityLog);
-                await _context.SaveChangesAsync();
-
-                return Json(new { success = true, message = "Visitor exit recorded successfully!" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error recording visitor exit for pass ID {PassId}", exitDto.PassId);
-                return StatusCode(500, new { success = false, message = "An error occurred while recording the visitor exit." });
             }
         }
 
@@ -1080,101 +1119,6 @@ namespace SubdivisionManagement.Controllers
                 _logger.LogError(ex, "Error fetching vehicle registrations");
                 return StatusCode(500, new { message = "Error retrieving vehicle registrations" });
             }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetSecurityLogs(string type = "all", string date = null)
-        {
-            if (!IsStaffLoggedIn(out _)) return Unauthorized();
-
-            try
-            {
-                DateTime filterDate = date != null ? 
-                    DateTime.Parse(date) : 
-                    DateTime.Today;
-
-                var query = _context.SecurityLogs
-                    .Include(l => l.Staff)
-                    .Where(l => l.Timestamp.Date == filterDate.Date);
-
-                if (type.ToLower() != "all")
-                {
-                    query = query.Where(l => l.Type.ToLower() == type.ToLower());
-                }
-
-                var logs = await query
-                    .OrderByDescending(l => l.Timestamp)
-                    .Select(l => new
-                    {
-                        l.Id,
-                        l.Type,
-                        Timestamp = l.Timestamp.ToString("yyyy-MM-dd HH:mm"),
-                        l.Message,
-                        StaffName = l.Staff != null ? l.Staff.FullName : "System",
-                        l.Status
-                    })
-                    .ToListAsync();
-
-                return Json(logs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving security logs");
-                return StatusCode(500, new { message = "Error retrieving security logs" });
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> HandleIncident([FromBody] HandleIncidentDto dto)
-        {
-            if (!IsStaffLoggedIn(out var username)) return Unauthorized();
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            try
-            {
-                var staff = GetLoggedInStaffUser(username);
-                var incident = await _context.SecurityLogs.FindAsync(dto.IncidentId);
-                
-                if (incident == null)
-                    return NotFound(new { success = false, message = "Incident not found." });
-
-                incident.Status = "Handled";
-                incident.HandledBy = staff?.Id;
-                incident.HandledAt = DateTime.UtcNow;
-                incident.Resolution = dto.Resolution;
-
-                await _context.SaveChangesAsync();
-
-                // Create a new log entry for the resolution
-                var resolutionLog = new SecurityLog
-                {
-                    Type = "Resolution",
-                    Message = $"Incident #{dto.IncidentId} resolved: {dto.Resolution}",
-                    Timestamp = DateTime.UtcNow,
-                    StaffId = staff?.Id,
-                    Status = "Completed"
-                };
-
-                _context.SecurityLogs.Add(resolutionLog);
-                await _context.SaveChangesAsync();
-
-                return Json(new { success = true, message = "Incident handled successfully." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error handling incident");
-                return StatusCode(500, new { success = false, message = "An error occurred while handling the incident." });
-            }
-        }
-
-        public class HandleIncidentDto
-        {
-            [Required]
-            public int IncidentId { get; set; }
-
-            [Required]
-            public string Resolution { get; set; } = string.Empty;
         }
     }
 }

@@ -193,48 +193,6 @@ namespace SubdivisionManagement.Migrations
                     b.ToTable("Homeowners");
                 });
 
-            modelBuilder.Entity("SubdivisionManagement.Model.SecurityLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("HandledAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("HandledBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Resolution")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("StaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StaffId");
-
-                    b.ToTable("SecurityLogs");
-                });
-
             modelBuilder.Entity("SubdivisionManagement.Model.ServiceCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -502,16 +460,6 @@ namespace SubdivisionManagement.Migrations
                     b.HasOne("SubdivisionManagement.Model.Staff", "Staff")
                         .WithMany()
                         .HasForeignKey("StaffId");
-
-                    b.Navigation("Staff");
-                });
-
-            modelBuilder.Entity("SubdivisionManagement.Model.SecurityLog", b =>
-                {
-                    b.HasOne("SubdivisionManagement.Model.Staff", "Staff")
-                        .WithMany()
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Staff");
                 });

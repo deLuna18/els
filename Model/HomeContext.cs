@@ -15,7 +15,6 @@ namespace SubdivisionManagement.Model
         public DbSet<ContactRequest> ContactRequests { get; set; }
         public DbSet<VisitorPass> VisitorPasses { get; set; }
         public DbSet<VehicleRegistration> VehicleRegistrations { get; set; }
-        public DbSet<SecurityLog> SecurityLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,13 +56,6 @@ namespace SubdivisionManagement.Model
                 .WithMany()
                 .HasForeignKey(v => v.HomeownerId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // Add SecurityLog configuration
-            modelBuilder.Entity<SecurityLog>()
-                .HasOne(sl => sl.Staff)
-                .WithMany()
-                .HasForeignKey(sl => sl.StaffId)
-                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

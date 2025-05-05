@@ -126,12 +126,12 @@
                     <div class="requests-container">
                         <h3>Pending Visitor Pass Requests</h3>
                         <div id="pendingVisitorPasses" class="visitor-list">
-                            <!-- Dynamically populated by JavaScript -->
+
                         </div>
 
                         <h3>Approved Visitor Passes</h3>
                         <div id="approvedVisitorPasses" class="visitor-list">
-                            <!-- Dynamically populated by JavaScript -->
+
                         </div>
                     </div>
                 </div>
@@ -142,12 +142,10 @@
                     <div class="requests-container">
                         <h3>Active Visitors</h3>
                         <div id="activeVisitors" class="visitor-list">
-                            <!-- Will be populated with active visitors -->
                         </div>
 
                         <h3>Today's Exits</h3>
                         <div id="todayExits" class="visitor-list">
-                            <!-- Will be populated with today's exits -->
                         </div>
                     </div>
                 </div>
@@ -158,65 +156,42 @@
                     <div class="requests-container">
                         <h3>Pending Vehicle Registrations</h3>
                         <div id="pendingVehicleRegistrations" class="vehicle-list">
-                            <!-- Dynamically populated by JavaScript -->
+                            
                         </div>
 
                         <h3>Approved Vehicle Registrations</h3>
                         <div id="approvedVehicleRegistrations" class="vehicle-list">
-                            <!-- Dynamically populated by JavaScript -->
+                                
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- REGISTERED VEHICLES AND SECURITY LOGS -->
-            <div class="security-section">
-                <!-- REGISTERED VEHICLES TABLE -->
-                <div class="summary-table-container">
-                    <h2><i class='bx bx-car'></i>Registered Vehicles</h2>
-                    <div class="table-responsive">
-                        <table class="summary-table">
-                            <thead>
-                                <tr>
-                                    <th>Owner Name</th>
-                                    <th>Vehicle Make</th>
-                                    <th>Vehicle Model</th>
-                                    <th>Plate Number</th>
-                                    <th>Registration Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="registeredVehiclesBody">
-                                <!-- Will be populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- SECURITY LOGS -->
-                <div class="security-card">
-                    <h2><i class='bx bx-history'></i>Security Logs</h2>
-                    <div class="logs-container">
-                        <div class="log-filters">
-                            <select id="logType">
-                                <option value="all">All Logs</option>
-                                <option value="visitor">Visitor Logs</option>
-                                <option value="vehicle">Vehicle Logs</option>
-                                <option value="incident">Incident Reports</option>
-                            </select>
-                            <input type="date" id="logDate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
-                        </div>
-                        <div id="securityLogsList" class="log-list">
-                            <!-- Will be populated dynamically -->
-                        </div>
-                    </div>
+            <!-- REGISTERED VEHICLES TABLE -->
+            <div class="summary-table-container" style="margin-top: 20px;">
+                <h2><i class='bx bx-car'></i>Registered Vehicles</h2>
+                <div class="table-responsive">
+                    <table class="summary-table">
+                        <thead>
+                            <tr>
+                                <th>Owner Name</th>
+                                <th>Vehicle Make</th>
+                                <th>Vehicle Model</th>
+                                <th>Plate Number</th>
+                                <th>Registration Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registeredVehiclesBody">
+                            
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
         <!-- MAIN -->
     </section>
 
-    <!-- Add jQuery and Toastr -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
@@ -283,7 +258,6 @@
             }
         })
 
-        // Load visitor passes
         function loadPendingVisitorPasses() {
             $.get('/Staff/GetPendingVisitorPasses', function(data) {
                 $('#pendingVisitorPasses').empty();
@@ -386,7 +360,6 @@
             });
         }
 
-        // Update status functions
         window.updateVisitorPassStatus = function(passId, action) {
             const data = {
                 passId: passId,
@@ -404,8 +377,38 @@
                 success: function(response) {
                     if (response.success) {
                         toastr.success(response.message);
-                        loadPendingVisitorPasses();
-                        loadApprovedVisitorPasses();
+
+                        if (action.toLowerCase() === 'approve') {
+                            const activeVisitorHtml = `
+                                <div class="list-item" data-id="${response.passDetails.id}">
+                                    <div class="request-info">
+                                        <span class="visitor-name"><i class='bx bx-user'></i> ${response.passDetails.visitorName}</span>
+                                        <span class="entry-time"><i class='bx bx-log-in'></i> Entry: ${response.passDetails.entryTime}</span>
+                                        <span class="visit-purpose"><i class='bx bx-info-circle'></i> ${response.passDetails.purpose}</span>
+                                        <span class="homeowner-name"><i class='bx bx-home'></i> Host: ${response.passDetails.homeownerName}</span>
+                                        <span class="visit-duration" data-entry="${response.passDetails.entryTime}">
+                                            <i class='bx bx-time'></i> Duration: Just now
+                                        </span>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <button class="btn-exit" onclick="recordVisitorExit(${response.passDetails.id})">
+                                            <i class='bx bx-log-out'></i> Record Exit
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            $('#activeVisitors .no-data').remove();
+                            
+                            $('#activeVisitors').prepend(activeVisitorHtml);
+                        }
+
+                        $(`#pendingVisitorPasses .list-item[data-id="${passId}"]`).fadeOut(function() {
+                            $(this).remove();
+                            if ($('#pendingVisitorPasses .list-item').length === 0) {
+                                $('#pendingVisitorPasses').append('<div class="no-data">No pending visitor passes</div>');
+                            }
+                        });
                     } else {
                         toastr.error(response.message || 'An error occurred');
                     }
@@ -436,6 +439,7 @@
                         toastr.success(response.message);
                         loadPendingVehicleRegistrations();
                         loadApprovedVehicleRegistrations();
+                        loadRegisteredVehicles();
                     } else {
                         toastr.error(response.message || 'An error occurred');
                     }
@@ -447,18 +451,18 @@
             });
         };
 
-        // Add these new functions for visitor exit management
         function loadActiveVisitors() {
             $.get('/Staff/GetActiveVisitors', function(data) {
                 $('#activeVisitors').empty();
                 data.forEach(function(visitor) {
                     const html = `
-                        <div class="list-item">
+                        <div class="list-item" data-id="${visitor.id}">
                             <div class="request-info">
-                                <span class="visitor-name">${visitor.visitorName}</span>
-                                <span class="visit-time">Entered: ${visitor.entryTime || 'Not recorded'}</span>
-                                <span class="visit-purpose">${visitor.purpose}</span>
-                                <span class="homeowner-name">Host: ${visitor.homeownerName}</span>
+                                <span class="visitor-name"><i class='bx bx-user'></i> ${visitor.visitorName}</span>
+                                <span class="entry-time"><i class='bx bx-log-in'></i> Entry: ${visitor.entryTime || 'Not recorded'}</span>
+                                <span class="visit-purpose"><i class='bx bx-info-circle'></i> ${visitor.purpose}</span>
+                                <span class="homeowner-name"><i class='bx bx-home'></i> Host: ${visitor.homeownerName}</span>
+                                <span class="visit-duration"><i class='bx bx-time'></i> Duration: ${visitor.visitDuration}</span>
                             </div>
                             <div class="action-buttons">
                                 <button class="btn-exit" onclick="recordVisitorExit(${visitor.id})">
@@ -469,6 +473,10 @@
                     `;
                     $('#activeVisitors').append(html);
                 });
+
+                if (data.length === 0) {
+                    $('#activeVisitors').append('<div class="no-data">No active visitors</div>');
+                }
             });
         }
 
@@ -479,16 +487,20 @@
                     const html = `
                         <div class="list-item">
                             <div class="request-info">
-                                <span class="visitor-name">${visitor.visitorName}</span>
-                                <span class="entry-time">Entry: ${visitor.entryTime || 'Not recorded'}</span>
-                                <span class="exit-time">Exit: ${visitor.exitTime}</span>
-                                <span class="visit-purpose">${visitor.purpose}</span>
-                                <span class="homeowner-name">Host: ${visitor.homeownerName}</span>
+                                <span class="visitor-name"><i class='bx bx-user'></i> ${visitor.visitorName}</span>
+                                <span class="entry-time"><i class='bx bx-log-in'></i> Entry: ${visitor.entryTime || 'Not recorded'}</span>
+                                <span class="exit-time"><i class='bx bx-log-out'></i> Exit: ${visitor.exitTime}</span>
+                                <span class="visit-purpose"><i class='bx bx-info-circle'></i> ${visitor.purpose}</span>
+                                <span class="homeowner-name"><i class='bx bx-home'></i> Host: ${visitor.homeownerName}</span>
                             </div>
                         </div>
                     `;
                     $('#todayExits').append(html);
                 });
+
+                if (data.length === 0) {
+                    $('#todayExits').append('<div class="no-data">No visitor exits recorded today</div>');
+                }
             });
         }
 
@@ -506,8 +518,29 @@
                 success: function(response) {
                     if (response.success) {
                         toastr.success(response.message);
-                        loadActiveVisitors();
-                        loadTodayExits();
+                        
+                        const exitHtml = `
+                            <div class="list-item">
+                                <div class="request-info">
+                                    <span class="visitor-name"><i class='bx bx-user'></i> ${response.exitDetails.visitorName}</span>
+                                    <span class="entry-time"><i class='bx bx-log-in'></i> Entry: ${response.exitDetails.entryTime || 'Not recorded'}</span>
+                                    <span class="exit-time"><i class='bx bx-log-out'></i> Exit: ${response.exitDetails.exitTime}</span>
+                                    <span class="visit-purpose"><i class='bx bx-info-circle'></i> ${response.exitDetails.purpose}</span>
+                                    <span class="homeowner-name"><i class='bx bx-home'></i> Host: ${response.exitDetails.homeownerName}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        $('#todayExits .no-data').remove();
+                        
+                        $('#todayExits').prepend(exitHtml);
+                        
+                        $(`#activeVisitors .list-item[data-id="${passId}"]`).fadeOut(function() {
+                            $(this).remove();
+                            if ($('#activeVisitors .list-item').length === 0) {
+                                $('#activeVisitors').append('<div class="no-data">No active visitors</div>');
+                            }
+                        });
                     } else {
                         toastr.error(response.message || 'An error occurred');
                     }
@@ -519,13 +552,79 @@
             });
         }
 
-        // Add these new functions for Registered Vehicles and Security Logs
+        $(document).ready(function() {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+            };
+
+            loadPendingVisitorPasses();
+            loadApprovedVisitorPasses();
+            loadPendingVehicleRegistrations();
+            loadApprovedVehicleRegistrations();
+            
+            loadActiveVisitors();
+            loadTodayExits();
+            
+            loadRegisteredVehicles();
+            
+            setInterval(function() {
+                loadActiveVisitors();
+                loadTodayExits();
+                loadRegisteredVehicles();
+            }, 300000);
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .status-completed { border-left-color: #2ecc71; }
+            .status-pending { border-left-color: #f1c40f; }
+            .status-rejected { border-left-color: #e74c3c; }
+        `;
+        document.head.appendChild(style);
+
+        function updateVisitDurations() {
+            $('.visit-duration').each(function() {
+                const entryTime = new Date($(this).data('entry'));
+                const now = new Date();
+                const duration = now - entryTime;
+                
+                let durationText;
+                if (duration >= 86400000) { // 24 hours in milliseconds
+                    durationText = `${Math.floor(duration / 86400000)} days`;
+                } else if (duration >= 3600000) { // 1 hour in milliseconds
+                    durationText = `${Math.floor(duration / 3600000)} hours`;
+                } else {
+                    durationText = `${Math.floor(duration / 60000)} minutes`;
+                }
+                
+                $(this).html(`<i class='bx bx-time'></i> Duration: ${durationText}`);
+            });
+        }
+
+        setInterval(updateVisitDurations, 60000);
+
+        const durationStyle = document.createElement('style');
+        durationStyle.textContent = `
+            .visit-duration {
+                color: #666;
+                font-style: italic;
+            }
+            
+            .visit-duration i {
+                color: #3498db;
+            }
+        `;
+        document.head.appendChild(durationStyle);
+
         function loadRegisteredVehicles() {
             $.get('/Staff/GetAllVehicleRegistrations', function(data) {
                 const tbody = $('#registeredVehiclesBody');
                 tbody.empty();
                 
                 data.forEach(function(vehicle) {
+                    const statusClass = vehicle.status.toLowerCase();
                     const html = `
                         <tr>
                             <td>${vehicle.homeownerName}</td>
@@ -533,109 +632,73 @@
                             <td>${vehicle.vehicleModel}</td>
                             <td>${vehicle.plateNumber}</td>
                             <td>${vehicle.registrationDate}</td>
-                            <td><span class="status-badge status-${vehicle.status.toLowerCase()}">${vehicle.status}</span></td>
+                            <td><span class="status-badge status-${statusClass}">${vehicle.status}</span></td>
                         </tr>
                     `;
                     tbody.append(html);
                 });
-            });
-        }
 
-        function loadSecurityLogs() {
-            const type = $('#logType').val();
-            const date = $('#logDate').val();
-            
-            $.get(`/Staff/GetSecurityLogs?type=${type}&date=${date}`, function(data) {
-                const logsList = $('#securityLogsList');
-                logsList.empty();
-                
-                data.forEach(function(log) {
-                    const html = `
-                        <div class="log-item">
-                            <div class="log-info">
-                                <span class="log-time">${log.timestamp}</span>
-                                <span class="log-type">${log.type}</span>
-                                <span class="log-details">${log.message}</span>
-                                ${log.status === 'Pending' ? `
-                                    <div class="log-actions">
-                                        <button class="btn-handle" onclick="handleIncident(${log.id})">
-                                            <i class='bx bx-check-circle'></i> Handle
-                                        </button>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    `;
-                    logsList.append(html);
-                });
-            });
-        }
-
-        function handleIncident(incidentId) {
-            const resolution = prompt('Please enter resolution details:');
-            if (!resolution) return;
-
-            $.ajax({
-                url: '/Staff/HandleIncident',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ 
-                    incidentId: incidentId,
-                    resolution: resolution
-                }),
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val()
-                },
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        loadSecurityLogs();
-                    } else {
-                        toastr.error(response.message || 'An error occurred');
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Error:', xhr);
-                    toastr.error('An error occurred while handling the incident.');
+                if (data.length === 0) {
+                    tbody.append('<tr><td colspan="6" class="no-data">No registered vehicles found</td></tr>');
                 }
+            }).fail(function(xhr) {
+                console.error('Error loading registered vehicles:', xhr);
+                $('#registeredVehiclesBody').html('<tr><td colspan="6" class="error-message">Failed to load registered vehicles</td></tr>');
             });
         }
 
-        // Load data on page load
-        $(document).ready(function() {
-            // Configure toastr
-            toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-            };
-
-            // Load visitor passes
-            loadPendingVisitorPasses();
-            loadApprovedVisitorPasses();
-            loadPendingVehicleRegistrations();
-            loadApprovedVehicleRegistrations();
-            
-            // Load visitor exit management data
-            loadActiveVisitors();
-            loadTodayExits();
-            
-            // Load Registered Vehicles and Security Logs
-            loadRegisteredVehicles();
-            loadSecurityLogs();
-            
-            // Add event listeners for security log filters
-            $('#logType, #logDate').on('change', function() {
-                loadSecurityLogs();
-            });
-            
-            // Refresh data every 5 minutes
-            setInterval(function() {
-                loadActiveVisitors();
-                loadTodayExits();
-                loadRegisteredVehicles();
-                loadSecurityLogs();
-            }, 300000);
-        });
+        const statusStyle = document.createElement('style');
+        statusStyle.textContent = `
+            .status-badge {
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 0.9em;
+                font-weight: 500;
+            }
+            .status-approved {
+                background-color: #e1f7e1;
+                color: #27ae60;
+            }
+            .status-pending {
+                background-color: #fef9e7;
+                color: #f1c40f;
+            }
+            .status-rejected {
+                background-color: #fde9e9;
+                color: #e74c3c;
+            }
+            .status-revoked {
+                background-color: #f4f6f7;
+                color: #95a5a6;
+            }
+            .summary-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .summary-table th,
+            .summary-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #eee;
+            }
+            .summary-table th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+            }
+            .summary-table tr:hover {
+                background-color: #f8f9fa;
+            }
+            .error-message {
+                color: #e74c3c;
+                text-align: center;
+                padding: 20px;
+                font-style: italic;
+            }
+        `;
+        document.head.appendChild(statusStyle);
     </script>
 </body>
+
+<style>
+
+</style>

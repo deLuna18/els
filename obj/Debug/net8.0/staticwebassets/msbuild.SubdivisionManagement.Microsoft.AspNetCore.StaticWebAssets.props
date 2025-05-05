@@ -390,8 +390,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>536a4yvysb</Fingerprint>
-      <Integrity>UflmnjCrZFomX4/O+f419YiAU96btIULMJ/ReH+T7mE=</Integrity>
+      <Fingerprint>kf7yx9c0xm</Fingerprint>
+      <Integrity>IJ8jpidjIehZHate6uzItpIL6ASNsg4RZ4E/g4zl8t8=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\staff_security_visitors.css'))</OriginalItemSpec>

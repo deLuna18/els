@@ -10,11 +10,11 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Chart.js for analytics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/admin_security_visitors.css" asp-append-version="true">
+    
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
 </head>
 
 <!-- SIDEBAR -->
@@ -160,14 +160,6 @@
                 </div>
             </div>
 
-            <!-- Visitor Trends Chart -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Visitor Trends</h5>
-                    <canvas id="visitorTrendsChart"></canvas>
-                </div>
-            </div>
-
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="securityTabs" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -178,16 +170,6 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="vehicle-registrations-tab" data-bs-toggle="tab" data-bs-target="#vehicle-registrations" type="button" role="tab">
                         Vehicle Registrations
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="staff-management-tab" data-bs-toggle="tab" data-bs-target="#staff-management" type="button" role="tab">
-                        Staff Management
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="blacklist-tab" data-bs-toggle="tab" data-bs-target="#blacklist" type="button" role="tab">
-                        Blacklist
                     </button>
                 </li>
             </ul>
@@ -416,30 +398,52 @@
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 <script>
-    // Initialize visitor trends chart
-    const ctx = document.getElementById('visitorTrendsChart').getContext('2d');
-    const visitorTrendsChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-                label: 'Visitors',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                }
-            }
+    // Function to load dashboard statistics
+    function loadDashboardStatistics() {
+        $.get('/api/SecurityPolicy/statistics')
+            .done(function(stats) {
+                // Update visitor count
+                $('#totalVisitorsToday').text(stats.totalVisitorsToday);
+                updateTrendIndicator('#totalVisitorsToday', stats.visitorChangePercent, 'vs yesterday');
+
+                // Update active passes
+                $('#activePassesCount').text(stats.activePasses);
+
+                // Update registered vehicles
+                $('#registeredVehiclesCount').text(stats.registeredVehicles);
+                updateTrendIndicator('#registeredVehiclesCount', stats.vehiclesChangePercent, 'this month');
+
+                // Update security alerts
+                $('#securityAlertsCount').text(stats.securityAlerts);
+                updateTrendIndicator('#securityAlertsCount', stats.securityAlertsChangePercent, 'vs last week');
+            })
+            .fail(function(xhr) {
+                console.error('Error loading dashboard statistics:', xhr);
+                toastr.error('Failed to load dashboard statistics');
+            });
+    }
+
+    // Helper function to update trend indicators
+    function updateTrendIndicator(parentSelector, percentage, timeframe) {
+        const parent = $(parentSelector).parent();
+        const indicator = parent.find('.trend-indicator');
+        
+        if (percentage === 0) {
+            indicator.removeClass('up down').html('No change ' + timeframe);
+        } else {
+            const isUp = percentage > 0;
+            indicator
+                .removeClass(isUp ? 'down' : 'up')
+                .addClass(isUp ? 'up' : 'down')
+                .html(`
+                    <i class='bx bx-${isUp ? 'up' : 'down'}-arrow-alt'></i>
+                    ${Math.abs(percentage)}% ${timeframe}
+                `);
         }
-    });
+    }
 
     // Function to export data
     function exportData() {
@@ -451,15 +455,60 @@
         // Implementation for advanced search
     }
 
+    // Function to load security policy
+    function loadSecurityPolicy() {
+        $.get('/api/SecurityPolicy')
+            .done(function(policy) {
+                $('#maxVisitDuration').val(policy.maxVisitDuration);
+                $('#advanceNotice').val(policy.advanceNoticeRequired);
+                $('#maxActivePasses').val(policy.maxActivePassesPerHomeowner);
+                $('#vehicleRegValidity').val(policy.vehicleRegistrationValidityMonths);
+                $('#requirePhotoId').prop('checked', policy.requirePhotoId);
+                $('#enableAutoApproval').prop('checked', policy.enableAutoApprovalForRegularVisitors);
+            })
+            .fail(function(xhr) {
+                console.error('Error loading security policy:', xhr);
+                toastr.error('Failed to load security policy settings');
+            });
+    }
+
     // Function to save security policy
     function saveSecurityPolicy() {
-        // Implementation for saving security policy
+        const policy = {
+            id: 1, // We always use ID 1 as we only have one policy
+            maxVisitDuration: parseInt($('#maxVisitDuration').val()),
+            advanceNoticeRequired: parseInt($('#advanceNotice').val()),
+            maxActivePassesPerHomeowner: parseInt($('#maxActivePasses').val()),
+            vehicleRegistrationValidityMonths: parseInt($('#vehicleRegValidity').val()),
+            requirePhotoId: $('#requirePhotoId').is(':checked'),
+            enableAutoApprovalForRegularVisitors: $('#enableAutoApproval').is(':checked')
+        };
+
+        $.ajax({
+            url: '/api/SecurityPolicy',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(policy),
+            success: function() {
+                toastr.success('Security policy updated successfully');
+                $('#securityPolicyModal').modal('hide');
+            },
+            error: function(xhr) {
+                console.error('Error saving security policy:', xhr);
+                toastr.error('Failed to update security policy');
+            }
+        });
     }
 
     // Load data when document is ready
     $(document).ready(function() {
         loadVisitorPasses();
         loadVehicleRegistrations();
+        loadSecurityPolicy();
+        loadDashboardStatistics(); // Load dashboard statistics when page loads
+
+        // Refresh dashboard statistics every 5 minutes
+        setInterval(loadDashboardStatistics, 5 * 60 * 1000);
 
         // Handle tab changes
         $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -474,6 +523,11 @@
         $('#searchInput').on('keyup', function() {
             const searchText = $(this).val().toLowerCase();
             filterTables(searchText);
+        });
+
+        // Handle security policy modal show
+        $('#securityPolicyModal').on('show.bs.modal', function() {
+            loadSecurityPolicy();
         });
     });
 

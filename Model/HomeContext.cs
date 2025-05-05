@@ -15,6 +15,7 @@ namespace SubdivisionManagement.Model
         public DbSet<ContactRequest> ContactRequests { get; set; }
         public DbSet<VisitorPass> VisitorPasses { get; set; }
         public DbSet<VehicleRegistration> VehicleRegistrations { get; set; }
+        public DbSet<SecurityPolicy> SecurityPolicies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,6 +57,22 @@ namespace SubdivisionManagement.Model
                 .WithMany()
                 .HasForeignKey(v => v.HomeownerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Add default security policy if none exists
+            modelBuilder.Entity<SecurityPolicy>().HasData(
+                new SecurityPolicy
+                {
+                    Id = 1,
+                    MaxVisitDuration = 24,
+                    AdvanceNoticeRequired = 2,
+                    MaxActivePassesPerHomeowner = 5,
+                    VehicleRegistrationValidityMonths = 12,
+                    RequirePhotoId = true,
+                    EnableAutoApprovalForRegularVisitors = false,
+                    LastModified = new DateTime(2024, 1, 1),
+                    ModifiedBy = "System"
+                }
+            );
         }
     }
 }

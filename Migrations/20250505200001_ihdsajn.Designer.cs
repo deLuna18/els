@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SubdivisionManagement.Model;
 
@@ -11,9 +12,11 @@ using SubdivisionManagement.Model;
 namespace SubdivisionManagement.Migrations
 {
     [DbContext(typeof(HomeContext))]
-    partial class HomeContextModelSnapshot : ModelSnapshot
+    [Migration("20250505200001_ihdsajn")]
+    partial class ihdsajn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,7 +238,7 @@ namespace SubdivisionManagement.Migrations
                             Id = 1,
                             AdvanceNoticeRequired = 2,
                             EnableAutoApprovalForRegularVisitors = false,
-                            LastModified = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastModified = new DateTime(2025, 5, 5, 20, 0, 0, 913, DateTimeKind.Utc).AddTicks(5542),
                             MaxActivePassesPerHomeowner = 5,
                             MaxVisitDuration = 24,
                             ModifiedBy = "System",

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SubdivisionManagement.Model;
 
@@ -11,9 +12,11 @@ using SubdivisionManagement.Model;
 namespace SubdivisionManagement.Migrations
 {
     [DbContext(typeof(HomeContext))]
-    partial class HomeContextModelSnapshot : ModelSnapshot
+    [Migration("20250505162834_security_5")]
+    partial class security_5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -439,12 +442,6 @@ namespace SubdivisionManagement.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("ApprovalDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EntryTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ExitTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("HomeownerId")

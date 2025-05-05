@@ -8,11 +8,14 @@ namespace SubdivisionManagement.Model
 
         public DbSet<Homeowner> Homeowners { get; set; } = null!;
         public DbSet<Admin> Admins { get; set; }
-        public DbSet<Staff> Staffs { get; set; }  
+        public DbSet<Staff> Staffs { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
-        public DbSet<ContactRequest> ContactRequests { get; set; }
         public DbSet<ServiceCategory> ServiceCategories { get; set; }
+        public DbSet<ContactRequest> ContactRequests { get; set; }
+        public DbSet<VisitorPass> VisitorPasses { get; set; }
+        public DbSet<VehicleRegistration> VehicleRegistrations { get; set; }
+        public DbSet<SecurityLog> SecurityLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +45,25 @@ namespace SubdivisionManagement.Model
             modelBuilder.Entity<ServiceCategory>()
                 .HasIndex(sc => sc.Name)
                 .IsUnique();
+
+            modelBuilder.Entity<VisitorPass>()
+                .HasOne(v => v.Homeowner)
+                .WithMany()
+                .HasForeignKey(v => v.HomeownerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<VehicleRegistration>()
+                .HasOne(v => v.Homeowner)
+                .WithMany()
+                .HasForeignKey(v => v.HomeownerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Add SecurityLog configuration
+            modelBuilder.Entity<SecurityLog>()
+                .HasOne(sl => sl.Staff)
+                .WithMany()
+                .HasForeignKey(sl => sl.StaffId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

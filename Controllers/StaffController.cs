@@ -632,10 +632,12 @@ namespace SubdivisionManagement.Controllers
             return View("staff_announcement", announcements);
         }
 
-        public IActionResult Staff_Security_Visitors()
+        public IActionResult SecurityVisitors()
         {
-            if (!IsStaffLoggedIn(out _)) return RedirectToAction("Login"); // Check login
+            if (!IsStaffLoggedIn(out _)) return RedirectToAction("Login");
 
+            var tokens = _antiforgery.GetAndStoreTokens(HttpContext);
+            ViewBag.AntiForgeryToken = tokens.RequestToken;
             return View("staff_security_visitors");
         }
 
@@ -678,6 +680,501 @@ namespace SubdivisionManagement.Controllers
                 _logger.LogError(ex, "Error fetching service categories");
                 return StatusCode(500, new { message = "Error fetching service categories" });
             }
+        }
+
+        public class VisitorPassActionDto
+        {
+            [Required]
+            public int PassId { get; set; }
+            
+            [Required]
+            public string Action { get; set; } = string.Empty; // "approve", "reject", "revoke"
+        }
+
+        public class VehicleRegistrationActionDto
+        {
+            [Required]
+            public int RegistrationId { get; set; }
+            
+            [Required]
+            public string Action { get; set; } = string.Empty; // "approve", "reject", "revoke"
+        }
+
+        public class VisitorExitDto
+        {
+            [Required]
+            public int PassId { get; set; }
+            
+            public DateTime ExitTime { get; set; } = DateTime.UtcNow;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPendingVisitorPasses()
+        {
+            var passes = await _context.VisitorPasses
+                .Include(v => v.Homeowner)
+                .Where(v => v.Status == "Pending")
+                .OrderByDescending(v => v.RequestDate)
+                .Select(v => new
+                {
+                    v.Id,
+                    v.VisitorName,
+                    VisitDate = v.VisitDate.ToString("yyyy-MM-dd"),
+                    v.Purpose,
+                    v.Status,
+                    HomeownerName = v.Homeowner.FirstName + " " + v.Homeowner.LastName
+                })
+                .ToListAsync();
+
+            return Json(passes);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetApprovedVisitorPasses()
+        {
+            var passes = await _context.VisitorPasses
+                .Include(v => v.Homeowner)
+                .Where(v => v.Status == "Approved")
+                .OrderByDescending(v => v.RequestDate)
+                .Select(v => new
+                {
+                    v.Id,
+                    v.VisitorName,
+                    VisitDate = v.VisitDate.ToString("yyyy-MM-dd"),
+                    v.Purpose,
+                    v.Status,
+                    HomeownerName = v.Homeowner.FirstName + " " + v.Homeowner.LastName
+                })
+                .ToListAsync();
+
+            return Json(passes);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPendingVehicleRegistrations()
+        {
+            var registrations = await _context.VehicleRegistrations
+                .Include(v => v.Homeowner)
+                .Where(v => v.Status == "Pending")
+                .OrderByDescending(v => v.RegistrationDate)
+                .Select(v => new
+                {
+                    v.Id,
+                    v.VehicleMake,
+                    v.VehicleModel,
+                    v.PlateNumber,
+                    v.Status,
+                    HomeownerName = v.Homeowner.FirstName + " " + v.Homeowner.LastName
+                })
+                .ToListAsync();
+
+            return Json(registrations);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetApprovedVehicleRegistrations()
+        {
+            var registrations = await _context.VehicleRegistrations
+                .Include(v => v.Homeowner)
+                .Where(v => v.Status == "Approved")
+                .OrderByDescending(v => v.RegistrationDate)
+                .Select(v => new
+                {
+                    v.Id,
+                    v.VehicleMake,
+                    v.VehicleModel,
+                    v.PlateNumber,
+                    v.Status,
+                    HomeownerName = v.Homeowner.FirstName + " " + v.Homeowner.LastName,
+                    RegistrationDate = v.RegistrationDate.ToString("yyyy-MM-dd")
+                })
+                .ToListAsync();
+
+            return Json(registrations);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVisitorPassStatus([FromBody] VisitorPassActionDto actionDto)
+        {
+            if (!IsStaffLoggedIn(out _)) 
+                return Unauthorized(new { success = false, message = "Please log in to continue." });
+
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, message = "Invalid request data." });
+
+            try
+            {
+                var pass = await _context.VisitorPasses.FindAsync(actionDto.PassId);
+                if (pass == null)
+                {
+                    return NotFound(new { success = false, message = "Visitor pass not found." });
+                }
+
+                switch (actionDto.Action.ToLower())
+                {
+                    case "approve":
+                        if (pass.Status != "Pending")
+                        {
+                            return BadRequest(new { success = false, message = "Can only approve pending passes." });
+                        }
+                        pass.Status = "Approved";
+                        pass.ApprovalDate = DateTime.UtcNow;
+                        break;
+
+                    case "reject":
+                        if (pass.Status != "Pending")
+                        {
+                            return BadRequest(new { success = false, message = "Can only reject pending passes." });
+                        }
+                        pass.Status = "Rejected";
+                        break;
+
+                    case "revoke":
+                        if (pass.Status != "Approved")
+                        {
+                            return BadRequest(new { success = false, message = "Can only revoke approved passes." });
+                        }
+                        pass.Status = "Revoked";
+                        break;
+
+                    default:
+                        return BadRequest(new { success = false, message = "Invalid action." });
+                }
+
+                _context.VisitorPasses.Update(pass);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = $"Visitor pass {actionDto.Action.ToLower()}ed successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating visitor pass status for ID {PassId}", actionDto.PassId);
+                return StatusCode(500, new { success = false, message = "An error occurred while updating the visitor pass." });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVehicleRegistrationStatus([FromBody] VehicleRegistrationActionDto actionDto)
+        {
+            if (!IsStaffLoggedIn(out _))
+                return Unauthorized(new { success = false, message = "Please log in to continue." });
+
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, message = "Invalid request data." });
+
+            try
+            {
+                var registration = await _context.VehicleRegistrations.FindAsync(actionDto.RegistrationId);
+                if (registration == null)
+                {
+                    return NotFound(new { success = false, message = "Vehicle registration not found." });
+                }
+
+                switch (actionDto.Action.ToLower())
+                {
+                    case "approve":
+                        if (registration.Status != "Pending")
+                        {
+                            return BadRequest(new { success = false, message = "Can only approve pending registrations." });
+                        }
+                        registration.Status = "Approved";
+                        registration.ApprovalDate = DateTime.UtcNow;
+                        break;
+
+                    case "reject":
+                        if (registration.Status != "Pending")
+                        {
+                            return BadRequest(new { success = false, message = "Can only reject pending registrations." });
+                        }
+                        registration.Status = "Rejected";
+                        break;
+
+                    case "revoke":
+                        if (registration.Status != "Approved")
+                        {
+                            return BadRequest(new { success = false, message = "Can only revoke approved registrations." });
+                        }
+                        registration.Status = "Revoked";
+                        break;
+
+                    default:
+                        return BadRequest(new { success = false, message = "Invalid action." });
+                }
+
+                _context.VehicleRegistrations.Update(registration);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = $"Vehicle registration {actionDto.Action.ToLower()}ed successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating vehicle registration status for ID {RegistrationId}", actionDto.RegistrationId);
+                return StatusCode(500, new { success = false, message = "An error occurred while updating the vehicle registration." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetActiveVisitors()
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                var activeVisitors = await _context.VisitorPasses
+                    .Include(v => v.Homeowner)
+                    .Where(v => v.Status == "Approved" && v.ExitTime == null)
+                    .OrderBy(v => v.EntryTime)
+                    .Select(v => new
+                    {
+                        v.Id,
+                        v.VisitorName,
+                        EntryTime = v.EntryTime.HasValue ? v.EntryTime.Value.ToString("yyyy-MM-dd HH:mm") : null,
+                        v.Purpose,
+                        HomeownerName = v.Homeowner != null ? $"{v.Homeowner.FirstName} {v.Homeowner.LastName}" : "N/A"
+                    })
+                    .ToListAsync();
+
+                return Json(activeVisitors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching active visitors");
+                return StatusCode(500, new { message = "Error retrieving active visitors" });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTodayExits()
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                var today = DateTime.Today;
+                var todayExits = await _context.VisitorPasses
+                    .Include(v => v.Homeowner)
+                    .Where(v => v.ExitTime.HasValue && v.ExitTime.Value.Date == today)
+                    .OrderByDescending(v => v.ExitTime)
+                    .Select(v => new
+                    {
+                        v.Id,
+                        v.VisitorName,
+                        EntryTime = v.EntryTime.HasValue ? v.EntryTime.Value.ToString("yyyy-MM-dd HH:mm") : null,
+                        ExitTime = v.ExitTime.HasValue ? v.ExitTime.Value.ToString("yyyy-MM-dd HH:mm") : null,
+                        v.Purpose,
+                        HomeownerName = v.Homeowner != null ? $"{v.Homeowner.FirstName} {v.Homeowner.LastName}" : "N/A"
+                    })
+                    .ToListAsync();
+
+                return Json(todayExits);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching today's visitor exits");
+                return StatusCode(500, new { message = "Error retrieving visitor exits" });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecordVisitorExit([FromBody] VisitorExitDto exitDto)
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                var pass = await _context.VisitorPasses.FindAsync(exitDto.PassId);
+                if (pass == null)
+                {
+                    return NotFound(new { success = false, message = "Visitor pass not found." });
+                }
+
+                if (pass.Status != "Approved" || pass.ExitTime.HasValue)
+                {
+                    return BadRequest(new { success = false, message = "Invalid visitor pass status or exit already recorded." });
+                }
+
+                // Record exit time
+                pass.ExitTime = DateTime.UtcNow;
+                pass.Status = "Completed";
+
+                await _context.SaveChangesAsync();
+
+                // Create a security log entry for the exit
+                var securityLog = new SecurityLog
+                {
+                    Type = "Visitor Exit",
+                    Message = $"Visitor {pass.VisitorName} exited the premises",
+                    Timestamp = DateTime.UtcNow,
+                    Status = "Completed"
+                };
+
+                _context.SecurityLogs.Add(securityLog);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Visitor exit recorded successfully!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error recording visitor exit for pass ID {PassId}", exitDto.PassId);
+                return StatusCode(500, new { success = false, message = "An error occurred while recording the visitor exit." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSecurityCounts()
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                var pendingVisitors = await _context.VisitorPasses
+                    .CountAsync(v => v.Status == "Pending");
+
+                var activeVisitors = await _context.VisitorPasses
+                    .CountAsync(v => v.Status == "Approved" && v.VisitDate.Date == DateTime.Today);
+
+                var pendingVehicles = await _context.VehicleRegistrations
+                    .CountAsync(v => v.Status == "Pending");
+
+                return Json(new
+                {
+                    pendingVisitors,
+                    activeVisitors,
+                    pendingVehicles
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting security counts");
+                return StatusCode(500, new { message = "Error retrieving security counts" });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllVehicleRegistrations()
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                var registrations = await _context.VehicleRegistrations
+                    .Include(v => v.Homeowner)
+                    .OrderByDescending(v => v.RegistrationDate)
+                    .Select(v => new
+                    {
+                        v.Id,
+                        v.VehicleMake,
+                        v.VehicleModel,
+                        v.PlateNumber,
+                        RegistrationDate = v.RegistrationDate.ToString("yyyy-MM-dd"),
+                        v.Status,
+                        HomeownerName = v.Homeowner != null ? $"{v.Homeowner.FirstName} {v.Homeowner.LastName}" : "N/A"
+                    })
+                    .ToListAsync();
+
+                return Json(registrations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching vehicle registrations");
+                return StatusCode(500, new { message = "Error retrieving vehicle registrations" });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSecurityLogs(string type = "all", string date = null)
+        {
+            if (!IsStaffLoggedIn(out _)) return Unauthorized();
+
+            try
+            {
+                DateTime filterDate = date != null ? 
+                    DateTime.Parse(date) : 
+                    DateTime.Today;
+
+                var query = _context.SecurityLogs
+                    .Include(l => l.Staff)
+                    .Where(l => l.Timestamp.Date == filterDate.Date);
+
+                if (type.ToLower() != "all")
+                {
+                    query = query.Where(l => l.Type.ToLower() == type.ToLower());
+                }
+
+                var logs = await query
+                    .OrderByDescending(l => l.Timestamp)
+                    .Select(l => new
+                    {
+                        l.Id,
+                        l.Type,
+                        Timestamp = l.Timestamp.ToString("yyyy-MM-dd HH:mm"),
+                        l.Message,
+                        StaffName = l.Staff != null ? l.Staff.FullName : "System",
+                        l.Status
+                    })
+                    .ToListAsync();
+
+                return Json(logs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving security logs");
+                return StatusCode(500, new { message = "Error retrieving security logs" });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HandleIncident([FromBody] HandleIncidentDto dto)
+        {
+            if (!IsStaffLoggedIn(out var username)) return Unauthorized();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
+            {
+                var staff = GetLoggedInStaffUser(username);
+                var incident = await _context.SecurityLogs.FindAsync(dto.IncidentId);
+                
+                if (incident == null)
+                    return NotFound(new { success = false, message = "Incident not found." });
+
+                incident.Status = "Handled";
+                incident.HandledBy = staff?.Id;
+                incident.HandledAt = DateTime.UtcNow;
+                incident.Resolution = dto.Resolution;
+
+                await _context.SaveChangesAsync();
+
+                // Create a new log entry for the resolution
+                var resolutionLog = new SecurityLog
+                {
+                    Type = "Resolution",
+                    Message = $"Incident #{dto.IncidentId} resolved: {dto.Resolution}",
+                    Timestamp = DateTime.UtcNow,
+                    StaffId = staff?.Id,
+                    Status = "Completed"
+                };
+
+                _context.SecurityLogs.Add(resolutionLog);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Incident handled successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling incident");
+                return StatusCode(500, new { success = false, message = "An error occurred while handling the incident." });
+            }
+        }
+
+        public class HandleIncidentDto
+        {
+            [Required]
+            public int IncidentId { get; set; }
+
+            [Required]
+            public string Resolution { get; set; } = string.Empty;
         }
     }
 }
